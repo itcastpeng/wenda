@@ -49,11 +49,11 @@ app.conf.beat_schedule = {
         'schedule': crontab("0", '*', '*', '*', '*'),
     },
 
-    # # 生成指定首页关键词覆盖报表
-    # 'KeywordsTopPageCoverExcel': {
-    #     'task': 'wenda_celery_project.tasks.keywords_top_page_cover_excel',
-    #     'schedule': crontab("*/30", '*', '*', '*', '*'),
-    # },
+    # 生成指定首页关键词覆盖报表
+    'KeywordsTopPageCoverExcel': {
+        'task': 'wenda_celery_project.tasks.keywords_top_page_cover_excel',
+        'schedule': crontab("0", '8', '*', '*', '*'),
+    },
 
     # 统计3天未操作的客户,然后将客户名发送给对应的营销顾问
     'TongjiKehuShiyong': {
