@@ -21,10 +21,8 @@ from webadmin.views_dir.wenda.message import AddMessage
 # 用户管理
 @pub.is_login
 def user_management(request):
-
     role_names = models.Role.objects.values_list("id", "name")
     status_choices = models.UserProfile.status_choices
-
     if "type" in request.GET and request.GET["type"] == "ajax_json":
         length = int(request.GET.get("length"))
         start = int(request.GET.get("start"))
