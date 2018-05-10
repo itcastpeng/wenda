@@ -26,10 +26,24 @@
             <label class="col-md-3 control-label" for="role_id">角色</label>
             <div class="col-md-6">
 
-                <select class="form-control" name="role_id">
+                <select id="role_id" class="form-control" name="role_id">
                     <option value="">请选择</option>
                     {% for i in roles_dict %}
                         <option value="{{ i.id }}" {% if user_profile_obj.role.id == i.id %}selected{% endif %}>{{ i.name }}</option>
+                    {% endfor %}
+
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-3 control-label" for="status">是否启用</label>
+            <div class="col-md-6">
+
+                <select id="status" class="form-control" name="status">
+                    <option value="">请选择</option>
+                    {% for i in user_profile_obj.status_choices %}
+                        <option value="{{ i.0 }}" {% if user_profile_obj.status == i.0%}selected{% endif %}>{{ i.1 }}</option>
                     {% endfor %}
 
                 </select>
