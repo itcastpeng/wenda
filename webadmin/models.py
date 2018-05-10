@@ -254,6 +254,7 @@ class Task(models.Model):
 
     add_map = models.BooleanField(verbose_name="该任务所有子任务是否添加地图", default=False)
     is_test = models.BooleanField(verbose_name="该任务是否为测试任务", default=False)
+    is_shangwutong = models.BooleanField(verbose_name="是否是商务通任务", default=False)
 
 
 # 任务流程日志表
