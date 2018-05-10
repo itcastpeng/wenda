@@ -227,6 +227,25 @@
         }, 'json');
     });
 
+    {# 删除回复异常 #}
+    $("#dataTable").on('click', '.shanchuhuifuyichang', function () {
+        var uid = $(this).attr("uid");
+
+        var csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
+        var data = "csrfmiddlewaretoken=" + csrfmiddlewaretoken;
+
+        var url = 'shanchuhuifuyichang/' + uid + '/';
+        $.post(url, data, function (result) {
+
+            if (!result['status']) {
+                toastr['error'](result['message']);
+            } else {
+                toastr['success'](result['message']);
+                table.draw();
+            }
+        }, 'json');
+    });
+
     {# 清空关键词 #}
     $("#dataTable").on('click', '.clearKeywords', function () {
         var uid = $(this).attr("uid");

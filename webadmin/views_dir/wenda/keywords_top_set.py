@@ -33,7 +33,8 @@ def init_data(role_id=None, q=Q(), start=0, length=-1):
         'keyword__client_user__username',
         'keyword__client_user__laowenda_youxian',
         'page_type'
-    ).annotate(cover=Count("keyword__client_user")).order_by('-keyword__client_user__laowenda_youxian', '-keyword__client_user__create_date')
+    ).annotate(cover=Count("keyword__client_user")).order_by('-keyword__client_user__laowenda_youxian',
+        '-keyword__client_user__create_date')
 
     print("2--> ", datetime.datetime.now())
 
@@ -94,7 +95,8 @@ def init_data(role_id=None, q=Q(), start=0, length=-1):
             no_select_keywords_num=no_select_keywords_num
         )
 
-        baobiao_download = """<a class="shengchengbaobiao" uid="{client_user_id}" href="#">生成报表</a>""".format(client_user_id=client_user_id)
+        baobiao_download = """<a class="shengchengbaobiao" uid="{client_user_id}" href="#">生成报表</a>""".format(
+            client_user_id=client_user_id)
         if keywords_top_page_cover_excel_path:
             baobiao_download += """
             /
@@ -108,6 +110,9 @@ def init_data(role_id=None, q=Q(), start=0, length=-1):
 
         oper = """
             <a class="chongcha" uid="{client_user_id}" href="#">重查</a>
+            /
+            <a class="shanchuhuifuyichang" uid="{client_user_id}" href="#">删除回复异常</a>
+            
         """.format(client_user_id=client_user_id)
 
         if role_id and ("测试" in username or role_id == 1):
@@ -166,9 +171,9 @@ def keywords_top_set(request):
             if field in request.GET and request.GET.get(field):  # 如果该字段存在并且不为空
                 if field == "client_user_type":
                     pass
-                    if request.GET.get(field) == "1":       # 正式用户
+                    if request.GET.get(field) == "1":  # 正式用户
                         q.add(~Q(**{"keyword__client_user__username" + "__contains": "测试"}), Q.AND)
-                    elif request.GET.get(field) == "2":     # 测试 用户
+                    elif request.GET.get(field) == "2":  # 测试 用户
                         q.add(Q(**{"keyword__client_user__username" + "__contains": "测试"}), Q.AND)
                 elif field == "client_user_id":
                     q.add(Q(**{"keyword__client_user_id": request.GET[field]}), Q.AND)
@@ -266,7 +271,8 @@ def keywords_top_set_oper(request, oper_type, o_id):
                 for i in keyword_list:
                     if not i:  # 如果为空 则跳过
                         continue
-                    obj = models.KeywordsTopSet.objects.filter(client_user_id=client_user_id, keyword=i, is_delete=False)
+                    obj = models.KeywordsTopSet.objects.filter(client_user_id=client_user_id, keyword=i,
+                        is_delete=False)
                     if not obj:
                         query.append(models.KeywordsTopSet(
                             keyword=i,
@@ -301,6 +307,15 @@ def keywords_top_set_oper(request, oper_type, o_id):
 
             response.status = True
             response.message = "开始重查"
+
+        # 删除回复异常任务
+        elif oper_type == 'shanchuhuifuyichang':
+            objs = models.WendaRobotTask.objects.select_related('task__release_user').filter(
+                task__release_user_id=o_id,
+                status=20,
+                task__is_delete=False,
+                wenda_type=2
+            ).delete()
 
         # 清空关键词
         elif oper_type == "clearKeywords":
@@ -375,7 +390,8 @@ def keywords_top_set_oper(request, oper_type, o_id):
                         data[client_user_id]["total"] = cover + data[client_user_id][1]
                 else:
                     # 查询该用户添加了多少关键词数量
-                    keywords_top_set_objs = models.KeywordsTopSet.objects.filter(client_user_id=client_user_id, is_delete=False)
+                    keywords_top_set_objs = models.KeywordsTopSet.objects.filter(client_user_id=client_user_id,
+                        is_delete=False)
                     keywords_num = keywords_top_set_objs.count()
                     no_select_keywords_num = keywords_top_set_objs.filter(status=1).count()
 
@@ -384,8 +400,10 @@ def keywords_top_set_oper(request, oper_type, o_id):
                     else:
                         keywords_status = "已查询"
 
-                    keywords_top_page_cover_excel_path = keywords_top_set_objs[0].client_user.keywords_top_page_cover_excel_path
-                    keywords_top_page_cover_yingxiao_excel_path = keywords_top_set_objs[0].client_user.keywords_top_page_cover_yingxiao_excel_path
+                    keywords_top_page_cover_excel_path = keywords_top_set_objs[
+                        0].client_user.keywords_top_page_cover_excel_path
+                    keywords_top_page_cover_yingxiao_excel_path = keywords_top_set_objs[
+                        0].client_user.keywords_top_page_cover_yingxiao_excel_path
 
                     pc_cover = 0
                     wap_cover = 0
@@ -399,7 +417,8 @@ def keywords_top_set_oper(request, oper_type, o_id):
                         # 3: wap_cover,
                         page_type: cover,
                         "username": username,
-                        "keywords_num": "{keywords_num} / {no_select_keywords_num}".format(keywords_num=keywords_num, no_select_keywords_num=no_select_keywords_num),
+                        "keywords_num": "{keywords_num} / {no_select_keywords_num}".format(keywords_num=keywords_num,
+                            no_select_keywords_num=no_select_keywords_num),
                         "keywords_status": keywords_status,
                         "keywords_top_page_cover_excel_path": keywords_top_page_cover_excel_path,
                         "keywords_top_page_cover_yingxiao_excel_path": keywords_top_page_cover_yingxiao_excel_path
