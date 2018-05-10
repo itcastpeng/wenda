@@ -588,6 +588,12 @@ class KeywordsTopSet(models.Model):
     )
     status = models.SmallIntegerField(verbose_name="状态", choices=status_choices, default=1)
 
+    keywords_type_choices = (
+        (1, "普通词"),
+        (2, "核心词"),
+        (3, "任务词"),
+    )
+    keywords_type = models.SmallIntegerField(verbose_name="关键词类型", choices=status_choices, default=1)
     top_page_cover = models.SmallIntegerField(verbose_name="首页覆盖条数", default=0)
     create_date = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
     update_date = models.DateTimeField(verbose_name="更新时间", null=True, blank=True)
@@ -597,7 +603,7 @@ class KeywordsTopSet(models.Model):
     update_select_cover_date = models.DateTimeField(verbose_name="更新查询排名的时间", null=True, blank=True)
     is_delete = models.BooleanField(verbose_name="是否删除", default=False)
 
-
+# 指定关键词首页数据表
 class KeywordsTopInfo(models.Model):
     keyword = models.ForeignKey('KeywordsTopSet')
     title = models.CharField(verbose_name="问题", max_length=128)

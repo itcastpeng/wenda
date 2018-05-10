@@ -244,12 +244,13 @@ def keywords_top_set_oper(request, oper_type, o_id):
     user_id = request.session["user_id"]
     role_id = request.session.get("role_id")
     response = pub.BaseResponse()
-
     if request.method == "POST":
         # 添加
         if oper_type == "create":
             keyword = request.POST.get("keyword")
             client_user_id = request.POST.get("client_user_id", None)
+            keywords_type = request.POST.get('keywords_type')
+
             print(client_user_id)
 
             if client_user_id == "":
@@ -271,15 +272,22 @@ def keywords_top_set_oper(request, oper_type, o_id):
                 for i in keyword_list:
                     if not i:  # 如果为空 则跳过
                         continue
-                    obj = models.KeywordsTopSet.objects.filter(client_user_id=client_user_id, keyword=i,
-                        is_delete=False)
-                    if not obj:
+                    objs = models.KeywordsTopSet.objects.filter(
+                        client_user_id=client_user_id,
+                        keyword=i,
+                        is_delete=False
+                    )
+                    if not objs:
                         query.append(models.KeywordsTopSet(
                             keyword=i,
                             client_user_id=client_user_id,
                             oper_user_id=user_id,
+                            keywords_type=keywords_type
                         ))
                     else:
+                        obj = objs[0]
+                        obj.keywords_type = keywords_type
+                        obj.save()
                         repeat_num += 1
 
                 models.KeywordsTopSet.objects.bulk_create(query)
@@ -357,6 +365,7 @@ def keywords_top_set_oper(request, oper_type, o_id):
         # 添加
         if oper_type == "create":
             client_objs = models.UserProfile.objects.filter(is_delete=False, role_id=5)
+            keywords_type_choices = models.KeywordsTopSet.keywords_type_choices
             return render(request, 'wenda/keywords_top_set/keywords_top_set_modal_create.html', locals())
 
         # 删除
