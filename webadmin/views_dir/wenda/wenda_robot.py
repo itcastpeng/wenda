@@ -182,7 +182,6 @@ def wenda_robot_oper(request, oper_type, o_id):
                     "content": content,
                     "user_id": user_id,
                 }
-                print('create_data  -- > ',create_data)
 
                 if wenda_type == "1":
                     title = request.POST["title"]

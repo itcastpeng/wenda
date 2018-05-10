@@ -481,7 +481,6 @@ def task_list_oper(request, oper_type, o_id):
             remark = request.POST.get("remark")
             addMap = request.POST.get("addMap", False)
             is_test = request.POST.get("is_test", False)
-            is_shangwutong = request.POST.get('is_shangwutong',False)
             if remark:
                 remark = unquote(remark)
             release_platform = 1        # 发布平台   百度知道
@@ -518,7 +517,6 @@ def task_list_oper(request, oper_type, o_id):
                             response.status = False
                             response.message = "该用户未填写医院信息"
 
-
                     if response.status:
                         task_count = models.Task.objects.filter(release_user_id=client_id).count() + 1
 
@@ -551,13 +549,9 @@ def task_list_oper(request, oper_type, o_id):
                             f.write(file_contents)
 
                         # 添加任务
-                        if is_shangwutong:
-                            is_shangwutong = True
 
                         if is_test:
                             is_test = True
-
-                        # 做出判断插入数据
                         task_obj = models.Task.objects.create(
                             release_user_id=form_obj.cleaned_data['client_id'],
                             name=task_name,
@@ -571,7 +565,6 @@ def task_list_oper(request, oper_type, o_id):
                             remark=remark,
                             add_map=addMap,
                             is_test=is_test,
-                            is_shangwutong=is_shangwutong
                         )
 
                         # 扣费
