@@ -249,6 +249,7 @@ def user_management_oper(request, oper_type, o_id):
             hospital_infomation_objs = models.HospitalInformation.objects.filter(user_id=o_id)
             if hospital_infomation_objs:
                 hospital_infomation_obj = hospital_infomation_objs[0]
+
             return render(request, 'myadmin/user_management/user_management_modal_update.html', locals())
 
         # 删除用户

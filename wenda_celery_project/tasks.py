@@ -992,7 +992,8 @@ def send_cover_info():
         userprofile_keywords_cover_obj = models.UserprofileKeywordsCover.objects.filter(
             create_date=now_date,
             client_user_id=user_id,
-            is_send_wechat=False
+            is_send_wechat=False,
+            client_user__status=1    # 如果用户未启用，则不发送报表
         )
 
         # 如果不存在,则表示还未查询完

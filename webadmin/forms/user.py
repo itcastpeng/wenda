@@ -70,6 +70,11 @@ class UserProfileUpdateForm(Form):
             "required": "用户名不能为空！",
         },
     )
+    status = fields.IntegerField(
+        error_messages={
+            "required": "状态不能为空",
+        },
+    )
 
     password = fields.CharField(
         required=False,

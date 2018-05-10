@@ -87,7 +87,7 @@ def login(request):
 
                     else:
                         response.status = False
-                        response.error['check_code'] = "该用户状态异常, 请联系管理员"
+                        response.error['check_code'] = "该用户状态异常, 请联系营销顾问"
 
                 else:
                     response.status = False
@@ -126,7 +126,8 @@ def test(request):
     # ffmpeg -i 20171018_刘坤在诸葛分享.mov -strict -2 -s 1024*768 o1.mp4      // 转换
     # ffmpeg -i o1.mp4 -y -f image2 -ss 8 -t 0.001 -s 1024*768 test.jpg     // 获取图片
 
-    return render(request, 'test.html')
+    # return render(request, 'test.html')
+    return HttpResponse('dfdfdsfsd')
 
 
 def img_upLoad(request):
