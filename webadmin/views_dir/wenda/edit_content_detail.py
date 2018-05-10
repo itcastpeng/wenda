@@ -85,7 +85,7 @@ def edit_content_detail(request):
                 # q.add(Q(Q(**{"task__task__client_user__task_edit_show": True}) | Q(**{"task__task__task__wenda_type__in": [1, 10]})), Q.AND)
 
         # objs = models.EditPublickTaskManagement.objects.select_related('task__task__client_user').filter(**filter_dict).filter(q).order_by(order_column)
-        objs = models.EditPublickTaskManagement.objects.select_related('task__task__client_user', 'task__task__task','task__edit_user').filter(**filter_dict).filter(q).order_by(order_column)
+        objs = models.EditPublickTaskManagement.objects.select_related('task__task__client_user', 'task__task__task').filter(**filter_dict).filter(q).order_by(order_column)
         print('filter_dict -->', filter_dict)
         print('q -->', q, objs.count(), user_id)
 
@@ -99,8 +99,7 @@ def edit_content_detail(request):
         result_data = {
             "recordsFiltered": len(data_list),
             "recordsTotal": len(data_list),
-            "data": [],
-
+            "data": []
         }
 
         for index, obj in enumerate(data_list[start: (start + length)], start=1):
@@ -137,7 +136,7 @@ def edit_content_detail(request):
 
             result_data["data"].append(
                 [
-                    index, client_username,obj.task.edit_user, obj.get_status_display(), title, obj.content,
+                    index, client_username, obj.get_status_display(), title, obj.content,
                     obj.submit_num, update_date, oper
                 ]
             )

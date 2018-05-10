@@ -120,7 +120,7 @@
             <div class="panel-body">
 
                 {# 只有问答客户角色才有添加权限 #}
-                {% if role_id in show_select_user_role_ids%}
+                {% if role_id == 7 %}
                 <div class="col-md-12 form-group" style="margin-bottom: 10px">
                     <button type="button" href="create/0/" data-toggle="modal" data-target="#exampleFormModal" class="btn btn-success pull-left margin-right-5">
                         <i class="icon fa-plus" aria-hidden="true"></i> 添加老问答(霸屏王)
