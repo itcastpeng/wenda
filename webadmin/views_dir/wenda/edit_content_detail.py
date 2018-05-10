@@ -100,7 +100,6 @@ def edit_content_detail(request):
             "recordsFiltered": len(data_list),
             "recordsTotal": len(data_list),
             "data": [],
-
         }
 
         for index, obj in enumerate(data_list[start: (start + length)], start=1):
@@ -137,7 +136,7 @@ def edit_content_detail(request):
 
             result_data["data"].append(
                 [
-                    index, client_username,obj.task.edit_user, obj.get_status_display(), title, obj.content,
+                    index, client_username,obj.task.edit_user.username, obj.get_status_display(), title, obj.content,
                     obj.submit_num, update_date, oper
                 ]
             )
