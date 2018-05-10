@@ -42,22 +42,29 @@
             <form class="form-horizontal search_form">
                 <div>
                     {% if role_id != 5 %}
-                    <label for="client_user_id">用户名称：</label>
-                    <select class="form-control select2-hidden-accessible" data-plugin="select2" tabindex="-1" aria-hidden="true" id="client_user_id" name="client_user_id">
-                        <option value="">全部</option>
-                        {% for i in client_data %}
-                            <option value="{{ i.client_user_id }}">{{ i.client_user__username }}</option>
-                        {% endfor %}
-                    </select>
+                        <label for="client_user_id">用户名称：</label>
+                        <select class="form-control select2-hidden-accessible" data-plugin="select2" tabindex="-1" aria-hidden="true" id="client_user_id" name="client_user_id">
+                            <option value="">全部</option>
+                            {% for i in client_data %}
+                                <option value="{{ i.client_user_id }}">{{ i.client_user__username }}</option>
+                            {% endfor %}
+                        </select>
 
-                    <label for="client_user__xiaoshou_id">销售名称：</label>
-                    <select class="form-control select2-hidden-accessible" data-plugin="select2" tabindex="-1" aria-hidden="true" id="client_user__xiaoshou_id" name="client_user__xiaoshou_id">
-                        <option value="">全部</option>
-                        {% for i in xiaoshou_data %}
-                            <option value="{{ i.client_user__xiaoshou_id }}">{{ i.client_user__xiaoshou__username }}</option>
-                        {% endfor %}
-                    </select>
+                        <label for="client_user__xiaoshou_id">销售名称：</label>
+                        <select class="form-control select2-hidden-accessible" data-plugin="select2" tabindex="-1" aria-hidden="true" id="client_user__xiaoshou_id" name="client_user__xiaoshou_id">
+                            <option value="">全部</option>
+                            {% for i in xiaoshou_data %}
+                                <option value="{{ i.client_user__xiaoshou_id }}">{{ i.client_user__xiaoshou__username }}</option>
+                            {% endfor %}
+                        </select>
 
+                        <label for="client_user__status">查看启用：</label>
+                        <select class="form-control" name="client_user__status" id="client_user__status">
+    {#                        <option value="">全部</option>#}
+                            {% for obj in status_choices %}
+                                <option value="{{ obj.0 }}">{{ obj.1 }}</option>
+                            {% endfor %}
+                        </select>
                     {% endif %}
 
                 </div>

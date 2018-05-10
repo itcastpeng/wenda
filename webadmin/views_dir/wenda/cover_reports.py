@@ -52,7 +52,7 @@ def cover_reports(request):
         column_list = [
             "index", "id", "client_user", "client_user__xiaoshou", "keywords_num", "keyword_no_select_count",
             "today_cover_num", "total_cover_num", "total_publish_num", "oper", "client_user_id",
-            "client_user__xiaoshou_id"
+            "client_user__xiaoshou_id",'client_user__status'
         ]
         order_column = request.GET.get('order[0][column]', 1)  # 第几列排序
         order = request.GET.get('order[0][dir]')  # 正序还是倒序
@@ -69,6 +69,11 @@ def cover_reports(request):
                     q.add(Q(**{field + "__contains": request.GET[field]}), Q.AND)
                 else:
                     q.add(Q(**{field: request.GET[field]}), Q.AND)
+
+        if 'client_user__status' not in request.GET:
+            q.add(Q(**{'client_user__status': 1}), Q.AND)
+
+        # print('q -->', q)
 
         # data_objs = models.KeywordsCover.objects.select_related(
         #     "keywords__client_user",
@@ -91,7 +96,7 @@ def cover_reports(request):
         result_data = {
             "recordsFiltered": data_objs.count(),
             "recordsTotal": data_objs.count(),
-            "data": []
+            "data": [],
         }
 
         status_choices = models.UserProfile.status_choices
@@ -201,8 +206,10 @@ def cover_reports(request):
             'client_user__username',
             'client_user_id'
         ).annotate(Count("id"))
+
     xiaoshou_data = models.ClientCoveringData.objects.filter(**filter_dict).values('client_user__xiaoshou__username', 'client_user__xiaoshou_id').annotate(Count("id"))
     print("client_data -->", client_data)
+    status_choices = models.UserProfile.status_choices
     if "_pjax" in request.GET:
         return render(request, 'wenda/cover_reports/cover_reports_pjax.html', locals())
     return render(request, 'wenda/cover_reports/cover_reports.html', locals())
