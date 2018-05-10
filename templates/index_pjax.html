@@ -1,0 +1,67 @@
+<title>首页</title>
+<link rel="stylesheet" href="/statics/public/fonts/themify/themify.css">
+<link rel="stylesheet" href="/statics/public/css/home.css">
+
+<div class="page animation-fade page-index">
+    <div class="page-content">
+        <div class="media account-info">
+            <div class="media-left">
+                <div class="avatar avatar-online">
+                    <img src="/statics/public/images/avatar.svg" alt="xiaxuan@admui_demo">
+                    <i class="avatar avatar-busy"></i>
+                </div>
+            </div>
+            <div class="media-body">
+                <h4 class="media-heading">
+                    欢迎您，{{ request.session.username }}
+                </h4>
+                <p>
+                    <i class="icon icon-color wb-bell" aria-hidden="true"></i> 这是您第 {{ login_count }} 次登录，上次登录日期：{{ user_profile_obj.last_login_date|date:"Y-m-d H:i:s" }}
+{#                    ，详细信息请查看#}
+{#                    <a data-pjax href="{% url 'account' %}?type=log" target="_blank">日志</a>#}
+{#                    ，如果不是您本人登录，请及时#}
+{#                    <a data-pjax href="{% url 'account' %}?type=password" target="_blank">修改密码</a>#}
+{#                    。#}
+                </p>
+            </div>
+{#            <div class="media-right">#}
+{#                <a href="{% url 'account' %}" data-pjax target="_blank" class="btn btn-outline btn-success btn-outline btn-sm">账户管理</a>#}
+{#            </div>#}
+        </div>
+
+        {% if not openid and user_profile_obj.role.id in get_msg_role_ids %}
+        <div style="text-align: center">
+            <img src="{{ qc_code_url }}" style="width: 150px; height: 150px">
+            <p>关注公众号实时查看任务动态</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+<script src="/statics/public/vendor/matchheight/jquery.matchHeight.min.js"></script>
+
+<script>
+    window.onload = function () {
+        // 每隔1秒钟判断用户是否关注微信公众号
+        {% if not openid and user_profile_obj.role.id in get_msg_role_ids %}
+            var interval = setInterval(function () {
+                if (location.pathname != "/") {
+                    clearInterval(interval);
+                }
+
+                // url, data, callback, type
+                var url = "/api/check_follow_wechat/?user_id=" + {{ user_id }};
+                $.get(url, function (result) {
+                    if (result["status"]) {
+                        clearInterval(interval);
+                        toastr['success'](result['message']);
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1000);
+                    }
+                }, 'json')
+            }, 1000);
+        {% endif %}
+    }
+
+
+</script>

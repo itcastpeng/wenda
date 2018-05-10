@@ -1,0 +1,62 @@
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">添加关键词</h4>
+</div>
+
+
+<div class="modal-body">
+    <form class="form-horizontal search_form" id="formOper" onsubmit="return false">
+
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="client_user_id">客户名称</label>
+            <div class="col-md-8">
+                <select class="form-control" id="client_user_id" name="client_user_id">
+                    <option value="">全部</option>
+                    {% for obj in wendaClientUserObjs %}
+                        <option value="{{ obj.id }}">{{ obj.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="keywords">关键词</label>
+            <div class="col-md-8">
+                <textarea class="form-control input-md" rows="5" id="keywords" name="keywords" placeholder="请输入关键词,每行一个" autocomplete="off"></textarea>
+            </div>
+        </div>
+    </form>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" id="create_button">添加</button>
+</div>
+
+<script>
+
+    {# 调整模态对话框的大小 #}
+    $("#exampleFormModal .modal-dialog").css("width", "700px");
+
+    $("#create_button").on('click', function () {
+
+        var data = $("#formOper").serialize();
+
+        var url = '{% url "user_management" %}create/0/';
+        $.post(url, data, function (result) {
+            if(!result['status']){
+                toastr['error'](result['message']);
+            }else{
+                toastr['success'](result['message']);
+                $('.modal').modal("hide");
+                table.ajax.reload();
+            }
+        }, 'json')
+
+    })
+
+</script>

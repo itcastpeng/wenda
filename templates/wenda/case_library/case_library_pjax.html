@@ -1,0 +1,223 @@
+<title>案例库</title>
+
+<style>
+
+    .btn.focus, .btn:focus, .btn:hover {
+        color: white;
+    }
+
+    .search_form>div{
+        margin-bottom: 10px;
+    }
+
+    .search_form label{
+
+        width: 85px;
+        text-align: right;
+    }
+
+    .search_form input, .search_form select{
+        display: inline-block;
+        width: 300px
+    }
+    .search_form select{
+        display: inline-block;
+        width: 100px
+    }
+
+    #create_date{
+        width: 120px;
+    }
+    tbody{
+        text-align: center;
+    }
+
+</style>
+
+{% csrf_token %}
+<div class="page animation-fade page-index page-data-tables">
+    <div class="page-content">
+
+        <div class="panel" style="padding: 10px; height: auto">
+            <form class="form-horizontal search_form">
+                <div>
+                    <label for="department_id">科室：</label>
+                    <select class="form-control select2-hidden-accessible" data-plugin="select2" tabindex="-1" aria-hidden="true" id="department_id" name="department_id">
+                        <option value="">全部</option>
+                        {% for obj in department_objs %}
+                            <option value="{{ obj.id }}">{{ obj.name }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label for="keywords__client_user_id">用户名称：</label>
+                    <select class="form-control select2-hidden-accessible" data-plugin="select2" tabindex="-1" aria-hidden="true" id="keywords__client_user_id" name="keywords__client_user_id">
+                        <option value="">全部</option>
+                        {% for obj in user_objs %}
+                            <option value="{{ obj.id }}">{{ obj.username }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label for="create_date">查询日期：</label>
+                    <input class="Wdate form-control" id="create_date" name="create_date" value="{{ now_date }}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" type="text">
+
+                    <label for="page_type">覆盖类型：</label>
+                    <select class="form-control" name="page_type" id="page_type">
+                        <option value="">全部</option>
+                        {% for i in page_type_choices %}
+                            <option value="{{ i.0 }}">{{ i.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label for="search_keyword">关键词搜索：</label>
+                    <input class="form-control" name="search_keyword" id="search_keyword" type="text" placeholder="关键词模糊搜索模糊搜索">
+
+                    <label for="task_type">知道类型：</label>
+                    <select class="form-control" name="task_type" id="task_type">
+                        <option value="">全部</option>
+                        {% for i in task_type_choices %}
+                            <option value="{{ i.0 }}">{{ i.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div style="position: absolute; bottom:0; right: 20px;">
+                    <button type="button" class="btn btn-primary" id="search_button"><i class="icon fa-search" aria-hidden="true"></i>搜索</button>
+                </div>
+
+            </form>
+        </div>
+
+        <div class="panel" style="height: 100%;">
+            <div class="panel-body">
+                <table class="table table-bordered table-hover dataTable table-striped width-full text-nowrap" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>编号</th>
+                            <th>客户名称</th>
+                            <th>关键词</th>
+                            <th>知道问题</th>
+                            <th>覆盖类型</th>
+                            <th>排名</th>
+                            <th>查询日期</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+        {# 在模态对话框关闭时清空数据 #}
+    $(".modal").on("hidden.bs.modal", function() {
+        $(this).removeData("bs.modal");
+        $(this).find(".modal-content").children().remove();
+    });
+
+    var table = $('#dataTable').DataTable({
+        language: {
+            "sProcessing": "处理中...",
+            "sLengthMenu": "每页显示 _MENU_ 条",
+            "sZeroRecords": "没有匹配结果",
+            "sInfo": "第 _START_ 至 _END_ 项，共 _TOTAL_ 项",
+            "sInfoEmpty": "第 0 至 0 项，共 0 项",
+            "sInfoFiltered": "",
+            "sInfoPostFix": "",
+            "sSearch": "搜索:",
+            "sUrl": "",
+            "sEmptyTable": "表中数据为空",
+            "sLoadingRecords": "载入中...",
+            "sInfoThousands": ",",
+            "oPaginate": {
+                "sFirst": "首页",
+                "sPrevious": "上页",
+                "sNext": "下页",
+                "sLast": "末页"
+            },
+            "oAria": {
+                "sSortAscending": ": 以升序排列此列",
+                "sSortDescending": ": 以降序排列此列"
+            }
+        },
+{#        "pageLength": 25,#}
+        "processing": true,
+        "serverSide": true,  // 服务器模式
+        "ajax": "?type=ajax_json", // ajax 取数据
+        "bFilter": false,   // 去掉搜索框
+        "destroy": true,
+        "aaSorting": [[ 1, "desc" ]] ,
+        "columnDefs": [
+            {
+                "targets": [0],     // 这些列禁止搜索
+                "searchable": false,
+                "sortable": false
+{#                "visible": false       // 不可见#}
+            },
+        ]
+
+    });
+
+    $("#dataTable").on('click', 'button', function(){
+        var tid = $(this).attr('tid');
+        var ttype = $(this).attr('ttype');
+        var data = {}
+        if (ttype == "save") {
+            var content = $(this).parents('tr').find('textarea').val();
+            if (!content) {
+                toastr['error']("请填写回复内容");
+                return false
+            } else {
+                data = {
+                    content: content
+                }
+                var url = "save_content/" + tid + '/';
+            }
+        } else if (ttype == "delete") {
+            var url = "delete/" + tid + '/';
+        }
+
+        $.get(url, data, function (result) {
+            if(!result['status']){
+                toastr['error'](result['message']);
+            }else{
+                toastr['success'](result['message']);
+                table.draw();
+            }
+        }, 'json');
+
+    })
+
+    {# 搜索按钮被点击 #}
+    $("#search_button").click(function () {
+        var search_data = $(".search_form").serialize();
+        var get_url = "?type=ajax_json&" + search_data;
+
+        table.ajax.url(get_url);
+        table.draw();
+
+    });
+
+    {# 搜框中的input标签 回车键被触发 #}
+    $(".search_form input").keydown(function () {
+        var e=window.event||arguments.callee.caller.arguments[0];
+        if(e.keyCode==13){
+            $("#search_button").click();
+        }
+    });
+
+    {# 搜框中的select标签 回车键被触发 #}
+    $(".search_form select").change(function () {
+        $("#search_button").click();
+    });
+
+</script>

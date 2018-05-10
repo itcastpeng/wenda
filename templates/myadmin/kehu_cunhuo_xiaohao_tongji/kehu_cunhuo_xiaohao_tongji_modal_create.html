@@ -1,0 +1,67 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">新增客户购买数量</h4>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal" id="modal-form">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label class="col-md-3 control-label" for="client_id">选择用户 <span class="form-span-active">*</span></label>
+            <div class="col-md-8">
+
+                <select class="form-control" name="client_id" id="client_id">
+                    <option value="">请选择</option>
+
+                    {% for i in client_obj %}
+                        <option value="{{ i.id }}" >{{ i.username }}</option>
+                    {% endfor %}
+
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-3 control-label" for="hezuo_num">合作数量 <span class="form-span-active">*</span></label>
+            <div class="col-md-8">
+                <input type="text" class="form-control input-md" id="hezuo_num" name="hezuo_num" placeholder="请输入合作数量" autocomplete="off">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label" for="remark">备注</label>
+            <div class="col-md-8">
+                <textarea rows="5" class="form-control" id="remark" name="remark"></textarea>
+            </div>
+        </div>
+
+    </form>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" id="create_button">添加</button>
+</div>
+
+<script>
+
+    $("#exampleFormModal .modal-dialog").css("width", "500px");
+
+    $("#create_button").on('click', function () {
+
+        var data = $("#modal-form").serialize();
+
+        var url = 'create/0/';
+        $.post(url, data, function (result) {
+            if(!result['status']){
+                toastr['error'](result['message']);
+            }else{
+                toastr['success'](result['message']);
+                $('.modal').modal("hide");
+                table.ajax.reload();
+            }
+        }, 'json')
+
+    })
+
+</script>

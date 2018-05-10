@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>修改发布异常内容</title>
+
+    <link rel="stylesheet" href="/statics/custom/css/bootstrap.min.css">
+
+    <style>
+        body, .font-size-40{
+            font-size: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" style="margin-top: 20px; text-align: center">
+        {% if obj.status == 2 %}
+{#        {% if 2 == 2 %}#}
+        <form class="form-horizontal">
+            <h3 style="color: red; margin: 50px;">失败原因: {{ wenda_robot_task_obj.get_status_display }}</h3>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label font-size-40">问题: </label>
+                <div class="col-sm-8">
+                    <textarea {% if wenda_robot_task_obj.status in content_update_id_list %}disabled{% endif %} class="form-control font-size-40" rows="3" id="title">{{ obj.title }}</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label font-size-40">答案: </label>
+                <div class="col-sm-8">
+                    <textarea {% if wenda_robot_task_obj.status in title_update_id_list %}disabled{% endif %} class="form-control font-size-40" rows="3" id="content">{{ obj.content }}</textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="checkbox">
+                    <label for="addMap" class="col-sm-3 control-label font-size-40">添加地图: </label>
+                    <div class="col-sm-8">
+                        {% if map_flag %}
+{#                        {% if True %}#}
+                        <input type="checkbox"  id="addMap" style="display: block; margin-left: 0; zoom: 300%">
+                        {% else %}
+                        <p style="color: red">未填写地图搜索词和地图匹配词</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+
+            <button type="button" onclick="update();" class="btn btn-success font-size-40" style="float: right; right: 20px; margin-right: 50px;margin-top: 30px;">修改</button>
+
+            <div style="float: right; right: 20px; margin-right: 50px;margin-top: 30px;color: red" id="show_msg" class="hidden">修改成功</div>
+        </form>
+
+            <script>
+                function update() {
+                    var url = "/edit_error_content/" + {{ o_id }} + "/";
+
+                    var form = new FormData();
+                    form.append("content", document.getElementById('content').value);
+                    form.append("title", document.getElementById('title').value);
+
+                    var addMap = false;
+                    addMapTag = document.getElementById('addMap')
+                    if (addMapTag && addMapTag.checked){
+                        addMap = true;
+                    }
+                    form.append("addMap", addMap);
+
+                    var xhr = new XMLHttpRequest();
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState == 4){
+                            // 已经接受到全部响应数据,执行以下操作
+                            var result = JSON.parse(xhr.responseText);
+                            if(result["status"]){
+                                document.getElementById("app").innerHTML = result["message"];
+
+                            }else{
+                                if (result["data"]){
+                                    var title_err_name_list = result['data']["title_err_name_list"];
+                                    var content_err_name_list = result['data']["content_err_name_list"];
+
+                                    if (title_err_name_list.length > 0) {
+                                        alert("问题中存在敏感词 --> " + title_err_name_list);
+                                    }
+
+                                    if (content_err_name_list.length > 0) {
+                                        alert("答案中存在敏感词 --> " + content_err_name_list);
+                                    }
+
+                                }else{
+                                    document.getElementById("show_msg").className = "";
+                                    document.getElementById("show_msg").innerHTML = result["message"];
+                                }
+                            }
+                        }
+                    };
+
+                    xhr.open("POST", url, true);
+                    xhr.send(form);
+                }
+            </script>
+
+        {% else %}
+            发布中。。。
+        {% endif %}
+    </div>
+
+</body>
+</html>

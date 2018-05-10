@@ -1,0 +1,38 @@
+
+<style>
+
+    .modal-body a{
+        margin-right: 10px;
+    }
+
+</style>
+
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+            <span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title">问答内容提交表单【下载】</h4>
+    </div>
+    <div class="modal-body">
+        <div style="margin-left: 60px">
+            <a class="btn btn-primary margin-top-5" href='/statics/task_excel/template/新问答-信息模板.xlsx' download='新问答-信息模板.xlsx'><i class="icon fa-cloud-download" aria-hidden="true"></i>下载新问答模板</a>
+            <a class="btn btn-primary margin-top-5" href='/statics/task_excel/template/老问答-信息模板.xlsx' download='老问答-信息模板.xlsx'><i class="icon fa-cloud-download" aria-hidden="true"></i>下载老问答模板</a>
+{#            <a class="btn btn-primary margin-top-5" href='/statics/task_excel/template/百度口碑-评论模板.xls' download='百度口碑-评论模板.xls'><i class="icon fa-cloud-download" aria-hidden="true"></i>下载百度口碑-评论模板</a>#}
+        </div>
+    </div>
+{#    <div class="modal-footer">#}
+{#        <button type="button" id="button_set_departure_save" class="btn btn-primary margin-top-5">确定</button>#}
+{#    </div>#}
+</div>
+
+<script>
+    (function ($) {
+        $("#exampleFormModal .modal-dialog").css("width", "700px");
+
+        $(".modal-body a").click(function () {
+            $('.modal').modal("hide");
+        });
+
+    })(jQuery)
+</script>

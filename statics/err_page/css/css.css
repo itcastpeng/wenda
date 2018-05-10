@@ -1,0 +1,17 @@
+@charset "utf-8";
+/* CSS Document */
+
+*{ margin:0; padding:0;font-size:18px;font-family:"Microsoft YaHei"; color:#9d9d9d;}
+body{ background:#f5f5f5;}
+h1,h2,h3,h4,h5,h6,em{font-size:100%;font-weight:normal; font-style:normal;}
+a{text-decoration:underline; color:#9a00a3;}
+a:hover{text-decoration:underline;}
+img{ border:none;}
+ul li{ list-style:none;}
+.hzclear{zoom:1;overflow:hidden;}
+
+
+#hzkq .main{ width:589px; height:407px; margin:auto; position:absolute; top:0; left:0; bottom:0; right:0; overflow:hidden;}
+#hzkq .main img{ display:block; margin:0 auto; float:left; vertical-align:middle;}
+#hzkq .main p{ width:589px; height:18px; line-height:18px; text-align:left; float:left; margin-top:30px; overflow:hidden;}
+#hzkq .main p a{line-height:18px; text-decoration:underline;}

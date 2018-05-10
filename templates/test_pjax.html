@@ -1,0 +1,71 @@
+
+
+
+
+
+
+<link rel="stylesheet" href="/statics/public/vendor/jstree/jstree.css">
+<title>JsTree</title>
+<style>
+    .jstree-default .jstree-clicked {
+        background: none;
+        box-shadow: none;
+    }
+
+</style>
+
+{#<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />#}
+
+
+<div class="page animation-fade">
+    <div class="page-header">
+        <h1 class="page-title">JsTree</h1>
+        <div class="page-header-actions">
+            <a class="btn btn-inverse btn-round" href="http://jstree.com/" target="_blank">
+                <i class="icon wb-link" aria-hidden="true"></i> <span class="hidden-xs">官网</span></a>
+        </div>
+    </div>
+    <div class="page-content">
+
+        <div class="panel">
+            <div class="panel-body container-fluid">
+                <div class="row row-lg">
+                    <div class="col-lg-4 col-sm-6">
+                        <div class="example-wrap">
+                            <h4 class="example-title">Ajax</h4>
+                            <div class="example">
+                                <div id="ajax"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
+
+<script>
+    $(function() {
+        $('#ajax').jstree({
+            "plugins" : ["checkbox"],
+            'core' : {
+                'data' : [
+                    {
+                        "text" : "Root node",
+                        "children" : [
+                            {
+                                "text" : "Child node 1",
+                                "icon": "fa-laptop",
+                                "checked": "true"
+                            },
+                            { "text" : "Child node 2" }
+                        ]
+                    }
+                ]
+            }
+        });
+    });
+</script>

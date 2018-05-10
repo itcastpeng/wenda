@@ -1,0 +1,58 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">问答币提现</h4>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="tixian_moeny">提现金额:</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control" name="tixian_moeny" id="tixian_moeny" placeholder="请输入提现金额" value="{{ user_profile_obj.balance }}" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="tixian_name">支付宝姓名:</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control" name="tixian_name" id="tixian_name" placeholder="请输入支付宝姓名" value="{{ user_profile_obj.tixian_name }}" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="tixian_zhanghao">支付宝账号:</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control" name="tixian_zhanghao" id="tixian_zhanghao" placeholder="请输入支付宝账号" value="{{ user_profile_obj.tixian_zhanghao }}" />
+            </div>
+        </div>
+    </form>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" id="create_button">提交</button>
+</div>
+
+<script>
+
+    {# 调整模态对话框的大小 #}
+    $("#exampleFormModal .modal-dialog").css("width", "700px");
+
+    $("#create_button").on('click', function () {
+
+        var data = $(".form-horizontal").serialize();
+
+        var url = 'create/0/';
+        $.post(url, data, function (result) {
+            if(!result['status']){
+                toastr['error'](result['message']);
+            }else{
+                toastr['success'](result['message']);
+                $('.modal').modal("hide");
+                table.ajax.reload();
+            }
+        }, 'json')
+
+    })
+
+</script>

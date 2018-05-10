@@ -1,0 +1,86 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">添加编写任务</h4>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal" id="formOper" onsubmit="return false">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="client_user_id">客户名称 <span class="form-span-active">*</span></label>
+            <div class="col-md-4">
+                <select class="form-control" name="client_user_id" id="client_user_id">
+                    <option value="">请选择</option>
+                    {% for i in users_list %}
+                        <option value="{{ i.id }}">{{ i.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="number">编写数量 <span class="form-span-active">*</span></label>
+            <div class="col-md-4">
+                <input type="text" class="form-control input-md" id="number" name="number" placeholder="请输入编写数量" autocomplete="off">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="file">参考资料 <span class="form-span-active">*</span></label>
+            <div class="col-md-4">
+                <input type="file" class="form-control" name="file" id="file">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="remark">任务说明 <span class="form-span-active">*</span></label>
+            <div class="col-md-8">
+                <textarea rows="5" class="form-control" name="remark" id="remark" placeholder="填写任务说明"></textarea>
+            </div>
+        </div>
+    </form>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" id="create_button">添加</button>
+</div>
+
+<script>
+
+    $("#exampleFormModal .modal-dialog").css("width", "800px");
+
+    $("#create_button").on('click', function () {
+        var fileObj = $("#file")[0].files[0];
+
+        var form = new FormData();
+        form.append("file", fileObj);
+        form.append("client_user_id", $("#formOper #client_user_id").val());
+        form.append("number", $("#formOper #number").val());
+        form.append("remark", $("#formOper #remark").val());
+        form.append("csrfmiddlewaretoken", $("#formOper input[name='csrfmiddlewaretoken']").val());
+
+
+        $.ajax({
+            type: "POST",
+            url: "create/0/",
+            data: form,
+            dataType: "json",
+            processData: false,
+            contentType: false,    // 不设置请求头
+            success: function (result) {
+                if(!result['status']){
+                    toastr['error'](result['message']);
+                }else{
+                    toastr['success'](result['message']);
+                    $('.modal').modal("hide");
+                    table.ajax.reload();
+                }
+            }
+        });
+
+
+    })
+
+</script>

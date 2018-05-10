@@ -1,0 +1,158 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">添加老问答(霸屏王)</h4>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal" id="form-modal">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="col-md-3 control-label" for="release_platform">发布平台</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control input-md" id="release_platform" disabled value="百度知道" autocomplete="off">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-3 control-label" for="wenda_type">问答类型</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control input-md" id="wenda_type" disabled value="老问答(霸屏王)" autocomplete="off">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-3 control-label" for="client_id">发布用户 <span class="form-span-active"> * </span></label>
+            <div class="col-md-8">
+
+{#                <select class="form-control" name="client_id">#}
+{#                    <option value="">请选择</option>#}
+{##}
+{#                    {% for i in user_client_data %}#}
+{#                        <option value="{{ i.id }}">{{ i.username }}</option>#}
+{#                    {% endfor %}#}
+{##}
+{#                </select>#}
+
+                <select style="width: 300px;" class="form-control modalSelect" data-plugin="select2" tabindex="-1" aria-hidden="true" id="m-client_id" name="client_id">
+                    <option value="">请选择</option>
+                    {% for i in user_client_data %}
+                        <option value="{{ i.id }}">{{ i.username }}</option>
+                    {% endfor %}
+
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-3 control-label" for="num">发布数量 <span class="form-span-active"> * </span></label>
+            <div class="col-md-8">
+                <input type="text" class="form-control input-md" id="num" name="num" autocomplete="off">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="task_excel">任务需求excel <span class="form-span-active"> * </span></label>
+
+            <div class="col-sm-8">
+                <input type="file" class="form-control" id="task_excel" name="task_excel" value="上传任务需求表单">
+{#                <button class="btn btn-squared btn-outline btn-primary btn-smb" type="button" id="upload_file"> 上传任务需求表单 </button>#}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-3 control-label" for="bianji_id">分配编辑 <span class="form-span-active"> * </span></label>
+            <div class="col-md-8">
+
+                <select style="width: 300px;" class="form-control modalSelect" data-plugin="select2" tabindex="-1" aria-hidden="true" id="m-bianji_id" name="bianji_id">
+                    <option value="">请选择</option>
+
+                    {% for i in user_bianji_data %}
+                        <option value="{{ i.id }}">{{ i.username }}</option>
+                    {% endfor %}
+
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label" for="num">地图 <span class="form-span-active"> * </span></label>
+            <div class="checkbox-custom checkbox-primary col-md-8 margin-left-10">
+                <input type="checkbox" id="addMap" name="addMap">
+                <label for="addMap">添加 <small class="form-span-active"> (该功能将对该任务所有子任务增加地图)</small></label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-3 control-label" for="is_test">测试任务 <span class="form-span-active"> * </span></label>
+            <div class="checkbox-custom checkbox-primary col-md-8 margin-left-10">
+                <input type="checkbox" id="is_test" name="is_test">
+                <label for="is_test">测试任务 <small class="form-span-active"> (勾选表示该任务的所有子任务为测试任务,仅做测试用)</small></label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-3 control-label" for="remark">备注</label>
+            <div class="col-md-8">
+                <textarea class="form-control" id="remark" name="remark" rows="3"></textarea>
+            </div>
+        </div>
+
+    </form>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" id="create_button">添加</button>
+</div>
+
+<script>
+    $("#exampleFormModal .modal-dialog").css("width", "800px");
+
+{#    $.fn.modal.Constructor.prototype.enforceFocus = function() {#}
+{#       $("#form-modal").focus();#}
+{#    };#}
+
+
+    $(".modalSelect").select2({
+        dropdownParent:$("#exampleFormModal")
+    });
+
+    $("#create_button").on('click', function () {
+        var that = this;
+        $(that).attr("disabled", "disabled")
+
+        var fileObj = $("#task_excel")[0].files[0];
+        var form = new FormData();
+        form.append("task_excel", fileObj);
+
+        var data = $("#form-modal").serialize().split('&');
+        for (var i = 0; i < data.length; i++) {
+            var k = data[i].split('=')[0];
+            var v = data[i].split('=')[1];
+            form.append(k, v);
+        }
+
+
+        var url = 'create/0/';
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: form,
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                $(that).removeAttr("disabled")
+                console.log(result);
+                if(!result['status']){
+                    toastr['error'](result['message']);
+
+                }else{
+                    toastr['success'](result['message']);
+                    $('.modal').modal("hide");
+                    table.draw();
+                }
+            }
+        })
+
+    })
+
+</script>

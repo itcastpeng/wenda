@@ -1,0 +1,113 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">修改用户</h4>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal" id="model_form">
+        {% csrf_token %}
+        <input name="id" value="{{ user_profile_obj.id }}" class="hidden" />
+        <div class="form-group">
+            <label class="col-md-3 control-label" for="username">用户名</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control input-md" id="username" name="username" placeholder="请输入用户名" autocomplete="off" value="{{ user_profile_obj.username }}">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-3 control-label" for="password">密码</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control input-md" id="password" name="password" placeholder="为空表示不操作,输入密码表示修改密码" autocomplete="off" value="">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-3 control-label" for="role_id">角色</label>
+            <div class="col-md-8">
+
+                <select class="form-control" name="role_id">
+                    <option value="">请选择</option>
+                    {% for i in roles_dict %}
+                        <option value="{{ i.id }}" {% if user_profile_obj.role.id == i.id %}selected{% endif %}>{{ i.name }}</option>
+                    {% endfor %}
+
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-3 control-label" for="guwen_id">营销顾问</label>
+            <div class="col-md-8">
+
+                <select class="form-control" name="guwen_id">
+                    <option value="">请选择</option>
+
+                    {% for i in guwen_objs %}
+                        <option value="{{ i.id }}" {% if user_profile_obj.guwen.id == i.id %}selected{% endif %} >{{ i.username }}</option>
+                    {% endfor %}
+
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-3 control-label" for="xiaoshou_id">销售</label>
+            <div class="col-md-8">
+
+                <select class="form-control" name="xiaoshou_id">
+                    <option value="">请选择</option>
+
+                    {% for i in xiaoshou_objs %}
+                        <option value="{{ i.id }}" {% if user_profile_obj.xiaoshou.id == i.id %}selected{% endif %}>{{ i.username }}</option>
+                    {% endfor %}
+
+                </select>
+            </div>
+        </div>
+
+        {% if user_profile_obj.role.id in shouyi_role_ids %}
+        <div class="form-group">
+            <label class="col-md-3 control-label" for="xie_wenda_money">写问答收益</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control input-md" id="xie_wenda_money" name="xie_wenda_money" placeholder="请输入写问答每条收益(问答币/条)" autocomplete="off" value="{% if user_profile_obj.xie_wenda_money %}{{ user_profile_obj.xie_wenda_money }}{% endif %}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label" for="fa_wenda_money">发问答收益</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control input-md" id="fa_wenda_money" name="fa_wenda_money" placeholder="请输入发问答每条收益(问答币/条)" autocomplete="off" value="{% if user_profile_obj.fa_wenda_money %}{{ user_profile_obj.fa_wenda_money }}{% endif %}">
+            </div>
+        </div>
+        {% endif %}
+
+    </form>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" id="create_button">修改</button>
+</div>
+
+<script>
+
+    {# 调整模态对话框的大小 #}
+    $("#exampleFormModal .modal-dialog").css("width", "700px");
+
+    $("#create_button").on('click', function () {
+
+        var data = $("#model_form").serialize();
+
+        var url = '{% url "user_management" %}update/{{ o_id }}/';
+        $.post(url, data, function (result) {
+            if(!result['status']){
+                toastr['error'](result['message']);
+            }else{
+                toastr['success'](result['message']);
+                $('.modal').modal("hide");
+                table.ajax.reload();
+            }
+        }, 'json')
+
+    })
+
+</script>

@@ -1,0 +1,105 @@
+{% load my_task %}
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">在线预览</h4>
+</div>
+<div class="modal-body">
+
+{#    <table class="table table-bordered table-hover dataTable table-striped width-full text-nowrap" id="detail_chaxun_table">#}
+    <table class="table table-bordered table-hover table-striped" id="detail_chaxun_table">
+        <thead>
+            <tr>
+                <th>编号</th>
+                {% if task_obj.wenda_type == 1 or  task_obj.wenda_type == 10%}   {# 新问答  或者新问答补发#}
+                    <th>问答地址链接</th>
+                    <th>问题</th>
+                    <th>答案</th>
+{#                    <th>追答1</th>#}
+{#                    <th>追答2</th>#}
+                {% else %}
+                    <th>问答地址链接</th>
+                    <th>答案</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody style="text-align: center">
+            {% for i in table_data %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+{#                    {% if task_obj.wenda_type == 1 or  task_obj.wenda_type == 10%}   {# 新问答  或者新问答补发#}
+
+                        <td>
+                            {% if i.0 %}
+                                {# 如果状态为真,表示检测完毕,否则显示url的一部分 #}
+                                {% if wenda_link_flag %}
+                                    <a href="{{ i.0 }}" target="_blank">{{ i.0 }}</a>
+                                {% else %}
+                                    {% cut_str i.0 %}
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                        <td>{{ i.1 }}</td>
+                        <td>{{ i.2 }}</td>
+{#                        <td>{{ i.3 }}</td>#}
+{#                        <td>{{ i.4 }}</td>#}
+{#                    {% else %}#}
+{#                        <td>{% if i.0 %}<a href="{{ i.0 }}" target="_blank">{{ i.0 }}</a>{% endif %}</td>#}
+{#                        <td>{{ i.1 }}</td>#}
+{#                    {% endif %}#}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+</div>
+
+<script>
+
+    $("#exampleFormModal .modal-dialog").css("width", "1200px");
+
+    var table_guaji = $('#detail_chaxun_table').DataTable({
+        language: {
+            "sProcessing": "处理中...",
+            "sLengthMenu": "每页显示 _MENU_ 条",
+            "sZeroRecords": "没有匹配结果",
+            "sInfo": "第 _START_ 至 _END_ 项，共 _TOTAL_ 项",
+            "sInfoEmpty": "第 0 至 0 项，共 0 项",
+            "sInfoFiltered": "",
+            "sInfoPostFix": "",
+            "sSearch": "搜索:",
+            "sUrl": "",
+            "sEmptyTable": "表中数据为空",
+            "sLoadingRecords": "载入中...",
+            "sInfoThousands": ",",
+            "oPaginate": {
+                "sFirst": "首页",
+                "sPrevious": "上页",
+                "sNext": "下页",
+                "sLast": "末页"
+            },
+            "oAria": {
+                "sSortAscending": ": 以升序排列此列",
+                "sSortDescending": ": 以降序排列此列"
+            }
+        },
+        "processing": true,
+{#        "serverSide": true,  // 服务器模式#}
+        "bFilter": false,   // 去掉搜索框
+{#        "ajax": "?type=ajax_json", // ajax 取数据#}
+        "destroy": true,
+        "bLengthChange": false,
+{#        "bAutoWidth": true,#}
+{#        "aaSorting": [[ 1, "asc" ]] ,#}
+{#        "columnDefs": [#}
+{#            {#}
+{#                "targets": [0],     // 这些列禁止搜索#}
+{#                "searchable": false,#}
+{#                "sortable": false#}
+{#            }#}
+{#        ]#}
+
+    });
+</script>

@@ -1,0 +1,39 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+            <span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title">删除关键词</h4>
+    </div>
+    <div class="modal-body">
+        <p>是否要将关键词 <span style="color: red">{{ obj.keyword }}</span> 删除</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" id="button_set_departure_save" class="btn btn-primary margin-top-5">确定</button>
+    </div>
+</div>
+
+<script>
+
+    {# 调整模态对话框的大小 #}
+    $("#exampleFormModal .modal-dialog").css("width", "500px");
+
+    (function ($) {
+        $("#button_set_departure_save").on('click', function () {
+            var csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
+            var data = "csrfmiddlewaretoken=" + csrfmiddlewaretoken;
+            var url = 'delete/{{ o_id }}/';
+            $.post(url, data, function (result) {
+                if(!result['status']){
+                    toastr['error'](result['message']);
+
+                }else{
+                    toastr['success'](result['message']);
+                    $('.modal').modal("hide");
+                    table.ajax.reload();
+                }
+            }, 'json')
+
+        })
+    })(jQuery)
+</script>

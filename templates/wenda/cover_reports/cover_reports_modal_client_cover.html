@@ -1,0 +1,77 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+            <span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title">首页关键词覆盖</h4>
+    </div>
+    {% csrf_token %}
+    <div class="modal-body">
+        <table class="table table-bordered table-hover dataTable table-striped ">
+            <thead>
+                <tr>
+                    <td>编号</td>
+                    <td>用户</td>
+                    <td>状态</td>
+                    <td>关键词数量 (总) / (未查询)</td>
+                    <td>总覆盖</td>
+                    <td>pc覆盖</td>
+                    <td>移动覆盖</td>
+                    <td>报表下载</td>
+                    <td>操作</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for k, v in data.items %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ v.username }}</td>
+                    <td>{{ v.keywords_status }}</td>
+                    <td>{{ v.keywords_num }}</td>
+                    <td>{{ v.total }}</td>
+                    <td>{{ v.1 }}</td>
+                    <td>{{ v.3 }}</td>
+                    <td>
+                        {% if v.keywords_top_page_cover_excel_path %}
+                            <a download="/{{ v.keywords_top_page_cover_excel_path }}" href="/{{ v.keywords_top_page_cover_excel_path }}">普通</a>
+                            /
+                            <a download="/{{ v.keywords_top_page_cover_yingxiao_excel_path }}" href="/{{ v.keywords_top_page_cover_yingxiao_excel_path }}">营销</a>
+
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a class="chongcha" uid="{{ k }}" href="#">重查</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="modal-footer">
+{#        <button type="button" id="button_set_departure_save" class="btn btn-primary margin-top-5">确定</button>#}
+    </div>
+</div>
+
+<script>
+    {# 调整模态对话框的大小 #}
+    $("#exampleFormModal .modal-dialog").css("width", "60%");
+
+    $(".chongcha").click(function () {
+        var uid = $(this).attr("uid");
+
+        var csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
+        var data = "csrfmiddlewaretoken=" + csrfmiddlewaretoken;
+
+        var url = 'chongcha/' + uid + '/';
+        $.post(url, data, function (result) {
+
+            if(!result['status']){
+                toastr['error'](result['message']);
+            }else{
+                toastr['success'](result['message']);
+                $('#exampleFormModal').modal('hide');
+            }
+        }, 'json');
+    })
+
+</script>

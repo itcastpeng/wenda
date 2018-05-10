@@ -1,0 +1,45 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">查询子项</h4>
+</div>
+<div class="modal-body">
+    <div style="text-align: center"><h4>{{ obj.client.username }}</h4></div>
+
+    <table class="table table-hover table-bordered table-striped">
+        <thead>
+            <tr>
+                <td>编号</td>
+                <td>发布数量</td>
+                <td>计费数量</td>
+                <td>创建时间</td>
+                <td>备注</td>
+                <td>操作人</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for obj in info_objs %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ obj.fabu_num }}</td>
+                    <td>{{ obj.jifei_num }}</td>
+                    <td>{{ obj.create_date | date:"Y-m-d H:i:s" }}</td>
+                    <td>{% if obj.remark %}{{ obj.remark }}{% endif %}</td>
+                    <td>{{ obj.oper_user.username }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+
+</div>
+<div class="modal-footer">
+</div>
+
+<script>
+
+    $("#exampleFormModal .modal-dialog").css("width", "900px");
+
+</script>

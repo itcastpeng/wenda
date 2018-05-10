@@ -1,0 +1,80 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">任务指派 {% if task_obj.status == 1 %}(编写问答任务){% else %}(发布问答任务){% endif %}</h4>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal" id="form_paidan" onsubmit="return false">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="name">任务名称</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control input-md" disabled id="name" name="name" value="{{ task_obj.name }}" placeholder="请输入角色名称" autocomplete="off">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label" style="width: 110px;" for="remark">任务说明</label>
+            <div class="col-md-8">
+                <textarea rows="5" class="form-control" id="remark" name="remark" ></textarea>
+            </div>
+        </div>
+        {% if task_obj.status == 1 %}
+            <div class="form-group">
+                <label class="col-md-2 control-label">任务类型</label>
+                <div style="margin-top: 5px;">
+                    <div style="display: inline-block; margin-right: 20px;margin-left: 10px;"><input type="radio" checked name="task_type" value="1" id="task_type1"/> <label for="task_type1">编写问答</label></div>
+                    <div style="display: inline-block; margin-right: 20px;margin-left: 10px;"><input type="radio" name="task_type" value="2" id="task_type2" /> <label for="task_type2">发布问答</label></div>
+                </div>
+            </div>
+        {% endif %}
+        <div class="form-group">
+            <label class="col-md-2 control-label" style="width: 110px;" for="rights_ids">选择接单用户</label>
+            <div class="col-md-6" style="margin-top: 30px;">
+                <div id="jstree"></div>
+            </div>
+        </div>
+
+
+    </form>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" id="create_button">添加</button>
+</div>
+
+<script>
+    $("#exampleFormModal .modal-dialog").css("width", "700px");
+
+    $('#jstree').jstree({
+        "plugins" : ["checkbox"],   // 添加可以 checkbox 标签
+
+        'core' : {
+            'multiple': false,  // 单选
+            'data' : {
+                "url" : "get_bianji_data/{{ o_id }}/",
+                "dataType" : "json"
+            }
+
+        }
+    });
+
+    $("#create_button").on('click', function () {
+        var instance = $('#jstree').jstree(true);
+        var post_data = $("#form_paidan").serialize() + "&user_id=" + instance.get_selected();
+
+        var url = 'paidan/{{ o_id }}/';
+        $.post(url, post_data, function (result) {
+            if(!result['status']){
+                toastr['error'](result['message']);
+            }else{
+                toastr['success'](result['message']);
+                $('.modal').modal("hide");
+                table.draw();
+
+            }
+        }, 'json')
+
+    })
+
+</script>

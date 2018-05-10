@@ -1,0 +1,95 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">添加用户</h4>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="username">用户名</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control input-md" id="username" name="username" placeholder="请输入用户名" autocomplete="off">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="password">密码</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control input-md" id="password" name="password" placeholder="请输入密码" autocomplete="off" value="wenda123">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="role_id">角色</label>
+            <div class="col-md-8">
+
+                <select class="form-control" name="role_id">
+                    <option value="">请选择</option>
+
+                    {% for i in roles_dict %}
+                        <option value="{{ i.id }}" {% if i.id == 5 %}selected{% endif %}>{{ i.name }}</option>
+                    {% endfor %}
+
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="guwen_id">营销顾问</label>
+            <div class="col-md-8">
+
+                <select class="form-control" name="guwen_id">
+                    <option value="">请选择</option>
+
+                    {% for i in guwen_objs %}
+                        <option value="{{ i.id }}" >{{ i.username }}</option>
+                    {% endfor %}
+
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="xiaoshou_id">销售</label>
+            <div class="col-md-8">
+
+                <select class="form-control" name="xiaoshou_id">
+                    <option value="">请选择</option>
+
+                    {% for i in xiaoshou_objs %}
+                        <option value="{{ i.id }}">{{ i.username }}</option>
+                    {% endfor %}
+
+                </select>
+            </div>
+        </div>
+
+    </form>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" id="create_button">添加</button>
+</div>
+
+<script>
+
+    $("#create_button").on('click', function () {
+
+        var data = $(".form-horizontal").serialize();
+
+        var url = '{% url "user_management" %}create/0/';
+        $.post(url, data, function (result) {
+            if(!result['status']){
+                toastr['error'](result['message']);
+            }else{
+                toastr['success'](result['message']);
+                $('.modal').modal("hide");
+                table.ajax.reload();
+            }
+        }, 'json')
+
+    })
+
+</script>

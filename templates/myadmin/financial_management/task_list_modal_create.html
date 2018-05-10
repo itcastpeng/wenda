@@ -1,0 +1,281 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">添加任务</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-12">
+
+            <div class="example-wrap">
+                <div class="example">
+                    <div class="steps row">
+                        <div class="step col-md-3 current" id="step1">
+                            <span class="step-number">1</span>
+                            <div class="step-desc">
+                                <span class="step-title">选择发布平台</span>
+                            </div>
+                        </div>
+                        <div class="step col-md-3" id="step2">
+                            <span class="step-number">2</span>
+                            <div class="step-desc">
+                                <span class="step-title">选择问答类型</span>
+                            </div>
+                        </div>
+                        <div class="step col-md-3" id="step3">
+                            <span class="step-number">3</span>
+                            <div class="step-desc">
+                                <span class="step-title">填写发布数量</span>
+                            </div>
+                        </div>
+                        <div class="step col-md-3" id="step4">
+                            <span class="step-number">4</span>
+                            <div class="step-desc">
+                                <span class="step-title">上传任务需求</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <form class="form-horizontal" id="form_create" onsubmit="return false">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="col-sm-2 control-label" for="release_platform">发布平台：</label>
+            <div class="col-sm-1" style="width: auto">
+                <select name="release_platform" id="release_platform" class="form-control">
+                    <option value="">请选择</option>
+                    {% for i in release_platform_choices %}
+                    <option value="{{ i.0 }}">{{ i.1 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-group hidden">
+            <label class="col-sm-2 control-label" for="wenda_type">问答类型：</label>
+            <div class="col-sm-1" style="width: 150px">
+                <select name="wenda_type" id="wenda_type" class="form-control">
+                    <option value="">请选择</option>
+                    {% for i in type_choices %}
+                    <option value="{{ i.0 }}">{{ i.1 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group hidden">
+            <label class="col-sm-2 control-label" for="num">发布数量：</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" name="num" id="num" placeholder="发布数量" autocomplete="off">
+            </div>
+        </div>
+
+        <div class="form-group hidden">
+            <label class="col-sm-2 control-label" for="task_excel">任务需求：</label>
+            <div class="col-sm-2"><a href="/statics/task_excel/"><button class="btn btn-squared btn-outline btn-primary btn-smb"> 下载任务需求模板</button></a></div>
+            <div class="col-sm-6">
+                <button class="btn btn-squared btn-outline btn-primary btn-smb" type="button" id="upload_file"> 上传任务需求模板</button>
+                <div class="hidden">
+                    <input type="file" name="task_excel" id="task_excel" placeholder="发布数量" autocomplete="off">
+                </div>
+
+            </div>
+        </div>
+    </form>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary hidden" id="button_up">上一步</button>
+    <button type="button" class="btn btn-primary" id="button_next">下一步</button>
+    <button type="button" class="btn btn-primary hidden" id="button_save">提交任务</button>
+</div>
+
+<script>
+
+    function checkRate(nubmer) {
+    　　var re = /^[1-9]+.?[0-9]*$/; //判断字符串是否为数字 //判断正整数 /^[1-9]+[0-9]*]*$/
+
+    　　if (!re.test(nubmer)) {
+    　　　　return false;
+    　　}else return true;
+
+    }
+
+    {# 调整模态对话框的大小 #}
+    $("#exampleFormModal .modal-dialog").css("width", "1000px");
+
+    var current_num = 1;
+
+    {# 下一步 按钮被点击 #}
+    $("#button_next").on("click", function () {
+
+        var release_platform = $("#form_create #release_platform").val();
+        var wenda_type = $("#form_create #wenda_type").val();
+        var num = $("#form_create #num").val();
+        var task_excel = $("#form_create #task_excel").val();
+
+        if(current_num == 1){
+
+            if(release_platform != ""){
+                $("#form_create div.form-group:eq(0)").addClass("hidden");
+                $("#form_create div.form-group:eq(1)").removeClass("hidden");
+                $("#step1").removeClass("current");
+                $("#step1").addClass("done");
+                $("#step2").addClass("current");
+
+                $("#button_up").removeClass("hidden");
+
+                {# 如果发布平台选择百度或知乎,则问答类型中显示新问答和老问答, 否则只显示新问答 #}
+                if(release_platform == 1 || release_platform == 2){
+                    $("#wenda_type option:eq(2)").removeClass("hidden");
+                }else{
+                    $("#wenda_type option:eq(2)").addClass("hidden");
+                }
+
+            }else{
+                toastr['error']("请选择发布平台");
+                return false
+            }
+
+        }
+        else if(current_num == 2){
+
+            if(wenda_type != ""){
+
+
+                $("#form_create div.form-group:eq(1)").addClass("hidden");
+                $("#form_create div.form-group:eq(2)").removeClass("hidden");
+                $("#step2").removeClass("current");
+                $("#step2").addClass("done");
+                $("#step3").addClass("current")
+
+            }else{
+                toastr['error']("请选择问答类型");
+                return false
+            }
+
+        }
+        else if(current_num == 3){
+
+            if(num != ""){
+                if(checkRate(num)){
+                    $("#form_create div.form-group:eq(2)").addClass("hidden");
+                    $("#form_create div.form-group:eq(3)").removeClass("hidden");
+                    $("#step3").removeClass("current");
+                    $("#step3").addClass("done");
+                    $("#step4").addClass("current");
+
+                    $("#button_next").addClass("hidden");
+                    $("#button_save").removeClass("hidden");
+
+
+                }else{
+                    toastr['error']("请填写正确的发布数量");
+                    return false
+                }
+
+            }else{
+                toastr['error']("请填写发布数量");
+                return false
+            }
+
+        }
+
+        current_num += 1;
+    });
+
+
+    {# 上一步按钮被点击 #}
+    $("#button_up").on("click", function () {
+        if(current_num == 2){
+
+            $("#form_create div.form-group:eq(1)").addClass("hidden");
+            $("#form_create div.form-group:eq(0)").removeClass("hidden");
+            $("#step2").removeClass("current");
+
+            $("#step1").removeClass("done");
+            $("#step1").addClass("current");
+
+            $("#button_up").addClass("hidden");
+
+
+        }
+        else if(current_num == 3){
+
+            $("#form_create div.form-group:eq(2)").addClass("hidden");
+            $("#form_create div.form-group:eq(1)").removeClass("hidden");
+            $("#step3").removeClass("current");
+
+            $("#step2").removeClass("done");
+            $("#step2").addClass("current");
+
+        }
+        else if(current_num == 4){
+            $("#form_create div.form-group:eq(3)").addClass("hidden");
+            $("#form_create div.form-group:eq(2)").removeClass("hidden");
+            $("#step4").removeClass("current");
+
+            $("#step3").removeClass("done");
+            $("#step3").addClass("current");
+
+            $("#button_next").removeClass("hidden");
+            $("#button_save").addClass("hidden");
+        }
+
+        current_num -= 1;
+    });
+
+
+    {# 上传任务需求文件 按钮被点击 #}
+    $("#upload_file").click(function () {
+        $("#task_excel").click();
+    });
+
+    {# 提交任务 按钮被点击 #}
+    $("#button_save").on('click', function () {
+
+        // 获取文件对象
+        var fileObj = $("#form_create #task_excel")[0].files[0];
+
+        // 创建FormData对象
+        var form = new FormData();
+
+        var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+
+        var release_platform = $("#form_create #release_platform").val();
+        var wenda_type = $("#form_create #wenda_type").val();
+        var num = $("#form_create #num").val();
+
+        // 将数据封装到对象中
+        form.append("file", fileObj);
+        form.append("release_platform", release_platform);
+        form.append("wenda_type", wenda_type);
+        form.append("num", num);
+        form.append("csrfmiddlewaretoken", csrfmiddlewaretoken);
+
+        var url = 'create/0/';
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: form,
+            dataType: "json",
+            processData: false,
+            contentType: false,     // 不设置请求头
+            success: function (result) {
+                if(!result['status']){
+                    toastr['error'](result['message']);
+                }else{
+                    toastr['success'](result['message']);
+                    $('.modal').modal("hide");
+                    table.draw();
+                }
+            }
+        });
+
+    })
+
+</script>

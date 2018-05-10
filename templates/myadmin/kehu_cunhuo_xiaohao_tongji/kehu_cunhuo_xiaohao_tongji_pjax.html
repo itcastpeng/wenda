@@ -1,0 +1,167 @@
+<title>客户存活消耗统计</title>
+
+
+<style>
+
+    .btn.focus, .btn:focus, .btn:hover {
+        color: white;
+    }
+
+    .search_form>div{
+        margin-bottom: 10px;
+    }
+
+    .search_form label{
+
+        width: 85px;
+        text-align: right;
+    }
+
+    .search_form input, .search_form select{
+        display: inline-block;
+        width: 300px
+    }
+    .search_form select{
+        display: inline-block;
+        width: 100px
+    }
+
+    #create_date{
+        width: 120px;
+    }
+    tbody{
+        text-align: center;
+    }
+
+</style>
+
+{% csrf_token %}
+<div class="page animation-fade page-index">
+    <div class="page-content">
+
+        <div class="panel" style="padding: 10px; height: auto">
+            <form class="form-horizontal search_form" onsubmit="return false">
+                <div>
+                    <label for="client_id">用户名称：</label>
+                    <select class="form-control select2-hidden-accessible" data-plugin="select2" tabindex="-1" aria-hidden="true" id="client_id" name="client_id">
+                        <option value="">全部</option>
+                        {% for obj in client_obj %}
+                            <option value="{{ obj.id }}">{{ obj.username }}</option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                <div style="position: absolute; bottom:0; right: 20px;">
+                    <button type="button" class="btn btn-primary" id="search_button"><i class="icon fa-search" aria-hidden="true"></i>搜索</button>
+                </div>
+
+            </form>
+        </div>
+        <div class="panel" style="height: 100%;">
+            <div class="panel-body">
+                <div class="col-md-12 form-group" style="margin-bottom: 10px">
+                    <button type="button" href="create/0/" data-toggle="modal" data-target="#exampleFormModal" class="btn btn-success pull-left" id="add_button">
+                        <i class="icon fa-plus" aria-hidden="true"></i> 添加
+                    </button>
+                </div>
+
+                <table class="table table-bordered table-hover dataTable table-striped width-full text-nowrap" id="dataTable">
+                    <thead>
+                        <tr>
+                            <td>编号</td>
+                            <td>客户名称</td>
+                            <td>合作数量</td>
+                            <td>剩余量</td>
+                            <td>创建时间</td>
+                            <td>备注</td>
+                            <td>操作人</td>
+                            <td>操作</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+        {# 在模态对话框关闭时清空数据 #}
+    $(".modal").on("hidden.bs.modal", function() {
+        $(this).removeData("bs.modal");
+        $(this).find(".modal-content").children().remove();
+    });
+
+    var table = $('#dataTable').DataTable({
+        language: {
+            "sProcessing": "处理中...",
+            "sLengthMenu": "每页显示 _MENU_ 条",
+            "sZeroRecords": "没有匹配结果",
+            "sInfo": "第 _START_ 至 _END_ 项，共 _TOTAL_ 项",
+            "sInfoEmpty": "第 0 至 0 项，共 0 项",
+            "sInfoFiltered": "",
+            "sInfoPostFix": "",
+            "sSearch": "搜索:",
+            "sUrl": "",
+            "sEmptyTable": "表中数据为空",
+            "sLoadingRecords": "载入中...",
+            "sInfoThousands": ",",
+            "oPaginate": {
+                "sFirst": "首页",
+                "sPrevious": "上页",
+                "sNext": "下页",
+                "sLast": "末页"
+            },
+            "oAria": {
+                "sSortAscending": ": 以升序排列此列",
+                "sSortDescending": ": 以降序排列此列"
+            }
+        },
+        "processing": true,
+        "serverSide": true,  // 服务器模式
+        "ajax": "?type=ajax_json", // ajax 取数据
+        "bFilter": false,   // 去掉搜索框
+        "destroy": true,
+        "aaSorting": [[ 4, "desc" ]],
+        "columnDefs": [
+            {
+                "targets": [0],     // 这些列禁止搜索
+                "searchable": false,
+{#                "visible": false       // 不可见#}
+            }
+        ]
+
+    });
+
+
+    {# 搜索按钮被点击 #}
+    $("#search_button").click(function () {
+        var search_data = $(".search_form").serialize();
+        var get_url = "?type=ajax_json&" + search_data;
+
+        table.ajax.url(get_url);
+        table.draw();
+
+    });
+
+    {# 搜框中的input标签 回车键被触发 #}
+    $(".search_form input").keydown(function () {
+        var e=window.event||arguments.callee.caller.arguments[0];
+        if(e.keyCode==13){
+            $("#search_button").click();
+        }
+    });
+
+    {# 搜框中的select标签 回车键被触发 #}
+    $(".search_form select").change(function () {
+        $("#search_button").click();
+    });
+
+
+
+</script>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>覆盖查询</title>
+        <link rel="icon" type="image/png" href="/statics/public/images/zgwd.ico">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    </head>
+    <body>
+
+        <div id="app" class="container">
+            <div class="row text-center">
+                <h1>覆盖报表</h1>
+            </div>
+            <div class="row">
+                <p class="col-xs-4">关键词数: {% verbatim myblock %}{{ keywords_num }}{% endverbatim myblock %}</p>
+                <p class="col-xs-4">总覆盖: {% verbatim myblock %}{{ cover_num }}{% endverbatim myblock %}</p>
+
+            </div>
+            <div class="row" style="padding: 0 10px;">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>编号</th>
+                            <th>日期</th>
+                            <th>覆盖数</th>
+                            <th>明细</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in table_data">
+                            <td>{% verbatim %}{{ item.index }}{% endverbatim %}</td>
+                            <td>{% verbatim %}{{ item.date_format }}{% endverbatim %}</td>
+                            <td>{% verbatim %}{{ item.cover_num }}{% endverbatim %}</td>
+                            <td><a :href="item.date_format">查看明细</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <script src="/statics/custom/js/vue.js"></script>
+        <script src="/statics/custom/js/axios.min.js"></script>
+        <script>
+
+            let app = new Vue({
+                el: "#app",
+                data: {
+                    openid: "{{ openid }}",
+                    result_data: {{ result_data | safe }}
+                },
+
+                computed: {
+
+                    // 总覆盖数量
+                    cover_num: function () {
+                        if (this.result_data){
+                            return this.result_data.total_cover_num
+                        }
+                    },
+                    keywords_num: function () {
+                        if (this.result_data){
+                            return this.result_data.total_keywords_num
+                        }
+                    },
+                    table_data: function () {
+                        return this.result_data.table_data
+                    }
+                }
+            });
+        </script>
+
+    </body>
+</html>

@@ -1,0 +1,133 @@
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">异常</h4>
+</div>
+<div class="modal-body">
+
+    <div style="margin-bottom: 10px">
+        <button type="button" id="button_set_departure_save" class="btn btn-primary margin-top-5">通知发稿人员</button>
+        <button type="button" id="button_get_data" class="btn btn-primary margin-top-5">下载数据报表</button>
+        <div class="hidden" id="download_file"></div>
+    </div>
+
+{#    <table class="table table-bordered table-hover dataTable table-striped width-full text-nowrap" id="detail_chaxun_table">#}
+    <table class="table table-bordered table-hover table-striped" id="detail_chaxun_table">
+        <thead>
+            <tr>
+                <th>编号</th>
+                <th>状态</th>
+                <th>问题</th>
+                <th>答案</th>
+                <th>问答链接</th>
+                <th>检查时间</th>
+            </tr>
+        </thead>
+        <tbody style="text-align: center">
+            {% for i in result_data %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ i.status }}</td>
+                    <td>{{ i.title }}</td>
+                    <td>{{ i.content }}</td>
+                    <td>{{ i.url }}</td>
+                    <td>{{ i.update }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+<script>
+
+    $("#exampleFormModal .modal-dialog").css("width", "1200px");
+
+    var table_guaji = $('#detail_chaxun_table').DataTable({
+        language: {
+            "sProcessing": "处理中...",
+            "sLengthMenu": "每页显示 _MENU_ 条",
+            "sZeroRecords": "没有匹配结果",
+            "sInfo": "第 _START_ 至 _END_ 项，共 _TOTAL_ 项",
+            "sInfoEmpty": "第 0 至 0 项，共 0 项",
+            "sInfoFiltered": "",
+            "sInfoPostFix": "",
+            "sSearch": "搜索:",
+            "sUrl": "",
+            "sEmptyTable": "表中数据为空",
+            "sLoadingRecords": "载入中...",
+            "sInfoThousands": ",",
+            "oPaginate": {
+                "sFirst": "首页",
+                "sPrevious": "上页",
+                "sNext": "下页",
+                "sLast": "末页"
+            },
+            "oAria": {
+                "sSortAscending": ": 以升序排列此列",
+                "sSortDescending": ": 以降序排列此列"
+            }
+        },
+        "processing": true,
+{#        "serverSide": true,  // 服务器模式#}
+        "bFilter": false,   // 去掉搜索框
+{#        "ajax": "?type=ajax_json", // ajax 取数据#}
+        "destroy": true,
+        "bLengthChange": false,
+{#        "bAutoWidth": true,#}
+{#        "aaSorting": [[ 1, "asc" ]] ,#}
+{#        "columnDefs": [#}
+{#            {#}
+{#                "targets": [0],     // 这些列禁止搜索#}
+{#                "searchable": false,#}
+{#                "sortable": false#}
+{#            }#}
+{#        ]#}
+
+    });
+</script>
+
+
+<script>
+    (function ($) {
+
+        $("#button_set_departure_save").on('click', function () {
+            var csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
+
+            var yichang_data = $("#yichang_data").val();
+            var data = "csrfmiddlewaretoken=" + csrfmiddlewaretoken + "&yichang_data=" + yichang_data;
+            var url = 'online_preview_yichang/{{ o_id }}/';
+            $.post(url, data, function (result) {
+                if(!result['status']){
+                    toastr['error'](result['message']);
+
+                }else{
+                    toastr['success'](result['message']);
+                    $('.modal').modal("hide");
+                }
+            }, 'json')
+
+        });
+
+        document.getElementById("button_get_data").onclick = function () {
+            url = "yichang_baobiao/" + {{ o_id }} + "/";
+            $.get(url, function (result) {
+                if(!result['status']){
+                    toastr['error'](result['message']);
+                }else{
+                    toastr['success'](result['message']);
+                    var file_path = result['file_path'];
+                    var file_name = result['file_name'];
+
+                    var a_tag = document.createElement("a");
+                    a_tag.href = file_path;
+                    a_tag.download = file_name;
+                    document.getElementById("download_file").appendChild(a_tag);
+                    a_tag.click();
+                }
+            }, "json")
+        }
+    })(jQuery)
+</script>

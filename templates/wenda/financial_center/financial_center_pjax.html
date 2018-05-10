@@ -1,0 +1,194 @@
+<title>财务中心</title>
+
+<style>
+
+    .btn.focus, .btn:focus, .btn:hover {
+        color: white;
+    }
+    .search_form>div{
+        margin-bottom: 10px;
+    }
+
+    .search_form label{
+
+        width: 85px;
+        text-align: right;
+    }
+
+    .search_form input, .search_form select{
+        display: inline-block;
+        width: 300px
+    }
+    .search_form select{
+        display: inline-block;
+        width: 100px
+    }
+
+    #create_at{
+        width: 120px;
+    }
+
+
+</style>
+
+{% csrf_token %}
+<div class="page animation-fade page-index">
+    <div class="page-content">
+        <div class="panel" style="padding: 10px; height: auto;">
+            <div>
+                <form class="form-horizontal search_form" onsubmit="return false">
+                    <div>
+                        <div style="display: inline-block">
+                            <div >总消耗问答币: <span style="color: red">{{ total_consumption }}</span></div>
+                            <div>可用问答币: <span style="color: red">{{ balance }}</span></div>
+                        </div>
+                        {% if user_profile_obj.role.id in tixian_role_ids %}
+{#                        <button class="btn btn-danger" type="button" href="tixian/0/" data-toggle="modal" data-target="#exampleFormModal">提现</button>#}
+                        <button class="btn btn-danger" type="button" id="button_tixian">提现</button>
+                        {% endif %}
+
+                        <label for="status">类型：</label>
+                        <select class="form-control" name="account_type" id="account_type">
+                            <option value="">请选择</option>
+                            {% for i in type_choices %}
+                                <option value="{{ i.0 }}">{{ i.1 }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label for="create_at">创建时间：</label>
+                        <input class="Wdate form-control" id="create_at" name="create_at" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" type="text">
+
+                    </div>
+
+                    <div style="position: absolute; bottom:0; right: 20px;">
+                        <button type="button" class="btn btn-primary" id="search_button"><i class="icon fa-search" aria-hidden="true"></i>搜索</button>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+
+        <div class="panel">
+            <div class="panel-body">
+                <table class="table table-bordered table-hover dataTable table-striped width-full text-nowrap" id="dataTable">
+                    <thead>
+                        <tr>
+                            <td>编号</td>
+                            <td>类型</td>
+                            <td>问答币</td>
+                            <td>创建时间</td>
+                            <td>操作人</td>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    {# 调整模态对话框的大小 #}
+    $("#exampleFormModal .modal-dialog").css("width", "700px");
+
+        {# 在模态对话框关闭时清空数据 #}
+    $(".modal").on("hidden.bs.modal", function() {
+        $(this).removeData("bs.modal");
+        $(this).find(".modal-content").children().remove();
+    });
+
+    var table = $('#dataTable').DataTable({
+        language: {
+            "sProcessing": "处理中...",
+            "sLengthMenu": "每页显示 _MENU_ 条",
+            "sZeroRecords": "没有匹配结果",
+            "sInfo": "第 _START_ 至 _END_ 项，共 _TOTAL_ 项",
+            "sInfoEmpty": "第 0 至 0 项，共 0 项",
+            "sInfoFiltered": "",
+            "sInfoPostFix": "",
+            "sSearch": "搜索:",
+            "sUrl": "",
+            "sEmptyTable": "表中数据为空",
+            "sLoadingRecords": "载入中...",
+            "sInfoThousands": ",",
+            "oPaginate": {
+                "sFirst": "首页",
+                "sPrevious": "上页",
+                "sNext": "下页",
+                "sLast": "末页"
+            },
+            "oAria": {
+                "sSortAscending": ": 以升序排列此列",
+                "sSortDescending": ": 以降序排列此列"
+            }
+        },
+        "processing": true,
+        "serverSide": true,  // 服务器模式
+        "bFilter": false,   // 去掉搜索框
+        "ajax": "?type=ajax_json", // ajax 取数据
+        "destroy": true,
+        "aaSorting": [[ 3, "desc" ]],
+        "columnDefs": [
+            {
+                "targets": [0],     // 这些列禁止搜索
+                "searchable": false,
+{#                "visible": false       // 不可见#}
+                "sortable": false
+            }
+        ]
+
+    });
+
+    {# 搜索按钮被点击 #}
+    $("#search_button").click(function () {
+        var search_data = $(".search_form").serialize();
+
+        var get_url = "?type=ajax_json&" + search_data;
+
+        table.ajax.url(get_url).load();
+    });
+
+    {# 搜框中的input标签 回车键被触发 #}
+    $(".search_form input").keydown(function () {
+        var e=window.event||arguments.callee.caller.arguments[0];
+        if(e.keyCode==13){
+            $("#search_button").click();
+        }
+    });
+
+    {# 搜框中的select标签 回车键被触发 #}
+    $(".search_form select").change(function () {
+        $("#search_button").click();
+    });
+
+
+    $("#button_tixian").click(function () {
+
+        {% if tixian_objs %}
+            toastr['error']("当前已有正在提现中的申请");
+        {% else %}
+        $.get("tixian/0/", function (result) {
+            $('#exampleFormModal .modal-content').append(result);
+
+            $('#exampleFormModal').modal("show")
+        });
+        {% endif %}
+
+
+    })
+
+
+
+
+
+
+
+
+</script>

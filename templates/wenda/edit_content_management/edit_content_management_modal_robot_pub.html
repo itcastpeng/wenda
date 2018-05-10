@@ -1,0 +1,38 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">进入发布队列</h4>
+</div>
+<div class="modal-body">
+    是否要将该任务放入到队列中
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" id="create_button">进入任务队列</button>
+</div>
+
+<script>
+
+    var pub_date_num = null;
+
+    {# 调整模态对话框的大小 #}
+    $("#exampleFormModal .modal-dialog").css("width", "700px");
+
+    $("#create_button").on('click', function () {
+        var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+        var form_data = "&csrfmiddlewaretoken=" + csrfmiddlewaretoken;
+        var url = 'robot_pub/{{ o_id }}/';
+        $.post(url, form_data, function (result) {
+            if(!result['status']){
+                toastr['error'](result['message']);
+            }else{
+                toastr['success'](result['message']);
+                $('.modal').modal("hide");
+                table.ajax.reload();
+            }
+        }, 'json')
+
+    });
+
+</script>

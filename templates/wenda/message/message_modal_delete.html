@@ -1,0 +1,35 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+            <span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title">删除任务</h4>
+    </div>
+    <div class="modal-body">
+        <p>是否要将任务 <span style="color: red">{{ task_list_obj.keywords }}</span> 删除</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" id="button_set_departure_save" class="btn btn-primary margin-top-5">确定</button>
+    </div>
+</div>
+
+<script>
+    (function ($) {
+        $("#button_set_departure_save").on('click', function () {
+            var csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
+            var data = "csrfmiddlewaretoken=" + csrfmiddlewaretoken;
+            var url = 'delete/{{ task_list_obj.id }}/';
+            $.post(url, data, function (result) {
+                if(!result['status']){
+                    toastr['error'](result['message']);
+
+                }else{
+                    toastr['success'](result['message']);
+                    $('.modal').modal("hide");
+                    table.ajax.reload();
+                }
+            }, 'json')
+
+        })
+    })(jQuery)
+</script>

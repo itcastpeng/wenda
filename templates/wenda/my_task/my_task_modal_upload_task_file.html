@@ -1,0 +1,93 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">{% if update %}修改{% else %}上传{% endif %}任务结果</h4>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal" id="form_create" onsubmit="return false">
+        {% csrf_token %}
+
+        <div class="form-group">
+{#            <label class="col-sm-4 control-label" for="task_excel">上传任务结果：</label>#}
+            <div class="col-sm-12">
+                <button class="btn btn-squared btn-outline btn-primary btn-smb" type="button" id="upload_file"> 点击上传</button>
+                <small class="hidden" style="color: red"> 添加完成,请点击提交按钮</small>
+                <div class="hidden">
+                    <input type="file" name="task_excel" id="task_excel" autocomplete="off">
+                </div>
+
+            </div>
+        </div>
+        <div class="form-group" id="upErrorMessage">
+
+
+            </div>
+        </div>
+    </form>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" id="button_save">提交</button>
+</div>
+
+<script>
+
+    $("#exampleFormModal .modal-dialog").css("width", "300px");
+
+    {# 上传任务结果 按钮被点击 #}
+    $("#upload_file").click(function () {
+        $("#upload_file").next('small').addClass("hidden");
+        $("#task_excel").click();
+    });
+
+    {# 选择上传文件之后显示提示信息 #}
+    $("#task_excel").change(function () {
+       $("#upload_file").next('small').removeClass("hidden");
+    });
+
+    {# 提交 按钮被点击 #}
+    $("#button_save").on('click', function () {
+
+        // 获取文件对象
+        var fileObj = $("#form_create #task_excel")[0].files[0];
+
+        // 创建FormData对象
+        var form = new FormData();
+
+        var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+
+        // 将数据封装到对象中
+        form.append("file", fileObj);
+        form.append("csrfmiddlewaretoken", csrfmiddlewaretoken);
+
+        var url = 'upload_task_file/{{ o_id }}/';
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: form,
+            dataType: "json",
+            processData: false,
+            contentType: false,     // 不设置请求头
+            success: function (result) {
+                if(!result['status']){
+                    toastr['error'](result['message']);
+                    $("#exampleFormModal .modal-dialog").css("width", "700px");
+                    $("#upErrorMessage").text("");
+                    for (var i = 0; i < result["error"].length; i++){
+                        var p = document.createElement('p');
+                        p.innerHTML = result["error"][i];
+                        $("#upErrorMessage").append(p)
+                    }
+
+                }else{
+                    toastr['success'](result['message']);
+                    $('.modal').modal("hide");
+                    table.draw();
+                }
+            }
+        });
+
+    })
+
+</script>

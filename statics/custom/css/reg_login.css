@@ -1,0 +1,90 @@
+.outer-form {
+	background:#fff;
+}
+.reg-logo {
+	display:block;
+	width:260px;
+	height:90px;
+	margin:40px auto 10px;
+	background:url(/statics/custom/images/reglogo.png) no-repeat;
+}
+.panel-default {
+	 border:0;
+	 border-radius:0;
+}
+.panel-default .panel-heading {
+	background:#fff;
+	color:#a3c737;
+	border-bottom:1px solid #eee;
+}
+.panel-footer {
+	background:#fff;
+	border-top:1px solid #eee;
+}
+.panel-footer .container-fluid {
+	 margin-top:3px;
+	 margin-bottom:3px;
+}
+.form-reg .form-control {
+	height:48px;
+	font-size:18px;
+}
+.form-reg .label-success, .form-reg .label-warning {
+	border-radius:2px;
+}
+.form-group h3 small {
+	color:#D9534F;
+	margin-right:10px;
+}
+.form-group span.label {
+	font-size:16px;
+}
+.form-reg label h3 {
+	color:#999;
+}
+.form-control {
+	border:2px solid #eee;
+	box-shadow:none;
+	height:48px;
+	font-size:18px;
+}
+.form-control:focus {
+	border:2px solid #80C31E;
+	box-shadow:none;
+}
+.form-reg input[type="checkbox"] {
+	width:auto;
+}
+.form-reg .label-remember {
+	margin-left:26px;
+	font-size:14px;
+	font-weight:normal;
+}
+#reg .panel-footer a,#login .panel-footer a {
+
+}
+.btn-reg,.btn-login {
+	border-radius:4px;
+	background:#80C31E;
+}
+.btn-reg:hover,.btn-login:hover {
+	background:#65C31E;
+}
+.btn-reg:focus,.btn-login:focus {
+	background:#57c31e;
+	outline:0;
+}
+#active {
+	font-size:16px;
+}
+.system-message-error {
+    background-color: #e6c0c0;
+    border-bottom: 3px solid #de7a7b;
+    border-top: 3px solid #de7a7b;
+    color: #c00;
+    font-weight: bold;
+    list-style: outside none none;
+    margin-bottom: 10px;
+    padding: 10px;
+    text-indent: 30px;
+}

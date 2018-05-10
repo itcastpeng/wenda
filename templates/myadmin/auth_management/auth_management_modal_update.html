@@ -1,0 +1,67 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">修改权限</h4>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="name">权限名称</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control input-md" id="name" name="name" placeholder="请输入权限名称" autocomplete="off" value="{{ access_rules_obj.name }}">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="url_path">权限url</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control input-md" id="url_path" name="url_path" placeholder="请输入权限url" autocomplete="off" value="{{ access_rules_obj.url_path }}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="super_id">父级权限</label>
+            <div class="col-md-8">
+                <select class="form-control" id="super_id" name="super_id">
+                    <option value="">请选择</option>
+                    {% for obj in access_rules_objs %}
+                        <option value="{{ obj.id }}" {% if access_rules_obj.super_id.id == obj.id %}selected{% endif %}>{{ obj.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="hidden">
+            <input type="text">
+            <input type="button">
+        </div>
+    </form>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" id="create_button">保存</button>
+</div>
+
+<script>
+
+    $("#create_button").on('click', function () {
+
+        var post_data = $(".form-horizontal").serialize();
+        var url = 'update/{{ access_rules_obj.id }}/';
+        $.post(url, post_data, function (result) {
+            if(!result['status']){
+                toastr['error'](result['message']);
+            }else{
+                toastr['success'](result['message']);
+                $('.modal').modal("hide");
+                table.ajax.reload();
+
+                $('#jstree1').data('jstree', false).empty();
+                load_jstree();
+
+            }
+        }, 'json')
+
+    })
+
+</script>

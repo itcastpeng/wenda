@@ -1,0 +1,52 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">人工回答</h4>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal" id="form-model">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="col-md-2 control-label">问题 </label>
+            <div class="col-md-8">
+                <input type="text" disabled value="{{ objs.title }}" class="form-control input-md" placeholder="请输入用户名" autocomplete="off">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="content">答案 <span class="form-span-active">*</span></label>
+            <div class="col-md-8">
+{#                <input type="text" value="{{ objs.content }}" class="form-control input-md" id="password" name="password" placeholder="请输入密码" autocomplete="off">#}
+                <textarea class="form-control" name="content" id="content" rows="5">{{ objs.content }}</textarea>
+            </div>
+        </div>
+
+    </form>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" id="create_button">人工完成</button>
+</div>
+
+<script>
+    $("#exampleFormModal .modal-dialog").css("width", "50%");
+
+    $("#create_button").on('click', function () {
+
+        var data = $("#form-model").serialize();
+
+        var url = 'rengong/{{ o_id }}/';
+        $.post(url, data, function (result) {
+            if(!result['status']){
+                toastr['error'](result['message']);
+            }else{
+                toastr['success'](result['message']);
+                $('.modal').modal("hide");
+                table.ajax.reload();
+            }
+        }, 'json')
+
+    })
+
+</script>

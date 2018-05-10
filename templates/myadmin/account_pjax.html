@@ -1,0 +1,274 @@
+{% load pub_simple_tag %}
+{% csrf_token %}
+<title>账户信息</title>
+
+<link rel="stylesheet" href="/statics/public/css/system/account.css">
+<link rel="stylesheet" href="/statics/public/vendor/jquery-strength/jquery-strength.css">
+<link rel="stylesheet" href="/statics/public/vendor/alertify-js/alertify.css">
+<div class="page animation-fade page-account">
+    <div class="page-content">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="widget widget-shadow text-center">
+                    <div class="widget-header">
+                        <div class="widget-header-content">
+                            <a class="avatar avatar-lg" href="javascript:;">
+                                <img src="/statics/public/images/avatar.svg" alt="xiaxuan@admui_demo">
+                            </a>
+                            <h4 class="account-user">{{ request.session.username }}</h4>
+                            <p>上次登录：{{ user_profile_obj.last_login_date|date:"Y-m-d H:i:s" }}</p>
+                        </div>
+                    </div>
+                    <div class="widget-footer">
+                        <div class="row no-space">
+
+                            <div class="col-xs-6">
+                                <strong class="account-stat-count">{{ login_count }}</strong> <span>登录</span>
+                            </div>
+                            <div class="col-xs-6">
+                                <strong class="account-stat-count msg-number">{{ p.count }}</strong> <span>消息</span>
+                            </div>
+{#                            <div class="col-xs-4">#}
+{#                                <strong class="account-stat-count log-number"></strong> <span>日志</span>#}
+{#                            </div>#}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="panel">
+                    <div class="panel-body nav-tabs-animate">
+                        <div class="example-wrap margin-lg-0">
+                            <div class="nav-tabs-horizontal" data-approve="nav-tabs">
+                                <ul class="nav nav-tabs nav-tabs-line" role="tablist">
+
+                                    <li class="{% if not show_type %}active{% endif %}" role="presentation">
+                                        <a data-toggle="tab" href="#exampleTabsLineOne" aria-controls="exampleTabsLineOne" role="tab">
+                                            <i class="icon fa-comment-o" aria-hidden="true"></i> 消息
+                                            <span class="badge badge-danger">{{ message_unread_count }}</span>
+                                        </a>
+
+                                    </li>
+                                    <li class="{% if show_type == 'log' %}active{% endif %}" role="presentation">
+                                        <a data-toggle="tab" href="#exampleTabsLineTwo" aria-controls="exampleTabsLineTwo" role="tab">
+                                            <i class="icon fa-file-text-o" aria-hidden="true"></i> 登录日志
+                                        </a>
+                                    </li>
+                                    <li class="{% if show_type == 'password' %}active{% endif %}" role="presentation">
+                                        <a data-toggle="tab" href="#exampleTabsLineThree" aria-controls="exampleTabsLineThree" role="tab">
+                                            <i class="icon fa-key" aria-hidden="true"></i> 密码
+                                        </a>
+                                    </li>
+
+                                <li class="dropdown hidden" role="presentation" style="opacity: 1;"><a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false"><span class="caret"></span> 更多</a><ul class="dropdown-menu" role="menu"></ul></li></ul>
+                                <div class="tab-content padding-top-20">
+                                    <div class="tab-pane {% if not show_type %}active{% endif %}" id="exampleTabsLineOne" role="tabpanel">
+
+
+                                        <div class="tab-pane animation-fade" id="all_contacts" role="tabpanel">
+                                            <ul class="list-group">
+                                                <li class="list-group-item">
+                                                    {% for obj in message_objs %}
+                                                    <div class="media">
+                                                        <div class="media-body">
+                                                            <h4 class="media-heading">
+                                                                {% if obj.status == 1 %}
+                                                                    <span class="label label-danger">未读</span>
+                                                                {% elif obj.status == 2 %}
+                                                                    <span class="label label-success">已读</span>
+                                                                {% endif %}
+                                                                <a onclick="message_detail({{ obj.id }})" style="cursor: pointer">
+                                                                    {{ obj.content }}
+                                                                </a>
+                                                                <a id="message_detail{{ obj.id }}" class="hidden" data-pjax="" href="{% if obj.url %}{{ obj.url }}{% else %}#{% endif %}" target="_blank">查看详情</a>
+
+                                                                <small class="padding-left-10">{{ obj.create_at|date:"Y-m-d H:i:s" }}</small>
+
+                                                            </h4>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                </li>
+                                            </ul>
+                                            <nav>
+                                                <ul data-plugin="twbsPagination" data-total-pages="50" data-pagination-class="pagination pagination-no-border" class="pagination pagination-no-border">
+                                                    {% mark_safe_html paging_html %}
+                                                </ul>
+                                            </nav>
+                                        </div>
+
+                                    </div>
+                                    <div class="tab-pane {% if show_type == 'log' %}active{% endif %}" id="exampleTabsLineTwo" role="tabpanel">
+                                        <table class="table table-bordered table-hover dataTable table-striped width-full text-nowrap" id="dataTable">
+                                            <thead>
+                                                <tr>
+                                                    <td>编号</td>
+                                                    <td>登录时间</td>
+                                                    <td>ip地址</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for obj in account_obj %}
+                                                    <tr>
+                                                        <td>{{ forloop.counter }}</td>
+                                                        <td>{{ obj.date |date:"Y-m-d H:i:s"}}</td>
+                                                        <td>{{ obj.ipaddress }}</td>
+
+                                                    </tr>
+                                                {% endfor %}
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="tab-pane {% if show_type == 'password' %}active{% endif %}" id="exampleTabsLineThree" role="tabpanel">
+
+                                        <div class="col-sm-6 col-sm-offset-3 margin-vertical-35">
+                                            <form id="accountMsg">
+                                                <div class="form-group">
+                                                    <h5>修改密码</h5>
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="password" name="oldPwd" class="form-control" placeholder="请输入原来的密码" autocomplete="off">
+                                                </div>
+                                                <div class="form-group">
+
+                                                    <input type="password" name="newPwd" class="form-control strength-input" placeholder="请输入新密码" autocomplete="off">
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="password" name="confirm" class="form-control" placeholder="请再次输入新密码" autocomplete="off">
+                                                </div>
+                                                <div class="form-group">
+                                                    <button type="button" onclick="updatePassword()" class="btn btn-primary">确认修改</button>
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{#<script src="/statics/public/js/system/account/message.js" data-name="message"></script>#}
+{#<script src="/statics/public/vendor/jquery-strength/jquery-strength.min.js"></script>#}
+{#<script src="/statics/public/vendor/alertify-js/alertify.min.js"></script>#}
+{#<script src="/statics/public/js/system/account/account.js" data-deps="message"></script>#}
+
+<div class="modal fade" id="modal" aria-hidden="true" aria-labelledby="examplePositionCenter" role="dialog" tabindex="-1" style="display: none; z-index: 1050">
+    <div class="modal-dialog modal-top">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+
+<script src="/statics/public/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="/statics/public/vendor/datatables-bootstrap/dataTables.bootstrap.min.js"></script>
+
+
+<script>
+
+    var table = $('#dataTable').DataTable({
+        language: {
+            "sProcessing": "处理中...",
+            "sLengthMenu": "每页显示 _MENU_ 条",
+            "sZeroRecords": "没有匹配结果",
+            "sInfo": "第 _START_ 至 _END_ 项，共 _TOTAL_ 项",
+            "sInfoEmpty": "第 0 至 0 项，共 0 项",
+            "sInfoFiltered": "",
+            "sInfoPostFix": "",
+            "sSearch": "搜索:",
+            "sUrl": "",
+            "sEmptyTable": "表中数据为空",
+            "sLoadingRecords": "载入中...",
+            "sInfoThousands": ",",
+            "oPaginate": {
+                "sFirst": "首页",
+                "sPrevious": "上页",
+                "sNext": "下页",
+                "sLast": "末页"
+            },
+            "oAria": {
+                "sSortAscending": ": 以升序排列此列",
+                "sSortDescending": ": 以降序排列此列"
+            }
+        },
+        "searching" : false,
+        "processing": true,
+        "destroy": true,
+{#        "columnDefs": [#}
+{#            {#}
+{#                "targets": [0],     // 这些列禁止搜索#}
+{#                "searchable": false,#}
+{#                "visible": false       // 不可见#}
+{#            }#}
+{#        ]#}
+    });
+
+
+    function message_detail(message_id) {
+
+        $.get('select/'+message_id + '/', function (data) {
+            var message_count = data["data"];
+            $(".msg-num").html(message_count)
+        });
+
+        var a_tag_obj = $("#message_detail"+message_id);
+        var url = a_tag_obj.attr('href');
+        if(url == "#"){
+            location.reload();
+        }else{
+            a_tag_obj.click();
+        }
+
+    }
+
+
+    // 修改密码
+    function updatePassword() {
+        var oldPwd = $("#accountMsg input[name='oldPwd']").val();
+        var newPwd = $("#accountMsg input[name='newPwd']").val();
+        var confirm = $("#accountMsg input[name='confirm']").val();
+
+        if (!oldPwd.length){
+            toastr['error']("请输入旧密码");
+        }else{
+            if (!newPwd.length){
+                toastr['error']("请输入新密码");
+            }else{
+                if (!confirm.length){
+                    toastr['error']("请输入确认密码");
+                }else{
+                    if(newPwd != confirm){
+                        toastr['error']("两次密码不一致");
+                    }else{
+                        var csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
+                        var post_data = "oldPwd=" + oldPwd + "&newPwd=" + newPwd + "&csrfmiddlewaretoken=" + csrfmiddlewaretoken;
+                        $.post('{% url 'update_password' %}', post_data, function (result) {
+                            if(!result['status']){
+                                toastr['error'](result['message']);
+                            }else{
+                                toastr['success'](result['message']);
+
+                                setTimeout(function () {
+                                    location.reload()
+                                }, 1000);
+
+                            }
+                        }, 'json')
+                    }
+                }
+            }
+
+        }
+
+
+
+
+    }
+
+</script>

@@ -1,0 +1,102 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">在线预览</h4>
+</div>
+<div class="modal-body">
+
+    <table class="table table-bordered table-hover dataTable table-striped width-full text-nowrap" id="detail_chaxun_table">
+        <thead>
+            <tr>
+                <th>编号</th>
+                <th>排名</th>
+                <th>变化情况</th>
+                <th>查询时间</th>
+                <th>ip地址</th>
+            </tr>
+        </thead>
+        <tbody style="text-align: center">
+            {% for obj in guaji_log_objs %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        {% if obj.rank == 0 %}
+                            无排名
+                        {% else %}
+                            {{ obj.rank }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if obj.rank == 0 %}
+                            无排名
+                        {% else %}
+                            {% if obj.change_num > 0 %}
+                                <i class="fa fa-long-arrow-up" aria-hidden="true" style="color: green;"></i>
+                                {{ obj.change_num }}
+                            {% elif obj.change_num < 0 %}
+                                <i class="fa fa-long-arrow-down" aria-hidden="true" style="color: red;"></i>
+                                {{ obj.change_num }}
+                            {% else %}
+                                无变化
+                            {% endif %}
+                        {% endif %}
+                    </td>
+
+                    <td>{{ obj.create_at|date:"Y-m-d H:i:s" }}</td>
+                    <td>{{ obj.ipaddress }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+</div>
+
+<script>
+    $("#exampleFormModal .modal-dialog").css("width", "700px");
+
+
+    var table_guaji = $('#detail_chaxun_table').DataTable({
+        language: {
+            "sProcessing": "处理中...",
+            "sLengthMenu": "每页显示 _MENU_ 条",
+            "sZeroRecords": "没有匹配结果",
+            "sInfo": "第 _START_ 至 _END_ 项，共 _TOTAL_ 项",
+            "sInfoEmpty": "第 0 至 0 项，共 0 项",
+            "sInfoFiltered": "",
+            "sInfoPostFix": "",
+            "sSearch": "搜索:",
+            "sUrl": "",
+            "sEmptyTable": "表中数据为空",
+            "sLoadingRecords": "载入中...",
+            "sInfoThousands": ",",
+            "oPaginate": {
+                "sFirst": "首页",
+                "sPrevious": "上页",
+                "sNext": "下页",
+                "sLast": "末页"
+            },
+            "oAria": {
+                "sSortAscending": ": 以升序排列此列",
+                "sSortDescending": ": 以降序排列此列"
+            }
+        },
+        "processing": true,
+{#        "serverSide": true,  // 服务器模式#}
+        "bFilter": false,   // 去掉搜索框
+{#        "ajax": "?type=ajax_json", // ajax 取数据#}
+        "destroy": true,
+        "bLengthChange": false,
+{#        "sScrollX":"100%",#}
+{#        "aaSorting": [[ 1, "asc" ]] ,#}
+{#        "columnDefs": [#}
+{#            {#}
+{#                "targets": [0],     // 这些列禁止搜索#}
+{#                "searchable": false,#}
+{#                "sortable": false#}
+{#            }#}
+{#        ]#}
+
+    });
+</script>

@@ -1,0 +1,46 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+            <span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title">添加地图</h4>
+    </div>
+    <div class="modal-body">
+        <p>问题: {{ obj.title }}</p>
+        <p>答案: {{ obj.content }}</p>
+        <p>是否要给该任务回复添加地图</p>
+    </div>
+    <div class="modal-footer">
+        {% if map_flag %}
+        <button type="button" id="button_set_departure_save" class="btn btn-primary margin-top-5">添加地图</button>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+
+    {# 调整模态对话框的大小 #}
+    $("#exampleFormModal .modal-dialog").css("width", "600px");
+    (function ($) {
+        {% if map_flag %}
+        $("#button_set_departure_save").on('click', function () {
+            var csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
+            var data = "csrfmiddlewaretoken=" + csrfmiddlewaretoken;
+            var url = 'add_map/{{ o_id }}/';
+            $.post(url, data, function (result) {
+                if(!result['status']){
+                    toastr['error'](result['message']);
+
+                }else{
+                    toastr['success'](result['message']);
+                    $('.modal').modal("hide");
+                    table.ajax.reload();
+                }
+            }, 'json')
+
+        });
+        {% else %}
+            toastr['error']("请先前往用户管理中给该用户添加地图搜索关键词和地图匹配关键词");
+        {% endif %}
+    })(jQuery)
+</script>

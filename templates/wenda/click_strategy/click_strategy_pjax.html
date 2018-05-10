@@ -1,0 +1,95 @@
+<title>点击策略</title>
+
+
+<style>
+
+    .btn.focus, .btn:focus, .btn:hover {
+        color: white;
+    }
+
+</style>
+
+{% csrf_token %}
+<div class="page animation-fade page-index">
+    <div class="page-content">
+        <div class="panel" style="height: 100%;">
+            <div class="panel-body">
+                <div class="col-md-12 form-group" style="margin-bottom: 10px">
+                    <button type="button" href="create/0/" data-toggle="modal" data-target="#exampleFormModal" class="btn btn-success pull-left" id="add_button">
+                        <i class="icon fa-plus" aria-hidden="true"></i> 添加
+                    </button>
+                </div>
+
+                <table class="table table-bordered table-hover dataTable table-striped width-full text-nowrap" id="dataTable">
+                    <thead>
+                        <tr>
+                            <td>编号</td>
+                            <td>策略名称</td>
+                            <td>添加时间</td>
+                            <td>状态</td>
+                            <td>添加人</td>
+                            <td>操作</td>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+        {# 在模态对话框关闭时清空数据 #}
+    $(".modal").on("hidden.bs.modal", function() {
+        $(this).removeData("bs.modal");
+        $(this).find(".modal-content").children().remove();
+    });
+
+    var table = $('#dataTable').DataTable({
+        language: {
+            "sProcessing": "处理中...",
+            "sLengthMenu": "每页显示 _MENU_ 条",
+            "sZeroRecords": "没有匹配结果",
+            "sInfo": "第 _START_ 至 _END_ 项，共 _TOTAL_ 项",
+            "sInfoEmpty": "第 0 至 0 项，共 0 项",
+            "sInfoFiltered": "",
+            "sInfoPostFix": "",
+            "sSearch": "搜索:",
+            "sUrl": "",
+            "sEmptyTable": "表中数据为空",
+            "sLoadingRecords": "载入中...",
+            "sInfoThousands": ",",
+            "oPaginate": {
+                "sFirst": "首页",
+                "sPrevious": "上页",
+                "sNext": "下页",
+                "sLast": "末页"
+            },
+            "oAria": {
+                "sSortAscending": ": 以升序排列此列",
+                "sSortDescending": ": 以降序排列此列"
+            }
+        },
+{#        "paging": false,#}
+        "processing": true,
+        "serverSide": true,  // 服务器模式
+        "ajax": "?type=ajax_json", // ajax 取数据
+        "destroy": true,
+        "columnDefs": [
+            {
+                "targets": [0],     // 这些列禁止搜索
+                "searchable": false,
+{#                "visible": false       // 不可见#}
+            }
+        ]
+
+    });
+
+</script>

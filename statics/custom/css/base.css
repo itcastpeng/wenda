@@ -1,0 +1,10 @@
+
+#head-title li[class='']{
+    cursor: pointer;
+}
+
+.error-p{
+    padding-top: 5px;
+    color: red;
+    text-align: left;
+}

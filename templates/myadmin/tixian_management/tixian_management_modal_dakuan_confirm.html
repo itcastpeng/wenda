@@ -1,0 +1,60 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">确认打款</h4>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal" id="form_oper" onsubmit="return false">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="col-md-2 control-label">提现用户</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control input-md" disabled autocomplete="off" value="{{ tixian_obj.user.username }}">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label">提现金额</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control input-md" disabled autocomplete="off" value="{{ tixian_obj.money }}">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="remark">打款信息</label>
+            <div class="col-md-8">
+{#                <textarea type="text" class="form-control input-md" id="remark" name="remark" placeholder="请输入转账的订单号" autocomplete="off">#}
+                <textarea class="form-control" id="remark" name="remark" placeholder="请输入转账的订单号或备注信息" autocomplete="off"></textarea>
+            </div>
+        </div>
+
+
+
+    </form>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" id="create_button">提交</button>
+</div>
+
+<script>
+
+    $("#create_button").on('click', function () {
+
+        var data = $("#form_oper").serialize();
+
+        var url = 'dakuan_confirm/{{ tixian_obj.id }}/';
+        $.post(url, data, function (result) {
+            if(!result['status']){
+                toastr['error'](result['message']);
+            }else{
+                toastr['success'](result['message']);
+                $('.modal').modal("hide");
+                table.ajax.reload();
+            }
+        }, 'json')
+
+    })
+
+</script>

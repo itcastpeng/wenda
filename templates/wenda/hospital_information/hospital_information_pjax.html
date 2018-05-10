@@ -1,0 +1,104 @@
+<title>医院信息</title>
+{% csrf_token %}
+<div class="page animation-fade">
+
+    <div class="page-content">
+        <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title">医院信息</h3>
+            </div>
+            <div class="panel-body">
+                <form class="form-horizontal">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="name">医院名称：</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" name="name" id="name" placeholder="医院名称" autocomplete="off" value="{{ hospital_information_obj.name }}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="department_id">医院科室：</label>
+                        <div class="col-sm-1" style="width: 150px">
+                            <select name="department_id" id="department_id" class="form-control">
+                                <option value="">请选择</option>
+                                {% for obj in department_objs %}
+                                <option {% if obj.id == hospital_information_obj.department.id %}selected{% endif %} value="{{ obj.id }}" >{{ obj.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="web_site">医院官网：</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" name="web_site" id="web_site" placeholder="医院官网" autocomplete="off" value="{{ hospital_information_obj.web_site }}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">问答内容方向<small>(多选)</small>：</label>
+                        <div class="col-sm-6">
+                            {% for i in content_direction_choices %}
+                            <div class="checkbox-custom checkbox-primary">
+                                <input type="checkbox" id="content_direction_{{ forloop.counter }}" name="content_direction" value="{{ i.0 }}" autocomplete="off" {% if i.0 in content_direction %}checked{% endif %}>
+                                <label for="content_direction_{{ forloop.counter }}">{{ i.1 }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"></label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" name="content_direction_custom" id="content_direction_custom" placeholder="其他方向" autocomplete="off" value="{% if hospital_information_obj.content_direction_custom %}{{ hospital_information_obj.content_direction_custom }}{% endif %}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" >表达人称角色<small>(多选)</small>：</label>
+                        <div class="col-sm-6">
+                            {% for i in reply_role_choices %}
+                            <div class="checkbox-custom checkbox-primary">
+                                <input type="checkbox" id="reply_role_{{ forloop.counter }}" name="reply_role" value="{{ i.0 }}" autocomplete="off" {% if i.0 in reply_role %}checked{% endif %}>
+                                <label for="reply_role_{{ forloop.counter }}">{{ i.1 }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <div class="col-sm-9 col-sm-offset-1">
+                            <button type="button" class="btn btn-primary" id="save_button">保存</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+
+    if (!{% if hospital_information_objs %}true{% else %}false{% endif %}){
+        toastr['error']("请提交医院信息后在进行后续操作!");
+    }
+
+    $("#save_button").on('click', function () {
+
+        var data = $(".form-horizontal").serialize();
+
+        var url = '{% url "hospital_information" %}update/0/';
+        $.post(url, data, function (result) {
+            if(!result['status']){
+                toastr['error'](result['message']);
+            }else{
+                toastr['success'](result['message']);
+            }
+        }, 'json')
+
+    })
+
+</script>

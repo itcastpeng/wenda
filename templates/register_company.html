@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html class="no-js css-menubar" lang="zh-cn">
+
+    <head>
+        <title>CRM</title>
+        <meta charset="utf-8">
+        <meta name="keywords" content="" />
+        <meta name="description" content="" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <!-- 移动设备 viewport -->
+        <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,minimal-ui">
+        <meta name="author" content="admui.com">
+        <!-- 360浏览器默认使用Webkit内核 -->
+        <meta name="renderer" content="webkit">
+        <!-- 禁止百度SiteAPP转码 -->
+        <meta http-equiv="Cache-Control" content="no-siteapp">
+        <!-- Chrome浏览器添加桌面快捷方式（安卓） -->
+        <link rel="icon" type="image/png" href="/statics/public/images/favicon.png">
+        <meta name="mobile-web-app-capable" content="yes">
+        <!-- Safari浏览器添加到主屏幕（IOS） -->
+        <link rel="icon" sizes="192x192" href="/statics/public/images/apple-touch-icon.png">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="apple-mobile-web-app-title" content="Admui">
+        <!-- Win8标题栏及ICON图标 -->
+        <link rel="apple-touch-icon-precomposed" href="/statics/public/images/apple-touch-icon.png">
+        <meta name="msapplication-TileImage" content="/public/images/app-icon72x72@2x.png">
+        <meta name="msapplication-TileColor" content="#62a8ea">
+        <!-- 样式 -->
+        <link rel="stylesheet" href="/statics/public/themes/classic/base/css/site.css" id="siteStyle">
+        <!--[if lte IE 9]>
+        <![endif]-->
+
+        <link rel="stylesheet" href="/statics/custom/css/base.css">
+
+        <script src="/statics/public/vendor/jquery/jquery.min.js"></script>
+        <script src="/statics/public/vendor/bootstrap/bootstrap.min.js"></script>
+{#        <script src="/statics/plugins/bootstrap/js/bootstrap.min.js"></script>#}
+{#        <script src="/statics/js/jquery-1.12.4.js"></script>#}
+
+        <style>
+            body {
+                background: url(/statics/custom/images/linen.png);
+                font-family: "Microsoft YaHei",Arial,sans-serif;
+                color: #666;
+                overflow-x: hidden;
+            }
+
+        </style>
+
+    </head>
+
+    <body class="site-contabs-open site-menubar-unfold site-menubar-keep ">
+        {% csrf_token %}
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+
+                <div class="panel" id="exampleWizardForm">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">创建新公司</h3>
+                    </div>
+                    <div class="panel-body">
+
+                        <div class="steps steps-sm row" data-plugin="matchHeight" data-by-row="true" role="tablist">
+
+                            <div class="step col-md-4 current" data-target="#exampleAccount" role="tab" aria-expanded="true" style="height: 86px;">
+                                <span class="step-number">1</span>
+                                <div class="step-desc">
+                                    <span class="step-title">公司信息</span>
+                                    <p>设置公司信息</p>
+                                </div>
+                            </div>
+                            <div class="step col-md-4" data-target="#exampleBilling" role="tab" aria-expanded="false" style="height: 86px;">
+                                <span class="step-number">2</span>
+                                <div class="step-desc">
+                                    <span class="step-title">密码设置</span>
+                                    <p>设置登录密码</p>
+                                </div>
+                            </div>
+                            <div class="step col-md-4 disabled" data-target="#exampleGetting" role="tab" aria-expanded="false" style="height: 86px;">
+                                <span class="step-number">3</span>
+                                <div class="step-desc">
+                                    <span class="step-title">个人信息</span>
+                                    <p>设置个人基础信息</p>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="wizard-content">
+                            <div class="wizard-pane active" id="exampleAccount" role="tabpanel" aria-expanded="true">
+                                <form id="exampleAccountForm" novalidate="novalidate" class="fv-form fv-form-bootstrap">
+                                    <input class="hidden" name="type" value="exampleAccountForm" />
+                                    <div class="form-group has-feedback col-lg-12">
+                                        <div class="col-lg-2"></div>
+                                        <div class="col-lg-2">
+                                            <label class="control-label" for="inputCompanyName">公司名称</label>
+                                        </div>
+
+                                        <div class="col-lg-5">
+                                            <input type="text" class="form-control" id="inputCompanyName" placeholder="请输入公司名称" name="company_name">
+                                        </div>
+
+                                    </div>
+
+                                    <div class="form-group has-feedback col-lg-12">
+                                        <div class="col-lg-2"></div>
+                                        <div class="col-lg-2">
+                                            <label class="control-label" for="inputPhone">手机号</label>
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <input type="text" class="form-control" id="inputPhone" name="phone" placeholder="请输入你的手机号">
+                                        </div>
+
+    {#                                        <i class="form-control-feedback" data-fv-icon-for="password" style="display: none;"></i>#}
+    {#                                        <small class="help-block" data-fv-validator="notEmpty" data-fv-for="password" data-fv-result="NOT_VALIDATED" style="display: none;">请填写密码</small>#}
+    {#                                        <small class="help-block" data-fv-validator="different" data-fv-for="password" data-fv-result="NOT_VALIDATED" style="display: none;">密码不能和用户名一致</small>#}
+                                    </div>
+                                    <div class="form-group has-feedback col-lg-12">
+                                        <div class="col-lg-2"></div>
+                                        <div class="col-lg-2">
+                                            <label class="control-label" for="inputAuthCode">验证码</label>
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <input type="text" class="form-control" id="inputAuthCode" name="auth_code" placeholder="请输入短信验证码">
+                                        </div>
+                                        <button type="button" class="btn btn-round btn-warning" onclick="GetAuthCode();" id="buttonGetAuthCode" time=0>获取验证码</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="wizard-pane hidden" id="exampleBilling" role="tabpanel" aria-expanded="false">
+                                <form id="exampleBillingForm" novalidate="novalidate" class="fv-form fv-form-bootstrap">
+                                    <input class="hidden" name="type" value="exampleBillingForm" />
+                                    <div class="form-group has-feedback col-lg-12">
+                                        <div class="col-lg-2"></div>
+                                        <div class="col-lg-2">
+                                            <label class="control-label" for="inputPassword">密码</label>
+                                        </div>
+
+                                        <div class="col-lg-5">
+                                            <input type="password" class="form-control" id="inputPassword" placeholder="请输入密码" name="password">
+                                        </div>
+
+                                    </div>
+
+                                    <div class="form-group has-feedback col-lg-12">
+                                        <div class="col-lg-2"></div>
+                                        <div class="col-lg-2">
+                                            <label class="control-label" for="inputPassword2">确认密码</label>
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <input type="password" class="form-control" id="inputPassword2" name="password2" placeholder="请输入确认密码">
+                                        </div>
+
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="wizard-pane hidden" id="exampleGetting" role="tabpanel" aria-expanded="false">
+                                <form id="exampleGettingForm" novalidate="novalidate" class="fv-form fv-form-bootstrap">
+                                    <input class="hidden" name="type" value="exampleGettingForm" />
+                                    <div class="form-group has-feedback col-lg-12">
+                                        <div class="col-lg-2"></div>
+                                        <div class="col-lg-2">
+                                            <label class="control-label" for="inputUsername">真实姓名</label>
+                                        </div>
+
+                                        <div class="col-lg-5">
+                                            <input type="text" class="form-control" id="inputUsername" placeholder="请输入真实姓名" name="username">
+                                        </div>
+
+                                    </div>
+
+
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="wizard-buttons col-lg-12" style="margin-top: 20px">
+                            <div class="col-lg-4"></div>
+                            <div class="col-lg-4" current_id="exampleAccount" up_id="">
+                                <button class="btn btn-default btn-outline disabled" data-wizard="back" onclick="Up(this);">上一步</button>
+                                <button class="btn btn-primary btn-outline pull-right" data-wizard="next" onclick="Next(this);">下一步</button>
+{#                                <button class="btn btn-success btn-outline pull-right hide" data-wizard="finish" role="button" onclick="Complete();">完成</button>#}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        <script>
+            var setInterval_id;
+            var csrfmiddlewaretoken = $("body input[name='csrfmiddlewaretoken']").val();
+
+
+            function CountDown() {
+                // 验证码倒计时
+                var button_obj = $("#buttonGetAuthCode");
+                var time = button_obj.attr('time');
+
+                if (time > 0){
+                    button_obj.addClass('disabled');
+                    var new_value = time + "秒后, 重新获取验证码";
+                    var new_time = time - 1;
+                    button_obj.html(new_value);
+                    button_obj.attr('time', new_time);
+
+                }else{
+                    clearInterval(setInterval_id);
+                    button_obj.removeClass('disabled');
+                    button_obj.html("获取验证码");
+                }
+
+
+            }
+
+
+            function GetAuthCode() {
+                // 输入手机号获取验证码
+                $("#exampleWizardForm").find('p[class="error-p"]').remove();
+
+                var phone_number = $("#inputPhone").val();
+
+                if (!isNaN(phone_number) && phone_number.length == 11){     // 手机号正确
+                    var post_data = {
+                        'type': "company_register",
+                        'phone_number': phone_number,
+                        'csrfmiddlewaretoken': csrfmiddlewaretoken
+                    };
+
+                    $.post("{% url 'PostAuthCode' %}", post_data, function(data){
+                        if (!data['status']){ // 条件成立的时候则表示有错误信息
+                            for (var key in data['error']){
+                                var p_tag = document.createElement('p');
+                                p_tag.setAttribute('class', 'error-p');
+                                p_tag.innerHTML = data['error'][key];
+                                $("#inputPhone").after(p_tag);
+
+                            }
+                        }else{
+                            $("#buttonGetAuthCode").attr('time', 60);
+                            CountDown();
+                            setInterval_id = setInterval(CountDown, 1000);
+                        }
+                    }, "json");
+                }else{
+                    var p_tag = document.createElement('p');
+                    p_tag.setAttribute('class', 'error-p');
+                    p_tag.innerHTML = "手机号格式不对";
+                    $("#inputPhone").after(p_tag);
+                }
+
+            }
+
+            function Next(ele) {
+                // 点击下一步触发
+
+                $("#exampleWizardForm").find('p[class="error-p"]').remove();
+
+                var step_id = $(ele).parent().attr('current_id');
+
+                if(step_id == "exampleAccount"){    // 填写公司信息、手机号、验证码
+
+                    var post_data = $("#exampleAccountForm").serialize() + "&csrfmiddlewaretoken=" + csrfmiddlewaretoken;
+
+                    $.post("{% url 'register_company' %}", post_data, function(data){
+
+                        if (!data['status']){ // 条件成立的时候则表示有错误信息
+                            for (var key in data['error']){
+                                var p_tag = document.createElement('p');
+                                p_tag.setAttribute('class', 'error-p');
+                                p_tag.innerHTML = data['error'][key];
+                                $("#exampleAccount input[name="+key+"]").after(p_tag);
+
+                            }
+                        }else{
+                            console.log('xxx');
+                            $(ele).parent().attr('current_id', 'exampleBilling');   // 修改 下一步按钮 的父标签的 current_id 属性
+                            $(ele).parent().attr('up_id', 'exampleAccount');   // 修改 下一步按钮 的父标签的 up_id 属性  供点击上一步使用
+                            $("#exampleWizardForm div[data-target='#exampleAccount']").addClass('done');
+                            $("#exampleWizardForm div[data-target='#exampleAccount']").removeClass('current');
+                            $("#exampleAccount").addClass('hidden');
+                            $("#exampleAccount").removeClass('active');
+
+                            $("#exampleBilling").addClass('active');
+                            $("#exampleBilling").removeClass('hidden');
+                            $("#exampleWizardForm div[data-target='#exampleBilling']").addClass('current');
+                            $(ele).prev().removeClass('disabled');
+                        }
+                    }, "json");
+
+                }
+                else if(step_id == "exampleBilling"){      // 填写密码
+                    var post_data = $("#exampleBillingForm").serialize() + "&csrfmiddlewaretoken=" + csrfmiddlewaretoken;
+                    $.post("{% url 'register_company' %}", post_data, function(data){
+
+                        if (!data['status']){ // 条件成立的时候则表示有错误信息
+                            for (var key in data['error']){
+                                var p_tag = document.createElement('p');
+                                p_tag.setAttribute('class', 'error-p');
+                                p_tag.innerHTML = data['error'][key];
+                                $("#exampleBilling input[name="+key+"]").after(p_tag);
+
+                            }
+                        }else{
+                            $(ele).parent().attr('current_id', 'exampleGetting');   // 修改 下一步按钮 的父标签的 current_id 属性
+                            $(ele).parent().attr('up_id', 'exampleBilling');   // 修改 下一步按钮 的父标签的 up_id 属性  供点击上一步使用
+                            $("#exampleWizardForm div[data-target='#exampleBilling']").addClass('done');
+                            $("#exampleWizardForm div[data-target='#exampleBilling']").removeClass('current');
+                            $("#exampleBilling").addClass('hidden');
+                            $("#exampleBilling").removeClass('active');
+                            $("#exampleGetting").addClass('active');
+                            $("#exampleGetting").removeClass('hidden');
+                            $("#exampleWizardForm div[data-target='#exampleGetting']").addClass('current');
+                        }
+
+                    }, "json");
+                }else if(step_id == "exampleGetting"){      // 填写真实姓名
+                    var post_data = $("#exampleGettingForm").serialize() + "&csrfmiddlewaretoken=" + csrfmiddlewaretoken;
+                    $.post("{% url 'register_company' %}", post_data, function(data){
+
+                        if (!data['status']){ // 条件成立的时候则表示有错误信息
+                            for (var key in data['error']){
+                                var p_tag = document.createElement('p');
+                                p_tag.setAttribute('class', 'error-p');
+                                p_tag.innerHTML = data['error'][key];
+                                $("#exampleGetting input[name="+key+"]").after(p_tag);
+
+                            }
+                        }else{
+                            location.href = "/"
+                        }
+
+                    }, "json");
+                }
+            }
+
+            function Up(ele) {
+                // 点击上一步触发
+                var step_id = $(ele).parent().attr('up_id');
+
+                if (step_id == "exampleAccount"){       // 退回步骤一  输入公司名、手机号、验证码
+
+                    $("#exampleBilling").addClass('hidden');
+                    $("#exampleBilling").removeClass('active');
+
+                    $("#exampleAccount").addClass('active');
+                    $("#exampleAccount").removeClass('hidden');
+
+                    $("#exampleWizardForm div[data-target='#exampleBilling']").addClass('disabled');
+                    $("#exampleWizardForm div[data-target='#exampleBilling']").removeClass('current');
+                    $("#exampleWizardForm div[data-target='#exampleBilling']").removeClass('done');
+
+                    $(ele).parent().attr('current_id', 'exampleAccount');   // 修改 下一步按钮 的父标签的 current_id 属性
+                    $(ele).parent().attr('up_id', '');   // 修改 下一步按钮 的父标签的 up_id 属性  供点击上一步使用
+                    $(ele).addClass('disabled')
+
+                }else if(step_id == "exampleBilling"){      // 退回步骤二  输入密码
+                    $("#exampleGetting").addClass('hidden');
+                    $("#exampleGetting").removeClass('active');
+
+                    $("#exampleBilling").addClass('active');
+                    $("#exampleBilling").removeClass('hidden');
+
+                    $("#exampleWizardForm div[data-target='#exampleGetting']").addClass('disabled');
+                    $("#exampleWizardForm div[data-target='#exampleGetting']").removeClass('current');
+
+                    $(ele).parent().attr('current_id', 'exampleBilling');   // 修改 下一步按钮 的父标签的 current_id 属性
+                    $(ele).parent().attr('up_id', 'exampleAccount');   // 修改 下一步按钮 的父标签的 up_id 属性  供点击上一步使用
+                }
+
+            }
+
+        </script>
+    </body>
+</html>
+

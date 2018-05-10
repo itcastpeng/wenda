@@ -1,0 +1,176 @@
+<title>财务管理</title>
+
+
+<style>
+
+    .btn.focus, .btn:focus, .btn:hover {
+        color: white;
+    }
+    .search_form>div{
+        margin-bottom: 10px;
+    }
+
+    .search_form label{
+        width: 85px;
+        text-align: right;
+    }
+
+    .search_form input, .search_form select{
+        display: inline-block;
+        width: 300px
+    }
+    .search_form select{
+        display: inline-block;
+        width: 100px
+    }
+
+    #create_date, #stop_date{
+        width: 150px;
+    }
+
+    tbody{
+        text-align: center;
+    }
+
+</style>
+
+
+{% csrf_token %}
+<div class="page animation-fade page-index">
+    <div class="page-content">
+        <div class="panel" style="padding: 10px; height: auto">
+            <form class="form-horizontal search_form">
+                <div>
+                    <label for="search_engine">类型：</label>
+                    <select class="form-control" name="account_type" id="account_type" style="width: auto">
+                        <option value="">全部</option>
+                        {% for i in type_choices %}
+                            <option value="{{ i.0 }}">{{ i.1 }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label for="create_date" style="width: 130px">按时间段查询：</label>
+                    <input class="Wdate form-control" id="create_date" name="create_date" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" type="text" placeholder="开始时间">
+                    -
+                    <input class="Wdate form-control" id="stop_date" name="stop_date" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" type="text" placeholder="结束时间">
+
+                </div>
+                <div>
+                    <label for="create_date">搜索：</label>
+                    <input class="form-control" id="username" name="username" placeholder="用户名和操作人模糊搜索"/>
+                </div>
+
+                <div style="position: absolute; bottom:0; right: 20px;">
+                    <button type="button" class="btn btn-primary" id="search_button"><i class="icon fa-search" aria-hidden="true"></i>搜索</button>
+                </div>
+            </form>
+        </div>
+        <div class="panel">
+            <div class="panel-body">
+
+                <table class="table table-bordered table-hover dataTable table-striped width-full text-nowrap" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>编号</th>
+                            <th>用户名</th>
+                            <th>类型</th>
+                            <th>金额</th>
+                            <th>充值</th>
+                            <th>赠送</th>
+                            <th>创建时间</th>
+                            <th>备注</th>
+                            <th>操作人</th>
+                        </tr>
+                    </thead>
+{#                    <tbody>#}
+{##}
+{#                    </tbody>#}
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    {# 在模态对话框关闭时清空数据 #}
+    $(".modal").on("hidden.bs.modal", function() {
+        $(this).removeData("bs.modal");
+        $(this).find(".modal-content").children().remove();
+        table.ajax.reload(null, false);
+    });
+
+    var table = $('#dataTable').DataTable({
+        language: {
+            "sProcessing": "处理中...",
+            "sLengthMenu": "每页显示 _MENU_ 条",
+            "sZeroRecords": "没有匹配结果",
+            "sInfo": "第 _START_ 至 _END_ 项，共 _TOTAL_ 项",
+            "sInfoEmpty": "第 0 至 0 项，共 0 项",
+            "sInfoFiltered": "",
+            "sInfoPostFix": "",
+            "sSearch": "搜索:",
+            "sUrl": "",
+            "sEmptyTable": "表中数据为空",
+            "sLoadingRecords": "载入中...",
+            "sInfoThousands": ",",
+            "oPaginate": {
+                "sFirst": "首页",
+                "sPrevious": "上页",
+                "sNext": "下页",
+                "sLast": "末页"
+            },
+            "oAria": {
+                "sSortAscending": ": 以升序排列此列",
+                "sSortDescending": ": 以降序排列此列"
+            }
+        },
+        "processing": true,
+        "serverSide": true,  // 服务器模式
+        "bFilter": false,   // 去掉搜索框
+{#        "ajax": "?type=ajax_json", // ajax 取数据#}
+        "destroy": true,
+{#        "sScrollX":"100%",#}
+
+
+        "order": [[ 6, 'desc' ]],
+
+        "columnDefs": [
+            {
+                "targets": [0],     // 这些列禁止搜索
+                "searchable": false,
+                "sortable": false       // 禁止排序
+            }
+        ],
+
+        ajax: {
+            "url": "?type=ajax_json",
+{#            "data": []#}
+        }
+    });
+
+
+    {# 搜索按钮被点击 #}
+    $("#search_button").click(function () {
+        var search_data = $(".search_form").serialize();
+        var get_url = "?type=ajax_json&" + search_data;
+
+        table.ajax.url(get_url);
+        table.draw();
+
+    });
+
+    {# 搜框中的input标签 回车键被触发 #}
+    $(".search_form input").keydown(function () {
+        var e=window.event||arguments.callee.caller.arguments[0];
+        if(e.keyCode==13){
+            $("#search_button").click();
+        }
+    });
+
+    {# 搜框中的select标签 回车键被触发 #}
+    $(".search_form select").change(function () {
+        $("#search_button").click();
+    });
+</script>

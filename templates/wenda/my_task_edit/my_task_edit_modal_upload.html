@@ -1,0 +1,158 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">提交任务内容</h4>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal" id="formOper" onsubmit="return false">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label class="col-md-1 control-label">问答问题 <span class="form-span-active">*</span></label>
+            <div class="col-md-10">
+                <div id="title"></div>
+                <textarea name="title" class="hidden" ></textarea>
+{#                <textarea rows="10" class="form-control" name="title" id="title" placeholder="填写问答问题,每行一条,与下面的答案对应"><p style="color: red">xxx</p></textarea>#}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-1 control-label" for="content">问答答案 <span class="form-span-active">*</span></label>
+            <div class="col-md-10">
+                <div id="content"></div>
+                <textarea name="content" class="hidden" ></textarea>
+{#                <textarea rows="10" class="form-control" name="content" id="content" placeholder="填写问答答案,每行一条, 与上面的问题对应"></textarea>#}
+            </div>
+        </div>
+    </form>
+
+</div>
+<div class="modal-footer">
+    <p style="display: inline-block; color: red; margin-right: 5px" id="insert_number"></p>
+    <button type="button" class="btn btn-primary" id="create_button">提交</button>
+</div>
+
+<script>
+
+    $(document).ready(function() {
+        $('#title').summernote({
+            height: 200,
+            toolbar: false
+        });
+
+        $('#content').summernote({
+            height: 200,
+            toolbar: false
+        });
+    });
+
+
+    $("#exampleFormModal .modal-dialog").css("width", "85%");
+
+    // 统计有多少个p标签
+    function count_lines(values) {
+        var value_list = values.replace(/<p>/g, "").replace(/<br>/g, "").replace(/&nbsp;/g, "").split("</p>");
+        var value_lenght = 0;
+        for (var i = 0; i < value_list.length; i ++) {
+            if (value_list[i]) {
+                value_lenght += 1
+            }
+        }
+        return value_lenght;
+    }
+
+    $(".note-editable").mouseleave(function () {
+        var title = $('#title').summernote('code');
+        var title_length = count_lines(title);
+        var content = $('#content').summernote('code');
+        var content_length = count_lines(content);
+
+        $("#insert_number").html("问题共填写 " + title_length + " 条, 答案共填写 " + content_length + " 条")
+    });
+
+    $("#create_button").on('click', function () {
+
+        var count = 1;
+        var timing_task = window.setInterval(function () {
+            if(count == 5){
+                count = 1
+            }
+            var msg = "内容正在检测中,请稍等";
+            for(var i = 0; i < count; i ++){
+                msg += "."
+            }
+            count += 1;
+
+            $("#insert_number").html(msg)
+        },500);
+        $("#create_button").attr("disabled", true);
+
+{#        #}
+        var title = $('#title').summernote('code').replace(/<p>/g, "").replace(/<br>/g, "").replace(/&nbsp;/g, "").replace(/<font color="red">/g, "").replace(/<\/font>/g, "").split("</p>").join("\n");
+        var content = $('#content').summernote('code').replace(/<p>/g, "").replace(/<br>/g, "").replace(/&nbsp;/g, "").replace(/<font color="red">/g, "").replace(/<\/font>/g, "").split("</p>").join("\n");;
+        var csrfmiddlewaretoken = $("#formOper input[name='csrfmiddlewaretoken']").val();
+{#        var form_data = "title=" + title + "&content=" + content + "&csrfmiddlewaretoken=" + csrfmiddlewaretoken;#}
+
+        var form_data = {
+            title: title,
+            sss: "sss;sfsdfds;fds",
+            content: content
+        };
+
+        var form_data_str = "form_data=" + escape(JSON.stringify(form_data)) + "&csrfmiddlewaretoken=" + csrfmiddlewaretoken;
+
+
+        var url = "upload/{{ o_id }}/";
+        $.post(url, form_data_str, function (result) {
+
+            window.clearInterval(timing_task);
+            $("#insert_number").html("");
+            $("#create_button").attr("disabled", false);
+
+            if(!result['status']){
+                if (result["data"]){
+                    var title_err_name_list = result['data']["title_err_name_list"];
+                    var content_err_name_list = result['data']["content_err_name_list"];
+
+                    $('#title').summernote('code', $('#title').summernote('code').replace(/<font color="red">/g, "").replace(/<\/font>/g, ""));
+                    $('#content').summernote('code', $('#content').summernote('code').replace(/<font color="red">/g, "").replace(/<\/font>/g, ""));
+
+                    if (title_err_name_list.length > 0) {
+                        toastr['error']("问题中存在敏感词");
+                        var value = $('#title').summernote('code');
+                        for (var index = 0; index < title_err_name_list.length; index++){
+                            var re = new RegExp(title_err_name_list[index], "g");
+                            var n_str = "<font color='red'>" + title_err_name_list[index] + "</font>";
+                            var value = value.replace(re, n_str);
+                        }
+                        $('#title').summernote('code', value);
+                    }
+
+                    if (content_err_name_list.length > 0) {
+                        toastr['error']("答案中存在敏感词");
+                        var value = $('#content').summernote('code');
+                        for (var index = 0; index < content_err_name_list.length; index++){
+                            var re = new RegExp(content_err_name_list[index], "g");
+                            var n_str = "<font color='red'>" + content_err_name_list[index] + "</font>";
+                            var value = value.replace(re, n_str);
+                        }
+                        $('#content').summernote('code', value);
+
+                    }
+                }else{
+                    toastr['error'](result['message']);
+                }
+
+
+
+            }else{
+                toastr['success'](result['message']);
+                $('.modal').modal("hide");
+                table.ajax.reload();
+            }
+        }, 'json')
+
+    })
+
+</script>

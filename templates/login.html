@@ -1,0 +1,159 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8">
+        <title>登录{% if request.get_host == 'wenda.zhugeyingxiao.com' %} - 诸葛营销{% endif %}</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" type="image/png" href="/statics/public/images/zgwd.ico">
+        <link href="/statics/custom/css/bootstrap.min.css"  rel="stylesheet" media="screen">
+        <link href="/statics/custom/css/login_base.css" rel="stylesheet">
+        <link href="/statics/custom/css/reg_login.css" rel="stylesheet">
+        <link href="/statics/custom/css/base.css" rel="stylesheet">
+        <script src="/statics/custom/js/jquery-1.10.2.min.js"></script>
+
+    </head>
+	<body id="login">
+
+		<div class="container">
+            <div class="row">
+				<div class="col-lg-4 col-lg-offset-4">
+					<a class="reg-logo" href="/" style="
+                        {% if request.get_host == 'wenda.zhugeyingxiao.com' %}
+                            background: url(/statics/custom/images/reglogo.png) no-repeat;
+                        {% else %}
+                            background: url(/statics/custom/images/reglogo_qudao1.png) no-repeat;
+{#                            background: url(/statics/custom/images/reglogo.png) no-repeat;#}
+                        {% endif %}
+                    "></a>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-6 col-lg-offset-3">
+
+					<div style="margin-top:10px;">
+					    <div id="system-message-username" class="system-message-error" style="display:none"></div>
+                        <div id="system-message-pwd" class="system-message-error" style="display:none"></div>
+                        <div id="system-message-verifyCode" class="system-message-error" style="display:none"></div>
+                    </div>
+				</div>
+			</div>
+
+
+			<div class="row">
+			<div class="col-lg-6 col-lg-offset-3">
+				<div class="panel panel-default">
+
+                    <div class="panel-heading">
+					  	<div class="container-fluid">
+					  		<div class="row">
+					  			<div class="col-lg-12">
+					  				<h3>登录</h3>
+					  			</div>
+					  		</div>
+					  	</div>
+					  </div>
+                    <div class="panel-body">
+                        <form class="form-reg" id="form" role="form" method="post">
+                            {% csrf_token %}
+                            <div class="container-fluid">
+                                <div class="row">
+									<div class="col-lg-12">
+									  <div class="form-group form-group-email">
+									    <input class="form-control" placeholder="请输入用户名" name="username" type="text" autocomplete="off" />
+                                      </div>
+									</div>
+								</div>
+							</div>
+                            <div class="container-fluid">
+                                <div class="row">
+									<div class="col-lg-12">
+									  <div class="form-group">
+									    <input class="form-control" placeholder="请输入密码" name="password" type="password" autocomplete="off" />
+                                      </div>
+									</div>
+								</div>
+							</div>
+
+							<div class="container-fluid">
+								<div class="row">
+									<div class="col-lg-12">
+									  <div class="form-group captcha">
+									  		<div class="row">
+									  			<div class="col-lg-5 pull-left">
+									  			    <input class="form-control" placeholder="请输入验证码" name="check_code" id="check_code" type="text" autocomplete="off" />
+                                                </div>
+									  			<div class="col-lg-3 pull-left" style="margin: 5px 0">
+									  			    <img alt="点击换图" title="点击换图" style="cursor:pointer;width:120px;" id="check_code_img" class="img-captcha" src="{% url 'check_code' %}" onclick="" />
+                                                </div>
+									  			<div class="col-lg-4 pull-left" style="margin: 5px 0">
+									  				<h4>看不清？点击图片</h4>
+									  			</div>
+									  		</div>
+									  </div>
+									</div>
+								</div>
+							</div>
+                            <div class="panel-footer">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-lg-8"></div>
+                                        <div class="col-lg-4">
+                                            <input class="btn btn-success btn-lg btn-login pull-right" type="button" onclick="Submit();" value="登录">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+						</form>
+					  </div>
+
+
+			</div>
+
+			</div>
+			</div>
+
+		</div>
+
+        <script>
+            $(function () {
+                $("#check_code_img").click(function () {
+                    var timestamp = Date.parse(new Date());
+                    $("#check_code_img").attr('src', '{% url 'check_code' %}?'+timestamp)
+                })
+            });
+
+            
+            function Submit() {
+                $("#form").find('p[class="error-p"]').remove();
+
+                var csrfmiddlewaretoken = $("body input[name='csrfmiddlewaretoken']").val();
+                var post_data = $("#form").serialize() + "&csrfmiddlewaretoken=" + csrfmiddlewaretoken;
+
+                $.post("{% url 'login' %}", post_data, function(data){
+
+                        if (!data['status']){ // 条件成立的时候则表示有错误信息
+                            for (var key in data['error']){
+                                var p_tag = document.createElement('p');
+                                p_tag.setAttribute('class', 'error-p');
+                                p_tag.innerHTML = data['error'][key];
+                                $("#form input[name="+key+"]").after(p_tag);
+                            }
+                        }else{
+                            location.href = "/";
+                        }
+
+                    }, "json");
+            }
+
+            $("#form input").keydown(function () {
+                var e=window.event||arguments.callee.caller.arguments[0];
+                if(e.keyCode==13){
+                    Submit();
+                }
+            })
+
+        </script>
+    </body>
+</html>

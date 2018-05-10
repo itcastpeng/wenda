@@ -1,0 +1,140 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">添加点击策略规则</h4>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="name">策略名称</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control input-md" id="name" name="name" placeholder="请输入策略名称" autocomplete="off">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="content">策略规则</label>
+            <div class="col-md-8">
+{#                <input type="text" class="form-control input-md" id="url" name="url" placeholder="请输入网址" autocomplete="off">#}
+                <table class="table table-bordered table-condensed" style="text-align: center">
+                    <thead>
+                        <tr>
+                            <td>时间段</td>
+                            <td>所占百分比（当前空闲百分比:<span id="free_percent" style="color: red">100</span>%)</td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>0-1点</td><td name="time0">0</td><td><button type="button" class="btn btn-success btn-xs"><i class="fa fa-plus fa-2" aria-hidden="true"></i></button> <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-minus" aria-hidden="true"></i></button></td></tr>
+                        <tr><td>1-2点</td><td name="time1">0</td><td><button type="button" class="btn btn-success btn-xs"><i class="fa fa-plus fa-2" aria-hidden="true"></i></button> <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-minus" aria-hidden="true"></i></button></td></tr>
+                        <tr><td>2-3点</td><td name="time2">0</td><td><button type="button" class="btn btn-success btn-xs"><i class="fa fa-plus fa-2" aria-hidden="true"></i></button> <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-minus" aria-hidden="true"></i></button></td></tr>
+                        <tr><td>3-4点</td><td name="time3">0</td><td><button type="button" class="btn btn-success btn-xs"><i class="fa fa-plus fa-2" aria-hidden="true"></i></button> <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-minus" aria-hidden="true"></i></button></td></tr>
+                        <tr><td>4-5点</td><td name="time4">0</td><td><button type="button" class="btn btn-success btn-xs"><i class="fa fa-plus fa-2" aria-hidden="true"></i></button> <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-minus" aria-hidden="true"></i></button></td></tr>
+                        <tr><td>5-6点</td><td name="time5">0</td><td><button type="button" class="btn btn-success btn-xs"><i class="fa fa-plus fa-2" aria-hidden="true"></i></button> <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-minus" aria-hidden="true"></i></button></td></tr>
+                        <tr><td>6-7点</td><td name="time6">0</td><td><button type="button" class="btn btn-success btn-xs"><i class="fa fa-plus fa-2" aria-hidden="true"></i></button> <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-minus" aria-hidden="true"></i></button></td></tr>
+                        <tr><td>7-8点</td><td name="time7">0</td><td><button type="button" class="btn btn-success btn-xs"><i class="fa fa-plus fa-2" aria-hidden="true"></i></button> <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-minus" aria-hidden="true"></i></button></td></tr>
+                        <tr><td>8-9点</td><td name="time8">0</td><td><button type="button" class="btn btn-success btn-xs"><i class="fa fa-plus fa-2" aria-hidden="true"></i></button> <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-minus" aria-hidden="true"></i></button></td></tr>
+                        <tr><td>9-10点</td><td name="time9">0</td><td><button type="button" class="btn btn-success btn-xs"><i class="fa fa-plus fa-2" aria-hidden="true"></i></button> <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-minus" aria-hidden="true"></i></button></td></tr>
+                        <tr><td>10-11点</td><td name="time10">0</td><td><button type="button" class="btn btn-success btn-xs"><i class="fa fa-plus fa-2" aria-hidden="true"></i></button> <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-minus" aria-hidden="true"></i></button></td></tr>
+                        <tr><td>11-12点</td><td name="time11">0</td><td><button type="button" class="btn btn-success btn-xs"><i class="fa fa-plus fa-2" aria-hidden="true"></i></button> <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-minus" aria-hidden="true"></i></button></td></tr>
+                        <tr><td>12-13点</td><td name="time12">0</td><td><button type="button" class="btn btn-success btn-xs"><i class="fa fa-plus fa-2" aria-hidden="true"></i></button> <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-minus" aria-hidden="true"></i></button></td></tr>
+                        <tr><td>13-14点</td><td name="time13">0</td><td><button type="button" class="btn btn-success btn-xs"><i class="fa fa-plus fa-2" aria-hidden="true"></i></button> <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-minus" aria-hidden="true"></i></button></td></tr>
+                        <tr><td>14-15点</td><td name="time14">0</td><td><button type="button" class="btn btn-success btn-xs"><i class="fa fa-plus fa-2" aria-hidden="true"></i></button> <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-minus" aria-hidden="true"></i></button></td></tr>
+                        <tr><td>15-16点</td><td name="time15">0</td><td><button type="button" class="btn btn-success btn-xs"><i class="fa fa-plus fa-2" aria-hidden="true"></i></button> <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-minus" aria-hidden="true"></i></button></td></tr>
+                        <tr><td>16-17点</td><td name="time16">0</td><td><button type="button" class="btn btn-success btn-xs"><i class="fa fa-plus fa-2" aria-hidden="true"></i></button> <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-minus" aria-hidden="true"></i></button></td></tr>
+                        <tr><td>17-18点</td><td name="time17">0</td><td><button type="button" class="btn btn-success btn-xs"><i class="fa fa-plus fa-2" aria-hidden="true"></i></button> <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-minus" aria-hidden="true"></i></button></td></tr>
+                        <tr><td>18-19点</td><td name="time18">0</td><td><button type="button" class="btn btn-success btn-xs"><i class="fa fa-plus fa-2" aria-hidden="true"></i></button> <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-minus" aria-hidden="true"></i></button></td></tr>
+                        <tr><td>19-20点</td><td name="time19">0</td><td><button type="button" class="btn btn-success btn-xs"><i class="fa fa-plus fa-2" aria-hidden="true"></i></button> <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-minus" aria-hidden="true"></i></button></td></tr>
+                        <tr><td>20-21点</td><td name="time20">0</td><td><button type="button" class="btn btn-success btn-xs"><i class="fa fa-plus fa-2" aria-hidden="true"></i></button> <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-minus" aria-hidden="true"></i></button></td></tr>
+                        <tr><td>21-22点</td><td name="time21">0</td><td><button type="button" class="btn btn-success btn-xs"><i class="fa fa-plus fa-2" aria-hidden="true"></i></button> <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-minus" aria-hidden="true"></i></button></td></tr>
+                        <tr><td>22-23点</td><td name="time22">0</td><td><button type="button" class="btn btn-success btn-xs"><i class="fa fa-plus fa-2" aria-hidden="true"></i></button> <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-minus" aria-hidden="true"></i></button></td></tr>
+                        <tr><td>23-24点</td><td name="time23">0</td><td><button type="button" class="btn btn-success btn-xs"><i class="fa fa-plus fa-2" aria-hidden="true"></i></button> <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-minus" aria-hidden="true"></i></button></td></tr>
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="hidden">
+            <input type="text">
+            <input type="button">
+        </div>
+
+    </form>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" id="create_button">添加</button>
+</div>
+
+<script>
+    $("#exampleFormModal .modal-dialog").css("width", "700px")
+
+    {# 计算百分比的总和 #}
+    function SumPercent() {
+        var sum_num = 0;
+        for (var i=0; i<24; i++){
+            var n = $("td[name='time" + i + "']").html();
+            sum_num += parseInt(n);
+        }
+
+        return sum_num
+    }
+
+    {# 增加百分比分配 #}
+    $("table .btn-success").click(function () {
+        var sum_num = SumPercent();
+        if (sum_num < 100){
+            var td_value_tag = $(this).parent("td").prev("td");
+            var o_num = td_value_tag.html();
+            td_value_tag.html(parseInt(o_num) + 1);
+
+            var free_percent = $("#free_percent");
+            free_percent.html(parseInt(free_percent.html()) - 1)
+        }else{
+            toastr['warning']("总百分比已经达到百分之百");
+        }
+
+    });
+
+    {# 减少百分比分配 #}
+    $("table .btn-danger").click(function () {
+        var td_value_tag = $(this).parent("td").prev("td");
+        var o_num = td_value_tag.html();
+        if (parseInt(o_num) > 0){
+            td_value_tag.html(parseInt(o_num) - 1);
+
+            var free_percent = $("#free_percent");
+            free_percent.html(parseInt(free_percent.html()) + 1)
+        }
+    });
+
+    $("#create_button").click(function () {
+
+        var click_strategy_content = "";
+        var click_strategy_content_array = [];
+        for (var i=0; i<24; i++){
+            var n = $("td[name='time" + i + "']").html();
+            click_strategy_content_array.push(n);
+        }
+
+        var data = $(".form-horizontal").serialize() + "&click_strategy_content=" + click_strategy_content_array.join(",");
+
+        var url = 'create/0/';
+        $.post(url, data, function (result) {
+            if(!result['status']){
+                toastr['error'](result['message']);
+            }else{
+                toastr['success'](result['message']);
+                $('.modal').modal("hide");
+                table.ajax.reload();
+            }
+        }, 'json')
+
+    })
+
+</script>

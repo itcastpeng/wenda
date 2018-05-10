@@ -1,0 +1,46 @@
+
+<style>
+    .row label{
+        text-align: right;
+    }
+
+</style>
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">医院基本信息</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <label class="col-md-4">医院名称: </label>
+        <p class="col-md-7">{{ hospital_information_obj.name }}</p>
+    </div>
+
+    <div class="row">
+        <label class="col-md-4">科室: </label>
+        <p class="col-md-7">{{ hospital_information_obj.department.name }}</p>
+    </div>
+
+    <div class="row">
+        <label class="col-md-4">医院官网: </label>
+        <p class="col-md-7">{{ hospital_information_obj.web_site }}</p>
+    </div>
+
+    <div class="row">
+        <label class="col-md-4">问答内容方向: </label>
+        <p class="col-md-7">{{ content_direction }}</p>
+    </div>
+    <div class="row">
+        <label class="col-md-4">表达人称角色: </label>
+        <p class="col-md-7">{{ reply_role }}</p>
+    </div>
+</div>
+
+<script>
+
+    {# 调整模态对话框的大小 #}
+    $("#exampleFormModal .modal-dialog").css({"width": "600px"});
+
+</script>

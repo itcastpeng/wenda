@@ -1,0 +1,64 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">修改角色</h4>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="name">角色名称</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control input-md" id="name" name="name" placeholder="请输入角色名称" autocomplete="off" value="{{ role_obj.name }}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="rights_ids">开通权限</label>
+            <div class="col-md-8" style="margin-top: 30px;">
+                <div id="jstree"></div>
+            </div>
+        </div>
+        <div class="hidden">
+            <input type="text">
+            <input type="button">
+        </div>
+    </form>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" id="create_button">修改</button>
+</div>
+
+<script>
+
+    $('#jstree').jstree({
+        "plugins" : ["checkbox"],   // 添加可以 checkbox 标签
+
+        'core' : {
+            'data' : {
+                "url" : "jstree_json_data/0/",
+                "dataType" : "json"
+            }
+
+        }
+    });
+
+    $("#create_button").on('click', function () {
+        var instance = $('#jstree').jstree(true);
+        var post_data = $(".form-horizontal").serialize() + "&access_rules=" + instance.get_selected();
+
+        var url = 'update/{{ role_obj.id }}/';
+        $.post(url, post_data, function (result) {
+            if(!result['status']){
+                toastr['error'](result['message']);
+            }else{
+                toastr['success'](result['message']);
+                $('.modal').modal("hide");
+                table.ajax.reload();
+            }
+        }, 'json')
+
+    })
+
+</script>

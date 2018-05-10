@@ -1,0 +1,72 @@
+<title>全局设置</title>
+{% csrf_token %}
+<div class="page animation-fade">
+
+    <div class="page-content">
+        <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title">全局设置</h3>
+            </div>
+            <div class="panel-body">
+                <form class="form-horizontal">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="new_wenda_money">发布一个新问答消耗多少个问答币：</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" name="new_wenda_money" id="new_wenda_money" placeholder="发布一个新问答消耗多少个问答币" autocomplete="off" value="{{ global_settings_obj.new_wenda_money }}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="old_wenda_money">发布一个老问答消耗多少个问答币：</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" name="old_wenda_money" id="old_wenda_money" placeholder="发布一个老问答消耗多少个问答币" autocomplete="off" value="{{ global_settings_obj.old_wenda_money }}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="xie_wenda_money">写问答内容收益多少个问答币：</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" name="xie_wenda_money" id="xie_wenda_money" placeholder="写问答内容收益多少个问答币" autocomplete="off" value="{{ global_settings_obj.xie_wenda_money }}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="fa_wenda_money">发布问答收益多少个问答币：</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" name="fa_wenda_money" id="fa_wenda_money" placeholder="发布问答收益多少个问答币" autocomplete="off" value="{{ global_settings_obj.fa_wenda_money }}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-9 col-sm-offset-5">
+                            <button type="button" class="btn btn-primary" id="save_button">保存</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+
+
+    $("#save_button").on('click', function () {
+
+        var data = $(".form-horizontal").serialize();
+
+        var url = '{% url "global_settings" %}?oper_type=update';
+        $.post(url, data, function (result) {
+            if(!result['status']){
+                toastr['error'](result['message']);
+            }else{
+                toastr['success'](result['message']);
+            }
+        }, 'json')
+
+    })
+
+</script>

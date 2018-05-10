@@ -1,0 +1,228 @@
+<title>编辑内容详情</title>
+
+<style>
+
+    .btn.focus, .btn:focus, .btn:hover {
+        color: white;
+    }
+
+    .search_form>div{
+        margin-bottom: 10px;
+    }
+
+    .search_form label{
+
+        width: 85px;
+        text-align: right;
+    }
+
+    .search_form input, .search_form select{
+        display: inline-block;
+        width: 300px
+    }
+    .search_form select{
+        display: inline-block;
+        width: 100px
+    }
+
+    #create_date{
+        width: 120px;
+    }
+    tbody{
+        text-align: center;
+    }
+
+</style>
+
+{% csrf_token %}
+<div class="page animation-fade page-index">
+    <div class="page-content">
+        {% csrf_token %}
+
+        <div class="panel" style="padding: 10px; height: auto" onsubmit="return false">
+            <form class="form-horizontal search_form">
+                <div>
+                    {% if role_id in guanli_role_list or role_id == 13 %}
+                    <label for="task__task__client_user_id">用户名称：</label>
+                    <select class="form-control select2-hidden-accessible" data-plugin="select2" tabindex="-1" aria-hidden="true" id="task__task__client_user_id" name="task__task__client_user_id">
+                        <option value="">全部</option>
+                        {% for user in user_data %}
+                            <option value="{{ user.task__task__client_user_id }}">{{ user.task__task__client_user__username }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label for="task_id">任务名称：</label>
+                    <select class="form-control" name="task_id" id="task_id">
+                        <option value="">全部</option>
+                        {% for obj in edit_task_management_objs %}
+                            <option value="{{ obj.id }}">{{ obj.task.client_user.username }}-{{ obj.id }}</option>
+                        {% endfor %}
+                    </select>
+                    {% endif %}
+
+                    <label for="status">状态：</label>
+                    <select class="form-control" name="status" id="status">
+                        <option value="">全部</option>
+                        {% for i in status_choices %}
+                            <option value="{{ i.0 }}" {% if i.0 == 2 %}selected{% endif %}>{{ i.1 }}</option>
+                        {% endfor %}
+                    </select>
+
+
+                </div>
+                <div>
+                    <label for="title">搜索：</label>
+                    <input class="form-control" name="title" id="title" type="text" placeholder="问题或链接模糊搜索" />
+
+                </div>
+                <div style="position: absolute; bottom:0; right: 20px;">
+                    <button type="button" class="btn btn-primary" id="search_button"><i class="icon fa-search" aria-hidden="true"></i>搜索</button>
+                </div>
+
+            </form>
+        </div>
+        <div class="panel" style="height: 100%;">
+            <div class="panel-body">
+                <div class="col-md-12 form-group" style="margin-bottom: 10px">
+                    {% if role_id == 14 %}
+                        <button id="downloadExcel" type="button" class="btn btn-primary pull-left margin-right-5">
+                            <i class="icon fa-download" aria-hidden="true"></i> 下载报表
+                        </button>
+                    {% endif %}
+                    {% if role_id in guanli_role_list %}
+                        <button type="button" href="rengong_add/0/" data-toggle="modal" data-target="#exampleFormModal" class="btn btn-primary pull-left margin-right-5">
+                            <i class="icon wb-plus" aria-hidden="true"></i> 新增人工操作老问答
+                        </button>
+                    {% endif %}
+
+                </div>
+
+                <table class="table table-bordered table-hover dataTable table-striped" id="dataTable">
+                    <thead>
+                        <tr>
+                            <td>编号</td>
+                            <td>客户名称</td>
+                            <td>状态</td>
+                            <td>问题</td>
+                            <td>答案</td>
+                            <td>修改次数</td>
+                            <td>更新时间</td>
+                            <td>操作</td>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+        {# 在模态对话框关闭时清空数据 #}
+    $(".modal").on("hidden.bs.modal", function() {
+        $(this).removeData("bs.modal");
+        $(this).find(".modal-content").children().remove();
+    });
+
+    var table = $('#dataTable').DataTable({
+        language: {
+            "sProcessing": "处理中...",
+            "sLengthMenu": "每页显示 _MENU_ 条",
+            "sZeroRecords": "没有匹配结果",
+            "sInfo": "第 _START_ 至 _END_ 项，共 _TOTAL_ 项",
+            "sInfoEmpty": "第 0 至 0 项，共 0 项",
+            "sInfoFiltered": "",
+            "sInfoPostFix": "",
+            "sSearch": "搜索:",
+            "sUrl": "",
+            "sEmptyTable": "表中数据为空",
+            "sLoadingRecords": "载入中...",
+            "sInfoThousands": ",",
+            "oPaginate": {
+                "sFirst": "首页",
+                "sPrevious": "上页",
+                "sNext": "下页",
+                "sLast": "末页"
+            },
+            "oAria": {
+                "sSortAscending": ": 以升序排列此列",
+                "sSortDescending": ": 以降序排列此列"
+            }
+        },
+        "processing": true,
+        "serverSide": true,  // 服务器模式
+        "ajax": "?type=ajax_json", // ajax 取数据
+        "bFilter": false,   // 去掉搜索框
+        "pageLength": 25,      // 默认显示多少条
+        "destroy": true,
+        "aaSorting": [[ 6, "desc" ]],
+        "columnDefs": [
+            {
+                "targets": [0],     // 这些列禁止搜索
+                "searchable": false,
+{#                "visible": false       // 不可见#}
+            }
+        ]
+
+    });
+
+
+    {# 搜索按钮被点击 #}
+    $("#search_button").click(function () {
+        var search_data = $(".search_form").serialize();
+        var get_url = "?type=ajax_json&" + search_data;
+
+        table.ajax.url(get_url);
+        table.draw();
+
+    });
+
+    {# 下载报表按钮被点击 #}
+    $("#downloadExcel").click(function() {
+        $("#downloadExcel").addClass("disabled")
+        var url = 'download/0/';
+        var csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
+        var data = "csrfmiddlewaretoken=" + csrfmiddlewaretoken;
+        $.post(url, data, function (result) {
+            if(!result['status']){
+                toastr['error'](result['message']);
+            }else{
+                setTimeout(function(){
+                    var $form = $('<form method="GET"></form>');
+                    $form.attr('action', result["download_url"]);
+                    $form.appendTo($('body'));
+                    $form.submit();
+                    toastr['success'](result['message']);
+                    $("#downloadExcel").removeClass("disabled")
+
+                }, 2000)
+
+{#                $("#button_download").removeClass('hidden');#}
+{#                $("#button_download").attr('href', result["download_url"])#}
+            }
+        }, 'json');
+    });
+
+    {# 搜框中的input标签 回车键被触发 #}
+    $(".search_form input").keydown(function () {
+        var e=window.event||arguments.callee.caller.arguments[0];
+        if(e.keyCode==13){
+            $("#search_button").click();
+        }
+    });
+
+    {# 搜框中的select标签 回车键被触发 #}
+    $(".search_form select").change(function () {
+        $("#search_button").click();
+    });
+
+
+
+</script>

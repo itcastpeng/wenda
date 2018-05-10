@@ -1,0 +1,93 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">提交任务内容</h4>
+</div>
+<div class="modal-body">
+    {% csrf_token %}
+    <button class="btn btn-success" id="upload_file"><i class="icon fa-upload" aria-hidden="true"></i> 上传 excel 表格</button>
+
+    <div id="minganci" style="margin-top: 10px">
+
+    </div>
+
+</div>
+<div class="modal-footer">
+    <p class="hidden" style="color: red;">审核中, 请稍等</p>
+</div>
+
+<script>
+
+    $("#exampleFormModal .modal-dialog").css("width", "25%");
+
+    $("#upload_file").click(function () {
+        var input_tag = document.createElement("input");
+        input_tag.type = "file";
+        input_tag.click();
+        input_tag.onchange = function () {
+
+            $(".modal-footer p").removeClass("hidden");
+            var n = 0;
+            var timer = setInterval(function () {
+                if (n == 5) {
+                    n = 0
+                }
+                var msg = "审核中, 请稍等";
+
+                for (var i = 0; i < n; i ++){
+                    msg += ".";
+                }
+
+                $(".modal-footer p").text(msg);
+                n += 1;
+            }, 500);
+
+
+            var fileObj = input_tag.files[0];
+
+            // 创建FormData对象
+            var form = new FormData();
+            // 将数据封装到对象中
+            form.append("file", fileObj);
+
+            var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+            form.append("csrfmiddlewaretoken", csrfmiddlewaretoken);
+
+            $.ajax({
+                type: "POST",
+                url: "upload_file/{{ o_id }}/",
+                data: form,
+                dataType: "json",
+                processData: false,
+                contentType: false,    // 不设置请求头
+                success: function (result) {
+                    clearInterval(timer);
+                    $(".modal-footer p").addClass("hidden");
+                    $(".modal-footer p").text("审核中, 请稍等");
+
+                    if (result["status"]){
+                        toastr['success'](result['message']);
+                        $('.modal').modal("hide");
+                        table.ajax.reload();
+
+                    }else{
+
+                        if (result["data"]){
+                            var err_name_list = result["data"]["err_name_list"];
+                            var minganci_str = "敏感词: <br>" + err_name_list.join('<br>');
+                            $("#minganci").html(minganci_str);
+                        }
+
+                        var message = result["message"];
+
+                        toastr['error'](message);
+
+                    }
+                }
+            })
+        }
+
+    })
+
+</script>

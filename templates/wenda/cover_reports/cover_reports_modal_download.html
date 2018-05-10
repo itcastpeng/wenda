@@ -1,0 +1,58 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">导出报表</h4>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal" id="modal_form" onsubmit="return false">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="user_id">用户名称：</label>
+            <div class="col-sm-8" style="width: auto">
+                <select name="user_id" id="user_id" class="form-control">
+                    <option value="">请选择</option>
+                    {% for obj in client_data %}
+                    <option value="{{ obj.keywords__client_user_id }}">{{ obj.keywords__client_user__username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </form>
+
+</div>
+<div class="modal-footer">
+    <a id="button_download" class="btn btn-info hidden" href="#">下载报表</a>
+    <button type="button" class="btn btn-primary" id="button_save">生成报表</button>
+</div>
+
+<script>
+    {# 调整模态对话框的大小 #}
+    $("#exampleFormModal .modal-dialog").css("width", "600px");
+
+    {# 提交任务 按钮被点击 #}
+    $("#button_save").on('click', function () {
+
+        $("#button_save").attr("disabled", "disabled");
+        $("#button_download").addClass('hidden');
+        $("#button_save").text("报表生成中。。。");
+
+        var post_data = $("#modal_form").serialize();
+        var url = 'download/0/';
+        $.post(url, post_data, function (result) {
+            if(!result['status']){
+                toastr['error'](result['message']);
+            }else{
+                setTimeout(function () {
+                    toastr['success'](result['message']);
+                    $("#button_save").removeAttr("disabled");
+                    $("#button_download").removeClass('hidden');
+                    $("#button_save").text("生成报表");
+                    $("#button_download").attr('href', result["download_url"])
+                }, 2000)
+            }
+        }, 'json');
+
+    })
+
+</script>

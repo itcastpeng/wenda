@@ -1,0 +1,47 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">费用充值</h4>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="balance">充值金额</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control input-md" id="balance" name="balance" placeholder="请输入充值金额" autocomplete="off" value="{{ user_profile_obj.username }}">
+            </div>
+        </div>
+
+        <div class="hidden">
+            <input type="text">
+            <input type="button">
+        </div>
+    </form>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" id="create_button">确认充值</button>
+</div>
+
+<script>
+
+    $("#create_button").on('click', function () {
+
+        var data = $(".form-horizontal").serialize();
+
+        var url = '{% url "user_management" %}recharge/{{ o_id }}/';
+        $.post(url, data, function (result) {
+            if(!result['status']){
+                toastr['error'](result['message']);
+            }else{
+                toastr['success'](result['message']);
+                $('.modal').modal("hide");
+                table.ajax.reload();
+            }
+        }, 'json')
+
+    })
+
+</script>
