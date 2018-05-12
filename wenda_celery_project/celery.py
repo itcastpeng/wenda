@@ -95,6 +95,12 @@ app.conf.beat_schedule = {
     'cached_ipaddr_list': {
         'task': 'wenda_celery_project.tasks.cached_ipaddr_list',
         'schedule': crontab('*', '*', '*', '*', '*'),
+    },
+
+    # 更新问答库编辑编写数据
+    'update_wendaku_bianjibianxie': {
+        'task': 'wenda_celery_project.tasks.update_wendaku_bianjibianxie',
+        'schedule': crontab('*/10', '*', '*', '*', '*'),
     }
 }
 

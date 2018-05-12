@@ -4,6 +4,9 @@
 # Email:zc_92@sina.com
 
 from __future__ import absolute_import, unicode_literals
+
+import hashlib
+
 from .celery import app
 
 from openpyxl import Workbook
@@ -1153,3 +1156,62 @@ def cached_ipaddr_list():
     ipaddr_list = [i[0] for i in
                    models.RobotAccountLog.objects.filter(create_date__lt=up_hours_time).values_list('ipaddr')]
     RedisOper.write_to_cache("api_check_ipaddr_ip_list", list(ipaddr_list))
+
+@app.task()
+def update_wendaku_bianjibianxie():
+    token = '4e0398e4d4bad913e24c1d0d60cc9170'
+    timestamp = str(int(time.time()))
+
+    # 用户输入的密码加密
+    pwd = str(timestamp + token)
+    hash = hashlib.md5()
+    hash.update(pwd.encode())
+    str_encrypt = hash.hexdigest()
+
+    params = {
+        'user_id': 1,
+        'timestamp': timestamp,
+        'rand_str': str_encrypt
+    }
+
+    params['is_today'] = True
+
+    # url = 'http://192.168.10.243:8000/wendaku/cishu'
+    url = 'http://api.zhugeyingxiao.com/wendaku/cishu'
+    # ret = requests.post('http://192.168.10.243:8000/ribao/user/add/0', params=params, data=data)
+    ret = requests.get(url, params=params)
+    data_temp = ret.json()
+    json_data = data_temp['data']
+    data_list = []
+    for k1,v1 in json_data.items():
+        # print('v--->',v1)
+        for k2,v2 in v1.items():
+            # print('v1--v2-->',k2,v2)
+            objs = models.UserProfile.objects.filter(username=v2[0],is_delete=False)
+            if objs:
+                obj = objs[0]
+                # print('obj_id-->',obj.id)
+                p = v2[1]
+                print('k2-->',k2)
+
+                bianxiebaobiao_objs = models.BianXieBaoBiao.objects.filter(
+                    xiangmu=1,
+                    oper_user_id=obj.id,
+                    create_date=k2,
+                )
+                if bianxiebaobiao_objs:
+                    print('修改数据---->',bianxiebaobiao_objs)
+                    bianxiebaobiao_objs.update(
+                        edit_count=p,
+                    )
+
+                else:
+                    models.BianXieBaoBiao.objects.select_related('oper_user_id').create(
+                        xiangmu=1,
+                        oper_user_id=obj.id,
+                        create_date=k2,
+                        edit_count=p,
+                    )
+
+            else:
+                print(v2[0],'不存在')
