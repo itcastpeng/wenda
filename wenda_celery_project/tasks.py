@@ -1218,11 +1218,11 @@ def update_wendaku_bianjibianxie():
                 print(v2[0],'不存在')
 
 
-
 # 更新编辑编写新老问答数据
 @app.task
 def update_xinlaowenda_bianxie_cishu():
-    objs = models.EditPublickTaskManagement.objects.values('task__edit_user','task__edit_user__username', 'task__task__task__wenda_type', 'create_date').annotate(Count('id'))
+    now_date = datetime.datetime.now().strftime('%Y-%m-%d')
+    objs = models.EditPublickTaskManagement.objects.filter(create_date__gte=now_date).values('task__edit_user','task__edit_user__username', 'task__task__task__wenda_type', 'create_date').annotate(Count('id'))
 
     data_dict = {
         'xin': {},
@@ -1325,3 +1325,69 @@ def update_xinlaowenda_bianxie_cishu():
                             edit_count=edit_count,
                         )
 
+
+# 修改编辑编写养账号数据
+@app.task
+def update_bianji_yangzhanghao_data():
+    # q = Q()
+    # q.add(Q(**{'status':2}),Q.AND)
+    now_date = datetime.datetime.now().strftime('%Y-%m-%d')
+    objs = models.ZhidaoWenda.objects.filter(status=2, update_date__gte=now_date).select_related('oper_user').values(
+        'oper_user_id',
+        'oper_user__username',
+        'update_date',
+    ).annotate(Count('id'))
+    # print('objs--->',objs)
+    data_dict = {}
+    for obj in objs:
+        count = obj['id__count']
+        user_id = obj['oper_user_id']
+        username = obj['oper_user__username']
+        update_time = obj['update_date'].strftime('%Y-%m-%d')
+        print('数据-->',count,user_id,username,update_time)
+
+        if not user_id:
+            continue
+
+        if user_id in data_dict:
+            if update_time in data_dict[user_id]:
+                data_dict[user_id][update_time] += count
+
+            else:
+                data_dict[user_id][update_time] = count
+        else:
+            data_dict[user_id] = {
+                # 'name':username,
+                update_time:count
+            }
+
+    print('data_dict--->',data_dict)
+
+    xiangmu = 2
+    for k2, v2 in data_dict.items():
+        # print(k2, v2)
+        user_id = k2
+        for k3, v3 in v2.items():
+            print(k3, v3)
+            create_date = k3
+            edit_count = v3
+
+            print(xiangmu, user_id, create_date)
+            bianxiebaobiao_objs = models.BianXieBaoBiao.objects.filter(
+                xiangmu=xiangmu,
+                oper_user_id=user_id,
+                create_date=create_date,
+            )
+            if bianxiebaobiao_objs:
+                print('修改数据---->', bianxiebaobiao_objs)
+                bianxiebaobiao_objs.update(
+                    edit_count=edit_count,
+                )
+
+            else:
+                models.BianXieBaoBiao.objects.create(
+                    xiangmu=xiangmu,
+                    oper_user_id=user_id,
+                    create_date=create_date,
+                    edit_count=edit_count,
+                )
