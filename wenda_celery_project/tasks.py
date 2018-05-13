@@ -1157,7 +1157,9 @@ def cached_ipaddr_list():
                    models.RobotAccountLog.objects.filter(create_date__lt=up_hours_time).values_list('ipaddr')]
     RedisOper.write_to_cache("api_check_ipaddr_ip_list", list(ipaddr_list))
 
-@app.task()
+
+# 更新问答库编辑编写数据
+@app.task
 def update_wendaku_bianjibianxie():
     token = '4e0398e4d4bad913e24c1d0d60cc9170'
     timestamp = str(int(time.time()))
@@ -1167,7 +1169,6 @@ def update_wendaku_bianjibianxie():
     hash = hashlib.md5()
     hash.update(pwd.encode())
     str_encrypt = hash.hexdigest()
-
     params = {
         'user_id': 1,
         'timestamp': timestamp,
@@ -1206,7 +1207,7 @@ def update_wendaku_bianjibianxie():
                     )
 
                 else:
-                    models.BianXieBaoBiao.objects.select_related('oper_user_id').create(
+                    models.BianXieBaoBiao.objects.create(
                         xiangmu=1,
                         oper_user_id=obj.id,
                         create_date=k2,
@@ -1215,3 +1216,112 @@ def update_wendaku_bianjibianxie():
 
             else:
                 print(v2[0],'不存在')
+
+
+
+# 更新编辑编写新老问答数据
+@app.task
+def update_xinlaowenda_bianxie_cishu():
+    objs = models.EditPublickTaskManagement.objects.values('task__edit_user','task__edit_user__username', 'task__task__task__wenda_type', 'create_date').annotate(Count('id'))
+
+    data_dict = {
+        'xin': {},
+        'lao': {},
+    }
+
+    for obj in objs:
+        # print('obj --> ',obj)
+        user_id = obj['task__edit_user']
+        username = obj['task__edit_user__username']
+        id_count = obj['id__count']
+        create_date = obj['create_date'].strftime('%Y-%m-%d')
+        task__wenda_type = obj['task__task__task__wenda_type']
+        # print('数据--->',username,user_id,task__wenda_type,create_date,id_count)
+
+        if task__wenda_type == 2: # 老问答
+            if user_id in data_dict['lao']:
+                if create_date in data_dict['lao'][user_id]:
+                    data_dict['lao'][user_id][create_date] += id_count
+                else:
+                    data_dict['lao'][user_id][create_date] = id_count
+            else:
+                data_dict['lao'][user_id] = {
+                    # 'name': username,
+                    create_date: id_count
+                }
+
+        else:   # 新问答
+            if user_id in data_dict['xin']:
+                if create_date in data_dict['xin'][user_id]:
+                   data_dict['xin'][user_id][create_date] += id_count
+                else:
+                   data_dict['xin'][user_id][create_date] = id_count
+            else:
+                data_dict['xin'][user_id] = {
+                   # 'name': username,
+                   create_date: id_count
+                }
+
+    print('data_dict-->', data_dict)
+
+    for k, v in data_dict.items():
+        # print(k, v)
+        if k == 'lao':
+            xiangmu = 4
+            for k2, v2 in v.items():
+                # print(k2, v2)
+                user_id = k2
+                for k3, v3 in v2.items():
+                    print(k3, v3)
+                    create_date = k3
+                    edit_count = v3
+
+                    bianxiebaobiao_objs = models.BianXieBaoBiao.objects.filter(
+                        xiangmu=xiangmu,
+                        oper_user_id=user_id,
+                        create_date=create_date,
+                    )
+                    if bianxiebaobiao_objs:
+                        print('修改数据---->', bianxiebaobiao_objs)
+                        bianxiebaobiao_objs.update(
+                            edit_count=edit_count,
+                        )
+
+                    else:
+                        models.BianXieBaoBiao.objects.create(
+                            xiangmu=xiangmu,
+                            oper_user_id=user_id,
+                            create_date=create_date,
+                            edit_count=edit_count,
+                        )
+
+        else:
+            xiangmu = 3
+            for k2, v2 in v.items():
+                # print(k2, v2)
+                user_id = k2
+                for k3, v3 in v2.items():
+                    print(k3, v3)
+                    create_date = k3
+                    edit_count = v3
+
+                    print(xiangmu, user_id, create_date)
+                    bianxiebaobiao_objs = models.BianXieBaoBiao.objects.filter(
+                        xiangmu=xiangmu,
+                        oper_user_id=user_id,
+                        create_date=create_date,
+                    )
+                    if bianxiebaobiao_objs:
+                        print('修改数据---->', bianxiebaobiao_objs)
+                        bianxiebaobiao_objs.update(
+                            edit_count=edit_count,
+                        )
+
+                    else:
+                        models.BianXieBaoBiao.objects.create(
+                            xiangmu=xiangmu,
+                            oper_user_id=user_id,
+                            create_date=create_date,
+                            edit_count=edit_count,
+                        )
+

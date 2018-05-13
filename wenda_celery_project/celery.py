@@ -101,6 +101,12 @@ app.conf.beat_schedule = {
     'update_wendaku_bianjibianxie': {
         'task': 'wenda_celery_project.tasks.update_wendaku_bianjibianxie',
         'schedule': crontab('*/10', '*', '*', '*', '*'),
+    },
+
+    # 更新编辑编写新老问答数据
+    'update_xinlaowenda_bianxie_cishu': {
+        'task': 'wenda_celery_project.tasks.update_xinlaowenda_bianxie_cishu',
+        'schedule': crontab('*/10', '*', '*', '*', '*'),
     }
 }
 
