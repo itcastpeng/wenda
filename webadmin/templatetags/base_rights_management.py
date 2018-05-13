@@ -136,6 +136,7 @@ def get_left_wenda_html(access_rules, access_rules_objs):
                     {cover_reports_html}
                     {zhidaohuida_html}
                     {case_library_html}
+                    {bianxiebaobiao_html}
                 </ul>
             </div>
         </div>
@@ -159,6 +160,7 @@ def get_left_wenda_html(access_rules, access_rules_objs):
     cover_reports_html = ""
     zhidaohuida_html = ""
     case_library_html = ""
+    bianxiebaobiao_html = ""
 
     # 问答机器人
     access_rules_obj = access_rules_objs.filter(name="问答机器人", url_path=reverse("wenda_robot"))
@@ -428,6 +430,18 @@ def get_left_wenda_html(access_rules, access_rules_objs):
             </li>
         """.format(cover_reports=reverse("case_library"))
 
+    # 编辑编写报表
+    access_rules_obj = access_rules_objs.filter(name="编辑编写报表", url_path=reverse("bianxiebaobiao"))
+    if access_rules_obj and access_rules_obj[0].id in access_rules:
+        bianxiebaobiao_html = """
+            <li class="site-menu-item">
+                <a data-pjax="" href="{cover_reports}" target="_blank">
+                    <i class="icon fa-pie-chart" aria-hidden="true"></i>
+                    <span class="site-menu-title margin-left-5">编辑编写报表</span>
+                </a>
+            </li>
+        """.format(cover_reports=reverse("bianxiebaobiao"))
+
     result_html = result_html.format(
         wenda_robot_html=wenda_robot_html,
         my_task_html=my_task_html,
@@ -447,6 +461,7 @@ def get_left_wenda_html(access_rules, access_rules_objs):
         cover_reports_html=cover_reports_html,
         zhidaohuida_html=zhidaohuida_html,
         case_library_html=case_library_html,
+        bianxiebaobiao_html=bianxiebaobiao_html,
     )
     return result_html
 

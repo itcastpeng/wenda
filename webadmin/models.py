@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # Create your models here.
 
 
@@ -39,7 +40,6 @@ class AccessRules(models.Model):
 
 # 用户信息表
 class UserProfile(models.Model):
-
     status_choices = (
         (1, "启用"),
         (2, "未启用"),
@@ -66,8 +66,8 @@ class UserProfile(models.Model):
 
     is_delete = models.BooleanField(verbose_name="是否删除", default=False)
 
-    guwen = models.ForeignKey("self", related_name="guwen_user", null=True)        # 营销顾问
-    xiaoshou = models.ForeignKey("self", related_name="xiaoshou_user", null=True)     # 销售
+    guwen = models.ForeignKey("self", related_name="guwen_user", null=True)  # 营销顾问
+    xiaoshou = models.ForeignKey("self", related_name="xiaoshou_user", null=True)  # 销售
 
     map_search_keywords = models.CharField(verbose_name="百度知道地图搜索关键词", max_length=64)
     map_match_keywords = models.CharField(verbose_name="百度知道地图匹配关键词", max_length=64)
@@ -77,13 +77,15 @@ class UserProfile(models.Model):
     openid = models.CharField(verbose_name="微信公众号id", max_length=32, null=True, blank=True)
 
     # 指定首页关键词功能中覆盖报表
-    keywords_top_page_cover_excel_path = models.CharField(verbose_name="指定首页关键词覆盖报表", max_length=128, null=True, blank=True)
+    keywords_top_page_cover_excel_path = models.CharField(verbose_name="指定首页关键词覆盖报表", max_length=128, null=True,
+        blank=True)
 
     # 营销顾问能够直接上传的报表
-    keywords_top_page_cover_yingxiao_excel_path = models.CharField(verbose_name="营销顾问能够直接上传的报表", max_length=128, null=True, blank=True)
+    keywords_top_page_cover_yingxiao_excel_path = models.CharField(verbose_name="营销顾问能够直接上传的报表", max_length=128,
+        null=True, blank=True)
 
     # 该客户的任务打回编辑是否显示
-    task_edit_show = models.BooleanField(verbose_name="是否显示打回的任务", default=True)    # 默认显示
+    task_edit_show = models.BooleanField(verbose_name="是否显示打回的任务", default=True)  # 默认显示
 
     # 该客户老问答是否正常返公众号报表
     send_statement = models.BooleanField(verbose_name="是否正式返报表", default=True)
@@ -98,7 +100,6 @@ class UserProfile(models.Model):
 
 # 登录日志
 class account_log(models.Model):
-
     date = models.DateTimeField(verbose_name="访问时间")
     ipaddress = models.GenericIPAddressField(verbose_name="访问IP地址")
     user = models.ForeignKey("UserProfile", verbose_name="用户")
@@ -106,7 +107,6 @@ class account_log(models.Model):
 
 # 余额明细
 class BalanceDetail(models.Model):
-
     user = models.ForeignKey("UserProfile", verbose_name="被操作用户", related_name="m_user")
     type_choices = (
         (1, "充值"),
@@ -118,8 +118,8 @@ class BalanceDetail(models.Model):
     account_type = models.SmallIntegerField(verbose_name="类型", choices=type_choices)
     money = models.IntegerField(verbose_name="金额")
 
-    balance = models.IntegerField(verbose_name="充值", default=0)      # 财务做账用
-    zbalance = models.IntegerField(verbose_name="赠送", default=0)     # 财务做账用
+    balance = models.IntegerField(verbose_name="充值", default=0)  # 财务做账用
+    zbalance = models.IntegerField(verbose_name="赠送", default=0)  # 财务做账用
 
     create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     oper_user = models.ForeignKey("UserProfile", verbose_name="操作人", related_name="o_user")
@@ -145,7 +145,7 @@ class TiXian(models.Model):
 
 # 消息表
 class Message(models.Model):
-    user = models.ForeignKey('UserProfile', verbose_name="用户")      # 表示这条消息属于谁
+    user = models.ForeignKey('UserProfile', verbose_name="用户")  # 表示这条消息属于谁
     status_choices = (
         (1, '未读'),
         (2, '已读'),
@@ -156,7 +156,7 @@ class Message(models.Model):
     create_at = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
     update_at = models.DateTimeField(verbose_name="已读时间", null=True, blank=True)
 
-    m_user = models.ForeignKey('UserProfile', verbose_name="添加消息人", related_name="message_user")    # 表示谁添加的这条消息
+    m_user = models.ForeignKey('UserProfile', verbose_name="添加消息人", related_name="message_user")  # 表示谁添加的这条消息
 
 
 # 医院科室
@@ -228,10 +228,12 @@ class Task(models.Model):
     create_date = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
     update_date = models.DateTimeField(verbose_name="更新时间", null=True, blank=True)
 
-    receive_user = models.ForeignKey("UserProfile", verbose_name="接收任务的用户", related_name="receive_user", null=True, blank=True)
+    receive_user = models.ForeignKey("UserProfile", verbose_name="接收任务的用户", related_name="receive_user", null=True,
+        blank=True)
     task_result_file_path = models.CharField(verbose_name="写问答结果", max_length=128, null=True, blank=True)
 
-    publish_user = models.ForeignKey("UserProfile", verbose_name="发布任务的用户", related_name="publish_user", null=True,blank=True)
+    publish_user = models.ForeignKey("UserProfile", verbose_name="发布任务的用户", related_name="publish_user", null=True,
+        blank=True)
     publish_task_result_file_path = models.CharField(verbose_name="发问答结果", max_length=128, null=True, blank=True)
 
     complete_date = models.DateTimeField(verbose_name="完成时间", null=True, blank=True)
@@ -264,10 +266,10 @@ class TaskProcessLog(models.Model):
     status_choices = (
         (1, "新发布"),
         (2, "分配任务"),
-        (3, "编辑已提交"),   # 写问答提交
+        (3, "编辑已提交"),  # 写问答提交
         (4, "驳回"),
         (5, "审核通过"),
-        (6, "编辑已提交"),   # 发问答提交
+        (6, "编辑已提交"),  # 发问答提交
         (7, "撤销"),
         (10, "已完结"),
         (11, "已删除"),
@@ -326,7 +328,7 @@ class WendaRobotTask(models.Model):
     wenda_type = models.SmallIntegerField(verbose_name="问答类型", choices=wenda_type_choices)
 
     status_choices = (
-        (1, "等待发布"),    # 新问答
+        (1, "等待发布"),  # 新问答
         (2, "等待回复"),
         (3, "等待追问"),  # 新问答等待追问
         (4, "等待追答"),  # 新问答等待追答
@@ -363,7 +365,6 @@ class WendaRobotTask(models.Model):
 
 # 机器人登录日志
 class RobotAccountLog(models.Model):
-
     wenda_robot_task = models.ForeignKey("WendaRobotTask", verbose_name="问答任务")
 
     status_choices = (
@@ -390,7 +391,6 @@ class RobotAccountLog(models.Model):
 
 # 全局设置
 class GlobalSettings(models.Model):
-
     new_wenda_money = models.SmallIntegerField(verbose_name="新问答价格", default=25)
     old_wenda_money = models.SmallIntegerField(verbose_name="老问答价格", default=35)
 
@@ -603,6 +603,7 @@ class KeywordsTopSet(models.Model):
     update_select_cover_date = models.DateTimeField(verbose_name="更新查询排名的时间", null=True, blank=True)
     is_delete = models.BooleanField(verbose_name="是否删除", default=False)
 
+
 # 指定关键词首页数据表
 class KeywordsTopInfo(models.Model):
     keyword = models.ForeignKey('KeywordsTopSet')
@@ -706,3 +707,22 @@ class ZhidaoWenda(models.Model):
     run_task = models.ForeignKey(to='WendaRobotTask', verbose_name="对应发布任务表", null=True, blank=True)
 
     oper_user = models.ForeignKey(to='UserProfile', verbose_name="填写答案的人", null=True, blank=True)
+
+
+
+class BianXieBaoBiao(models.Model):
+    xiangmu_choices = (
+        (1, "问答库"),
+        (2, "养账号"),
+        (3, "新问答编写"),
+        (4, "老问答编写"),
+        (5, "新问答打回"),
+        (6, "老问答打回"),
+    )
+
+    xiangmu = models.SmallIntegerField(verbose_name='项目', choices=xiangmu_choices)
+    oper_user = models.ForeignKey(to='UserProfile', verbose_name="编辑")
+    create_date = models.DateField(verbose_name="创建时间")
+    edit_count = models.IntegerField(verbose_name='编写数量')
+
+

@@ -22,7 +22,7 @@ from webadmin.views_dir.myadmin import account, user_management, role_management
 from webadmin.views_dir.wenda import task_list, personal_center, financial_center, message, wenda_robot, api, \
     wait_clearing, my_task, set_keywords, rank_data, edit_content_management, my_task_edit, edit_error_content,\
     sensitive_word_library, big_data, edit_content_detail, client_day_covering_num, keywords_top_set, cover_reports, \
-    show_wenda_cover_num, zhidaohuida, case_library
+    show_wenda_cover_num, zhidaohuida, case_library ,bianxiebaobiao
 
 from webadmin.views_dir.wechat import wechat
 
@@ -165,6 +165,11 @@ urlpatterns = [
     url(r'^case_library/(?P<oper_type>\w+)/(?P<o_id>\d+)/', case_library.case_library_oper),
     url(r'^case_library/', case_library.case_library, name="case_library"),
 
+    # 编辑编写报表
+    url(r'^bianxiebaobiao/', bianxiebaobiao.bianxiebaobiao, name="bianxiebaobiao"),
+
+
+
     # #################### 后台管理 ####################
     # 用户管理
     url(r'^admin/user_management/(?P<oper_type>\w+)/(?P<o_id>\d+)/', user_management.user_management_oper),
@@ -199,6 +204,7 @@ urlpatterns = [
 
     url(r'^admin/account/(?P<oper_type>\w+)/(?P<o_id>\d+)/', account.account_oper),   # 操作账户管理信息, 增删改
     url(r'^admin/account/', account.account, name="account"),  # 账户管理
+
 
     url(r'^test/', views.test),
     url(r'', views.index),
