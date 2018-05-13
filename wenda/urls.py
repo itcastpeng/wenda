@@ -166,8 +166,9 @@ urlpatterns = [
     url(r'^case_library/', case_library.case_library, name="case_library"),
 
     # 编辑编写报表
-    url(r'^bianxiebaobiao/(?P<oper_type>\w+)/(?P<o_id>\d+)/', bianxiebaobiao.bianxiebaobiao_oper),
     url(r'^bianxiebaobiao/', bianxiebaobiao.bianxiebaobiao, name="bianxiebaobiao"),
+
+
 
     # #################### 后台管理 ####################
     # 用户管理

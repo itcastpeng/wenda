@@ -42,46 +42,24 @@
         <div class="panel" style="padding: 10px; height: auto">
             <form class="form-horizontal search_form">
                 <div>
-                    <label for="department_id">科室：</label>
-                    <select class="form-control select2-hidden-accessible" data-plugin="select2" tabindex="-1" aria-hidden="true" id="department_id" name="department_id">
-                        <option value="">全部</option>
-                        {% for obj in department_objs %}
-                            <option value="{{ obj.id }}">{{ obj.name }}</option>
-                        {% endfor %}
-                    </select>
+                    <label for="department_id">开始时间：</label>
+                     <input class="Wdate form-control" id="start_time" name="start_time" value="{{ now_date }}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" type="text">
 
-                    <label for="keywords__client_user_id">用户名称：</label>
-                    <select class="form-control select2-hidden-accessible" data-plugin="select2" tabindex="-1" aria-hidden="true" id="keywords__client_user_id" name="keywords__client_user_id">
-                        <option value="">全部</option>
-                        {% for obj in user_objs %}
-                            <option value="{{ obj.id }}">{{ obj.username }}</option>
-                        {% endfor %}
-                    </select>
+                    <label for="keywords__client_user_id">结束时间：</label>
+                     <input class="Wdate form-control" id="stop_time" name="stop_time" value="{{ now_date }}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" type="text">
 
-                    <label for="create_date">查询日期：</label>
-                    <input class="Wdate form-control" id="create_date" name="create_date" value="{{ now_date }}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" type="text">
+                <label class="col-sm-3 control-label" for="xuantian">选天：</label>
+                <div class="col-sm-8" style="width: auto">
+                    <select name="xuantian" id="xuantian" class="form-control">
+                        <option value="1">今天</option>
+                        <option value="2">昨天</option>
+                        <option value="3">最近7天</option>
+                        <option value="4">最近30天</option>
 
-                    <label for="page_type">覆盖类型：</label>
-                    <select class="form-control" name="page_type" id="page_type">
-                        <option value="">全部</option>
-                        {% for i in page_type_choices %}
-                            <option value="{{ i.0 }}">{{ i.1 }}</option>
-                        {% endfor %}
                     </select>
                 </div>
+            </div>
 
-{#                <div>#}
-{#                    <label for="search_keyword">关键词搜索：</label>#}
-{#                    <input class="form-control" name="search_keyword" id="search_keyword" type="text" placeholder="关键词模糊搜索模糊搜索">#}
-{##}
-{#                    <label for="task_type">知道类型：</label>#}
-{#                    <select class="form-control" name="task_type" id="task_type">#}
-{#                        <option value="">全部</option>#}
-{#                        {% for i in task_type_choices %}#}
-{#                            <option value="{{ i.0 }}">{{ i.1 }}</option>#}
-{#                        {% endfor %}#}
-{#                    </select>#}
-{#                </div>#}
 
                 <div style="position: absolute; bottom:0; right: 20px;">
                     <button type="button" class="btn btn-primary" id="search_button"><i class="icon fa-search" aria-hidden="true"></i>搜索</button>
@@ -104,46 +82,52 @@
 <script>
 
     $(function () {
-        var get_url = "?type=ajax_json";
+
+        var get_url = "?type=ajax_json&xuantian=1";
         $.get(get_url, function (data) {
+
             // 基于准备好的dom，初始化echarts实例
             var myChart = echarts.init(document.getElementById('echarts_main'));
 
             // 指定图表的配置项和数据
             option = data.option;
 
-
             // 使用刚指定的配置项和数据显示图表。
+            myChart.clear();
             myChart.setOption(option);
 
         }, 'json');
+
+        {# 搜索按钮被点击 #}
+        $("#search_button").click(function () {
+            var search_data = $(".search_form").serialize();
+            var get_url = "?type=ajax_json&" + search_data;
+            $.get(get_url, function (data) {
+                // 基于准备好的dom，初始化echarts实例
+
+                var myChart = echarts.init(document.getElementById('echarts_main'));
+
+                // 指定图表的配置项和数据
+                option = data.option;
+
+                // 使用刚指定的配置项和数据显示图表。
+                myChart.clear();
+                myChart.setOption(option);
+
+        }, 'json');
+
+        {#table.ajax.url(get_url);#}
+        {#table.draw();#}
+
+    });
+
+
 
 
     })
 
 
 
-    {# 搜索按钮被点击 #}
-    $("#search_button").click(function () {
-        var search_data = $(".search_form").serialize();
-        var get_url = "?type=ajax_json&" + search_data;
 
-        table.ajax.url(get_url);
-        table.draw();
-
-    });
-
-    {# 搜框中的input标签 回车键被触发 #}
-    $(".search_form input").keydown(function () {
-        var e=window.event||arguments.callee.caller.arguments[0];
-        if(e.keyCode==13){
-            $("#search_button").click();
-        }
-    });
-
-    {# 搜框中的select标签 回车键被触发 #}
-    $(".search_form select").change(function () {
-        $("#search_button").click();
-    });
-
+    {##}
 </script>
