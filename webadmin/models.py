@@ -709,7 +709,7 @@ class ZhidaoWenda(models.Model):
     oper_user = models.ForeignKey(to='UserProfile', verbose_name="填写答案的人", null=True, blank=True)
 
 
-
+# 编写报表
 class BianXieBaoBiao(models.Model):
     xiangmu_choices = (
         (1, "问答库"),
