@@ -175,6 +175,8 @@ def cover_reports(request):
 
                 oper += " / <a href='chongcha/{client_user_id}/'>重查覆盖</a>"
 
+                oper += " / <a href='shanchulianjie/{client_user_id}/' data-toggle='modal' data-target='#exampleFormModal'>删除不计覆盖链接</a>"
+
             oper = oper.format(client_user_id=obj.client_user_id)
             result_data["data"].append(
                 {
@@ -282,6 +284,24 @@ def cover_reports_oper(request, oper_type, o_id):
             response.status = True
             response.message = "开始重查"
 
+        # 删除指定链接
+        elif oper_type == 'shanchulianjie':
+            # response.message = "删除成功"
+            delete_lianjie = request.POST.get('delete_lianjie')
+            delete_lianjie_list = set(delete_lianjie.splitlines())
+            print('delete_lianjie_list - - - - - - >',delete_lianjie_list)
+            for delete_lianjie in delete_lianjie_list:
+                if not delete_lianjie:
+                    continue
+                objs = models.TongjiKeywords.objects.filter(
+                    url=delete_lianjie,
+                    task__release_user_id=o_id,
+                )
+                if objs:
+                    objs.delete()
+            response.status = True
+            response.message = "删除成功"
+
         # 下载报表
         if oper_type == "download":
             user_id = request.POST.get("user_id")
@@ -312,6 +332,8 @@ def cover_reports_oper(request, oper_type, o_id):
                 response.status = True
                 response.message = "导出成功"
                 response.download_url = "/" + file_name
+
+
 
         return JsonResponse(response.__dict__)
 
@@ -485,9 +507,11 @@ def cover_reports_oper(request, oper_type, o_id):
 
             return redirect(reverse("cover_reports"))
 
-
-
-
+        elif oper_type == 'shanchulianjie':
+            objs = models.UserProfile.objects.filter(id=o_id)
+            user = objs[0]
+            return render(request,'wenda/cover_reports/client_reports_modal_shanchulianjie.html', locals())
+            # return redirect(reverse("cover_reports"))
 
 
 
