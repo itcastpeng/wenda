@@ -926,7 +926,6 @@ def keywords_cover(request):
         keywords_cover_obj = models.KeywordsCover.objects.filter(
             keywords_id=kid,
             page_type=page_type,
-            rank=rank,
             url=url,
             create_date__gte=datetime.datetime.now().strftime("%Y-%m-%d")
         )
