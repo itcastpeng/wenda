@@ -1396,9 +1396,9 @@ def update_bianji_yangzhanghao_data():
 # 更新编辑更新新老问答数据
 @app.task
 def update_EditTaskLog_dahui_cishu():
-    # now_date = datetime.datetime.today().strftime('%Y-%m-%d')
+    now_date = datetime.datetime.today().strftime('%Y-%m-%d')
     # print('now_date---->',now_date)
-    objs = models.EditTaskLog.objects.values(
+    objs = models.EditTaskLog.objects.filter(create_time__gte=now_date).values(
         'create_date',
         'edit_public_task_management__task__edit_user',
         'edit_public_task_management__task__task__task__wenda_type',
