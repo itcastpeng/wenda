@@ -30,8 +30,8 @@ def cover_reports(request):
     role_id = request.session.get("role_id")
     user_id = request.session.get("user_id")
 
-    print("role_id -->", role_id)
-    print("user_id -->", user_id)
+    # print("role_id -->", role_id)
+    # print("user_id -->", user_id)
     filter_dict = {}
     if role_id == 5:    # 客户角色只能看到自己的
         filter_dict["client_user"] = user_id
@@ -39,7 +39,7 @@ def cover_reports(request):
     #     filter_dict["keywords__client_user__xiaoshou_id"] = user_id
 
     if "type" in request.GET and request.GET["type"] == "ajax_json":
-        print("1 -->", datetime.datetime.now())
+        # print("1 -->", datetime.datetime.now())
         length = int(request.GET.get("length"))
         start = int(request.GET.get("start"))
 
@@ -80,7 +80,7 @@ def cover_reports(request):
         #     "keywords"
         # ).filter(**filter_dict).filter(q).order_by(order_column)
 
-        print("2 -->", datetime.datetime.now())
+        # print("2 -->", datetime.datetime.now())
 
         print(order_column)
         # 如果是销售角色，不是刘婷的账号，则将成都美尔贝隐藏起来
@@ -101,7 +101,7 @@ def cover_reports(request):
 
         status_choices = models.UserProfile.status_choices
 
-        print("3 -->", datetime.datetime.now())
+        # print("3 -->", datetime.datetime.now())
         for index, obj in enumerate(data_objs[start: (start + length)], start=1):
 
             # keywords_topset_obj = models.KeywordsTopSet.objects.filter(
@@ -177,23 +177,43 @@ def cover_reports(request):
 
                 oper += " / <a href='shanchulianjie/{client_user_id}/' data-toggle='modal' data-target='#exampleFormModal'>删除不计覆盖链接</a>"
 
-            oper = oper.format(client_user_id=obj.client_user_id)
-            result_data["data"].append(
-                {
-                    "index": index,
-                    "id": obj.client_user_id,
-                    "username": obj.client_user.username,
-                    "xiaoshou_username": obj.client_user.xiaoshou.username,
-                    "cover_total": obj.total_cover_num,
-                    "select_status": select_status,
-                    "keyword_count": keyword_count_str,
-                    "oper": oper,
-                    "today_cover": today_cover,
-                    "total_oper_num": total_oper_num
-                }
-            )
 
-        print("4 -->", datetime.datetime.now())
+            oper = oper.format(client_user_id=obj.client_user_id)
+            xiugaijifeiriqi = " <a href='xiugaijifeiriqi/{client_user_id}/' data-toggle='modal' data-target='#exampleFormModal'>修改计费日期</a>".format(client_user_id=obj.client_user_id)
+            username = obj.client_user.username
+            jifei_start_date = ''
+            jifei_stop_date = ''
+
+            if obj.client_user.jifei_start_date:
+                jifei_start_date = obj.client_user.jifei_start_date.strftime('%Y-%m-%d')
+            if obj.client_user.jifei_stop_date:
+                jifei_stop_date = obj.client_user.jifei_stop_date.strftime('%Y-%m-%d')
+
+                now_date = datetime.datetime.now()
+                if now_date.strftime('%Y-%m-%d') >= (obj.client_user.jifei_stop_date - datetime.timedelta(days=7)).strftime('%Y-%m-%d'):
+                    print(" 还有7天以内到期")
+                    # print('obj.client_user.jifei_stop_date -->', obj.client_user.jifei_stop_date, datetime.date.today())
+                    temp = obj.client_user.jifei_stop_date - datetime.date.today()
+                    username += "<span style='color: red'> (还有{}天到期)</span>".format(temp.days)
+
+            result_data["data"].append(
+                    {
+                        "index": index,
+                        "id": obj.client_user_id,
+                        "username": username,
+                        "xiaoshou_username": obj.client_user.xiaoshou.username,
+                        "cover_total": obj.total_cover_num,
+                        "select_status": select_status,
+                        "keyword_count": keyword_count_str,
+                        "oper": oper,
+                        "today_cover": today_cover,
+                        "total_oper_num": total_oper_num,
+                        "xiugaijifeiriqi": xiugaijifeiriqi,
+                        'xiugaijifeiriqistart':jifei_start_date,
+                        'xiugaijifeiriqistop': jifei_stop_date,
+                    }
+                )
+            # print("4 -->", datetime.datetime.now())
         return HttpResponse(json.dumps(result_data))
 
     if role_id == 7:
@@ -301,6 +321,16 @@ def cover_reports_oper(request, oper_type, o_id):
                     objs.delete()
             response.status = True
             response.message = "删除成功"
+
+        elif oper_type == 'xiugaijifeiriqi':
+            # print('o_id -- -- -> ',o_id)
+            xiugaijifeiriqistart = request.POST.get('xiugaijifeiriqistart')
+            xiugaijifeiriqistop = request.POST.get('xiugaijifeiriqistop')
+            print('xiugaijifei -- > ',xiugaijifeiriqistart,xiugaijifeiriqistop)
+            time_objs = models.UserProfile.objects.filter(id = o_id).update(
+                jifei_start_date=xiugaijifeiriqistart,
+                jifei_stop_date=xiugaijifeiriqistop
+            )
 
         # 下载报表
         if oper_type == "download":
@@ -513,6 +543,8 @@ def cover_reports_oper(request, oper_type, o_id):
             return render(request,'wenda/cover_reports/client_reports_modal_shanchulianjie.html', locals())
             # return redirect(reverse("cover_reports"))
 
-
+        elif oper_type == 'xiugaijifeiriqi':
+            o_id = o_id
+            return render(request,'wenda/cover_reports/client_reports_modal_xiugaijifeiriqi.html',locals())
 
 
