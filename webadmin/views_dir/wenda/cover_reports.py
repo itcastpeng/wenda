@@ -338,7 +338,8 @@ def cover_reports_oper(request, oper_type, o_id):
                 response.status = True
                 response.message = "修改成功"
             else:
-                response.status = True
+                response.status = False
+
                 response.message = '请填写正确日期'
         # 下载报表
         if oper_type == "download":
