@@ -94,6 +94,9 @@ class UserProfile(models.Model):
 
     shangwutong_url = models.CharField(verbose_name="商务通地址", max_length=128, null=True, blank=True)
 
+    jifei_start_date = models.DateField(verbose_name="计费开始时间", null=True, blank=True)
+    jifei_stop_date  =models.DateField(verbose_name="计费结束时间", null=True, blank=True)
+
     def __str__(self):
         return self.username
 
@@ -577,6 +580,7 @@ class ClientCoveringData(models.Model):
     update_date = models.DateTimeField(verbose_name="更新时间", null=True, blank=True)
 
 
+
 # 指定首页关键词
 class KeywordsTopSet(models.Model):
     keyword = models.CharField(verbose_name="关键词", max_length=128)
@@ -709,7 +713,7 @@ class ZhidaoWenda(models.Model):
     oper_user = models.ForeignKey(to='UserProfile', verbose_name="填写答案的人", null=True, blank=True)
 
 
-
+# 编写报表
 class BianXieBaoBiao(models.Model):
     xiangmu_choices = (
         (1, "问答库"),
