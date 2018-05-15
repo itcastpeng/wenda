@@ -13,7 +13,7 @@ from django.db import connection
 
 from webadmin.forms import user
 import json
-
+from webadmin.forms.form_cover_update_jifei  import jifeiupdateForm
 from django.db.models import F
 from django.db.models import Q
 from webadmin.views_dir.wenda.message import AddMessage
@@ -191,7 +191,7 @@ def cover_reports(request):
 
                 now_date = datetime.datetime.now()
                 if now_date.strftime('%Y-%m-%d') >= (obj.client_user.jifei_stop_date - datetime.timedelta(days=7)).strftime('%Y-%m-%d'):
-                    print(" 还有7天以内到期")
+                    # print(" 还有7天以内到期")
                     # print('obj.client_user.jifei_stop_date -->', obj.client_user.jifei_stop_date, datetime.date.today())
                     temp = obj.client_user.jifei_stop_date - datetime.date.today()
                     username += "<span style='color: red'> (还有{}天到期)</span>".format(temp.days)
@@ -327,13 +327,18 @@ def cover_reports_oper(request, oper_type, o_id):
             xiugaijifeiriqistart = request.POST.get('xiugaijifeiriqistart')
             xiugaijifeiriqistop = request.POST.get('xiugaijifeiriqistop')
             print('xiugaijifei -- > ',xiugaijifeiriqistart,xiugaijifeiriqistop)
-            time_objs = models.UserProfile.objects.filter(id = o_id).update(
-                jifei_start_date=xiugaijifeiriqistart,
-                jifei_stop_date=xiugaijifeiriqistop
-            )
-            response.status = True
-            response.message = "修改成功"
 
+            forms_obj = jifeiupdateForm(request.GET)
+            if forms_obj.is_valid():
+                time_objs = models.UserProfile.objects.filter(id = o_id).update(
+                    jifei_start_date=xiugaijifeiriqistart,
+                    jifei_stop_date=xiugaijifeiriqistop
+                )
+                response.status = True
+                response.message = "修改成功"
+            else:
+                response.status = True
+                response.message = '请填写正确日期'
         # 下载报表
         if oper_type == "download":
             user_id = request.POST.get("user_id")
@@ -364,8 +369,6 @@ def cover_reports_oper(request, oper_type, o_id):
                 response.status = True
                 response.message = "导出成功"
                 response.download_url = "/" + file_name
-
-
 
         return JsonResponse(response.__dict__)
 
