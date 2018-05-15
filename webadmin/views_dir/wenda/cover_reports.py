@@ -322,8 +322,8 @@ def cover_reports_oper(request, oper_type, o_id):
             response.status = True
             response.message = "删除成功"
 
+        # 修改计费日期
         elif oper_type == 'xiugaijifeiriqi':
-            # print('o_id -- -- -> ',o_id)
             xiugaijifeiriqistart = request.POST.get('xiugaijifeiriqistart')
             xiugaijifeiriqistop = request.POST.get('xiugaijifeiriqistop')
             print('xiugaijifei -- > ',xiugaijifeiriqistart,xiugaijifeiriqistop)
@@ -331,6 +331,8 @@ def cover_reports_oper(request, oper_type, o_id):
                 jifei_start_date=xiugaijifeiriqistart,
                 jifei_stop_date=xiugaijifeiriqistop
             )
+            response.status = True
+            response.message = "修改成功"
 
         # 下载报表
         if oper_type == "download":
