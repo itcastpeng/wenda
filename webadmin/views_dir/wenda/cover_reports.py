@@ -2,15 +2,11 @@
 # -*- coding: utf-8 -*-
 # Author:zhangcong
 # Email:zc_92@sina.com
-
-
 from django.shortcuts import render, HttpResponse, redirect, reverse
 from webadmin.views_dir import pub
-
 from webadmin import models
 from django.http import JsonResponse
 from django.db import connection
-
 from webadmin.forms import user
 import json
 from webadmin.forms.form_cover_update_jifei import jifeiupdateForm
@@ -51,8 +47,9 @@ def cover_reports(request):
         # column_list = ["", "index", "id", "keywords__client_user", "keyword", "page_type", "rank", "create_date", "oper", "keywords__client_user_id"]
         column_list = [
             "index", "id", "client_user", "client_user__xiaoshou", "keywords_num", "keyword_no_select_count",
-            "today_cover_num", "total_cover_num", "total_publish_num", "oper", "client_user_id",
-            "client_user__xiaoshou_id", 'client_user__status'
+            "today_cover_num", "total_cover_num", "total_publish_num",'client_user__jifei_start_date' ,'client_user__jifei_stop_date',
+            "oper", "client_user_id","client_user__xiaoshou_id", 'client_user__status',
+
         ]
         order_column = request.GET.get('order[0][column]', 1)  # 第几列排序
         order = request.GET.get('order[0][dir]')  # 正序还是倒序
@@ -190,10 +187,9 @@ def cover_reports(request):
                 jifei_stop_date = obj.client_user.jifei_stop_date.strftime('%Y-%m-%d')
 
                 now_date = datetime.datetime.now()
-                if now_date.strftime('%Y-%m-%d') >= (
-                        obj.client_user.jifei_stop_date - datetime.timedelta(days=7)).strftime('%Y-%m-%d'):
-                    # print(" 还有7天以内到期")
-                    # print('obj.client_user.jifei_stop_date -->', obj.client_user.jifei_stop_date, datetime.date.today())
+                # 如果当前时间 大于等于 计费结束日期减去七天
+                if now_date.strftime('%Y-%m-%d') >= (obj.client_user.jifei_stop_date - datetime.timedelta(days=7)).strftime('%Y-%m-%d'):
+                    # 用结束日期减去当前日期 剩余天数
                     temp = obj.client_user.jifei_stop_date - datetime.date.today()
                     username += "<span style='color: red'> (还有{}天到期)</span>".format(temp.days)
 
@@ -339,7 +335,6 @@ def cover_reports_oper(request, oper_type, o_id):
                 response.message = "修改成功"
             else:
                 response.status = False
-
                 response.message = '请填写正确日期'
         # 下载报表
         if oper_type == "download":
