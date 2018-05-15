@@ -50,7 +50,13 @@
     });
     $("#update_button").on('click', function () {
         var data = $(".form-horizontal").serialize();
-        var url = '{% url "cover_reports" %}xiugaijifeiriqi/{{ o_id }}/';
+
+        var start_time = $('#xiugaijifeiriqistart');
+        var stop_time = $('#xiugaijifeiriqistop').val();
+        if(start_time.val()==''){
+            alert('请输入正确日期格式')
+        }else {
+             var url = '{% url "cover_reports" %}xiugaijifeiriqi/{{ o_id }}/';
         $.post(url, data, function (result) {
             if(!result['status']){
                 toastr['error'](result['message']);
@@ -60,7 +66,10 @@
                 table.ajax.reload();
             }
         }, 'json')
-    });
+    }
+        }
+);
+
 
 
 </script>
