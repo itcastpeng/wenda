@@ -328,8 +328,9 @@ def cover_reports_oper(request, oper_type, o_id):
             xiugaijifeiriqistop = request.POST.get('xiugaijifeiriqistop')
             print('xiugaijifei -- > ',xiugaijifeiriqistart,xiugaijifeiriqistop)
 
-            forms_obj = jifeiupdateForm(request.GET)
+            forms_obj = jifeiupdateForm(request.POST)
             if forms_obj.is_valid():
+                print(111111111)
                 time_objs = models.UserProfile.objects.filter(id = o_id).update(
                     jifei_start_date=xiugaijifeiriqistart,
                     jifei_stop_date=xiugaijifeiriqistop
