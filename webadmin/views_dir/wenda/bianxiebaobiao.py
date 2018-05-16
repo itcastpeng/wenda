@@ -34,36 +34,40 @@ def bianxiebaobiao(request):
         q = Q()
         for index, field in enumerate(column_list):
             if field in request.GET and request.GET[field]:     # 如果该字段存在并且不为空
-                # 起始时间和结束时间
-                if field == 'start_time':
-                    q.add(Q(**{"create_date__gte": request.GET[field]}), Q.AND)
-                elif field == 'stop_time':
-                    q.add(Q(**{"create_date__lt": request.GET[field]}), Q.AND)
-                # 天数查询
-                elif field == 'xuantian':
-
-                    if xuantian == '1':
-                        start_time = datetime.datetime.today().strftime('%Y-%m-%d')
-                        stop_time = datetime.datetime.today().strftime('%Y-%m-%d')
-
-                    elif xuantian == '2':
-                        start_time = (datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
-                        stop_time = (datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
-
-                    elif xuantian == '3':
-                        start_time = (datetime.date.today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d')
-                        stop_time = datetime.datetime.now().strftime('%Y-%m-%d')
-
-                    elif xuantian == '4':
-                        start_time = (datetime.date.today() - datetime.timedelta(days=30)).strftime('%Y-%m-%d')
-                        stop_time = datetime.datetime.now().strftime('%Y-%m-%d')
-                    q.add(Q(**{"create_date__gte": start_time}), Q.AND)
-                    q.add(Q(**{"create_date__lte": stop_time}), Q.AND)
+                if start_time:
+                    # 起始时间和结束时间
+                    if field == 'start_time':
+                        print('start - -',start_time)
+                        q.add(Q(**{"create_date__gte": request.GET[field]}), Q.AND)
+                    elif field == 'stop_time':
+                        print('stop - - ',stop_time)
+                        q.add(Q(**{"create_date__lte": request.GET[field]}), Q.AND)
                 else:
-                    q.add(Q(**{field + "__contains": request.GET[field]}), Q.AND)
-        print('q-->',q)
+                    # 天数查询
+                    if field == 'xuantian':
+
+                        if  xuantian == '1':
+                            start_time = datetime.datetime.today().strftime('%Y-%m-%d')
+                            stop_time = datetime.datetime.today().strftime('%Y-%m-%d')
+
+                        elif xuantian == '2':
+                            start_time = (datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+                            stop_time = (datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+
+                        elif xuantian == '3':
+                            start_time = (datetime.date.today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d')
+                            stop_time = datetime.datetime.now().strftime('%Y-%m-%d')
+
+                        elif xuantian == '4':
+                            start_time = (datetime.date.today() - datetime.timedelta(days=30)).strftime('%Y-%m-%d')
+                            stop_time = datetime.datetime.now().strftime('%Y-%m-%d')
+                        q.add(Q(**{"create_date__gte": start_time}), Q.AND)
+                        q.add(Q(**{"create_date__lte": stop_time}), Q.AND)
+                    else:
+                        q.add(Q(**{field + "__contains": request.GET[field]}), Q.AND)
+        # print('q-->',q)
         task_list_objs = models.BianXieBaoBiao.objects.filter(q)
-        print('task_count---:>', task_list_objs.count())
+        # print('task_count---:>', task_list_objs.count())
 
 
         result_data = {
