@@ -84,7 +84,7 @@ def cover_reports(request):
         data_objs = models.ClientCoveringData.objects.select_related(
             "client_user",
             "client_user__xiaoshou"
-        ).filter(**filter_dict).filter(q).order_by(order_column)
+        ).filter(client_user__is_delete=False).filter(**filter_dict).filter(q).order_by(order_column)
         if role_id == 12:
             data_objs = data_objs.exclude(client_user__username__contains='YZ-')
             if user_id != 37:
@@ -187,11 +187,21 @@ def cover_reports(request):
                 jifei_stop_date = obj.client_user.jifei_stop_date.strftime('%Y-%m-%d')
 
                 now_date = datetime.datetime.now()
+
+
+                if obj.client_user.jifei_stop_date == datetime.date.today():
+                    username += "<span style='color: red'> (今天到期)</span>"
+
+                elif obj.client_user.jifei_stop_date <datetime.date.today():
+                    username += "<span style='color: red'> (已到期)</span>"
                 # 如果当前时间 大于等于 计费结束日期减去七天
-                if now_date.strftime('%Y-%m-%d') >= (obj.client_user.jifei_stop_date - datetime.timedelta(days=7)).strftime('%Y-%m-%d'):
-                    # 用结束日期减去当前日期 剩余天数
-                    temp = obj.client_user.jifei_stop_date - datetime.date.today()
-                    username += "<span style='color: red'> (还有{}天到期)</span>".format(temp.days)
+                else:
+                    if now_date.strftime('%Y-%m-%d') >= (obj.client_user.jifei_stop_date - datetime.timedelta(days=7)).strftime('%Y-%m-%d'):
+                        # 用结束日期减去当前日期 剩余天数
+                        temp = obj.client_user.jifei_stop_date - datetime.date.today()
+                        username += "<span style='color: #ff9900'> (还有{}天到期)</span>".format(temp.days)
+
+
 
             result_data["data"].append(
                 {
@@ -213,15 +223,15 @@ def cover_reports(request):
             # print("4 -->", datetime.datetime.now())
         return HttpResponse(json.dumps(result_data))
 
-    if role_id == 7:
-        client_data = models.ClientCoveringData.objects.filter(**filter_dict).exclude(
+    if role_id == 12:
+        client_data = models.ClientCoveringData.objects.filter(client_user__is_delete=False).filter(**filter_dict).exclude(
             client_user__username__contains='YZ-'
         ).values(
             'client_user__username',
             'client_user_id'
         ).annotate(Count("id"))
     else:
-        client_data = models.ClientCoveringData.objects.filter(**filter_dict).values(
+        client_data = models.ClientCoveringData.objects.filter(client_user__is_delete=False).filter(**filter_dict).values(
             'client_user__username',
             'client_user_id'
         ).annotate(Count("id"))
@@ -336,6 +346,7 @@ def cover_reports_oper(request, oper_type, o_id):
             else:
                 response.status = False
                 response.message = '请填写正确日期'
+
         # 下载报表
         if oper_type == "download":
             user_id = request.POST.get("user_id")
