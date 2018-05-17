@@ -492,6 +492,8 @@ class EditPublickTaskManagement(models.Model):
     content = models.TextField(verbose_name="答案")
     submit_num = models.SmallIntegerField(verbose_name="提交次数", default=0)
 
+
+
     status_choices = (
         (1, "发布中"),
         (2, "发布异常"),
@@ -529,6 +531,11 @@ class EditTaskLog(models.Model):
     remark = models.TextField(verbose_name="失败原因", null=True, blank=True)
     create_date = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
 
+    Choices_status = (
+            (1,'打回'),
+            (1,'修改'),
+        )
+    bianji_dahui_update = models.SmallIntegerField(verbose_name='修改or打回',choices=Choices_status,default=1)
 
 # 敏感词库
 class SensitiveWordLibrary(models.Model):
