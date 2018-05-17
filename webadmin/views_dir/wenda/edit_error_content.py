@@ -87,6 +87,13 @@ def edit_error_content(request, o_id):
                     obj.submit_num += 1
                     obj.is_select_cover_back = False
                     obj.save()
+                    models.EditTaskLog.objects.create(
+                        bianji_dahui_update=2,
+                        title=obj.title,
+                        content=obj.content,
+                        edit_public_task_management_id=o_id
+                    )
+
 
                     wenda_robot_task_obj = models.WendaRobotTask.objects.get(id=obj.run_task.id)
                     if wenda_robot_task_obj.status in content_update_id_list:   # 回复异常
