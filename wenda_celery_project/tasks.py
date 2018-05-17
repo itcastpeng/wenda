@@ -1398,15 +1398,15 @@ def update_bianji_yangzhanghao_data():
 def update_EditTaskLog_dahui_cishu():
     now_date = datetime.datetime.today().strftime('%Y-%m-%d')
     # print('now_date---->',now_date)
-    objs = models.EditTaskLog.objects.filter(create_time__gte=now_date).values(
+    objs = models.EditTaskLog.objects.filter(create_date__gte=now_date).values(
         'create_date',
         'edit_public_task_management__task__edit_user',
         'edit_public_task_management__task__task__task__wenda_type',
     ).annotate(Count('id'))
 
     data_dict = {
-        'xin':{},
-        'lao':{}
+        'xin': {},
+        'lao': {}
     }
 
     for obj in objs:

@@ -356,22 +356,24 @@ class CheckWendaUrlStatus(object):
     def start(self):
         while True:
             try:
-                ADSL(self.adsl_username, self.adsl_password).reconnect()
-                self.add_zhidaohuida()
-                self.vpsQiandao()
+                # 添加养账号任务
+                # ADSL(self.adsl_username, self.adsl_password).reconnect()
+                # self.add_zhidaohuida()
+                # self.vpsQiandao()
 
-                count = 0
-                while True:
-                    count += 1
-                    if count > 5:
-                        break
-                    ADSL(self.adsl_username, self.adsl_password).reconnect()
-                    while True:
-                        try:
-                            self.check_qudao_cunhuo()
-                            break
-                        except ConnectionError:
-                            pass
+                # 检测渠道存活任务
+                # count = 0
+                # while True:
+                #     count += 1
+                #     if count > 5:
+                #         break
+                #     ADSL(self.adsl_username, self.adsl_password).reconnect()
+                #     while True:
+                #         try:
+                #             self.check_qudao_cunhuo()
+                #             break
+                #         except ConnectionError:
+                #             pass
                 ADSL(self.adsl_username, self.adsl_password).reconnect()
                 self.login()
                 result = self.getTask()
