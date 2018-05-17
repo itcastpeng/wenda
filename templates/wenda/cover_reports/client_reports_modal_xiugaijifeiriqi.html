@@ -50,6 +50,7 @@
     });
     $("#update_button").on('click', function () {
         var data = $(".form-horizontal").serialize();
+
         var url = '{% url "cover_reports" %}xiugaijifeiriqi/{{ o_id }}/';
         $.post(url, data, function (result) {
             if(!result['status']){
@@ -60,7 +61,9 @@
                 table.ajax.reload();
             }
         }, 'json')
-    });
+    }
+);
+
 
 
 </script>

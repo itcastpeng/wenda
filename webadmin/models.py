@@ -2,8 +2,6 @@ from django.db import models
 
 
 # Create your models here.
-
-
 # 角色表
 class Role(models.Model):
     name = models.CharField(verbose_name="角色名称", max_length=32)
