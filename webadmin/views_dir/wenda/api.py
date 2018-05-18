@@ -551,6 +551,17 @@ def check_wenda_link(request):
             obj.update_date = datetime.datetime.now()
             obj.save()
 
+            if obj.status == '2':
+                wenda_objs = obj.task.wendarobottask_set.filter(wenda_url=obj.url)
+                print('wenda_objs -  -> ', wenda_objs)
+                wenda_obj = wenda_objs[0]
+                models.TongjiKeywords.objects.create(
+                    title=wenda_obj.title,
+                    content=wenda_obj.content,
+                    url=wenda_obj.wenda_url,
+                    task_id=obj.task.id
+                )
+
             response.status = True
             response.message = "提交成功"
 
