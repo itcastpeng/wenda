@@ -76,11 +76,11 @@ class UserProfile(models.Model):
 
     # 指定首页关键词功能中覆盖报表
     keywords_top_page_cover_excel_path = models.CharField(verbose_name="指定首页关键词覆盖报表", max_length=128, null=True,
-        blank=True)
+                                                          blank=True)
 
     # 营销顾问能够直接上传的报表
     keywords_top_page_cover_yingxiao_excel_path = models.CharField(verbose_name="营销顾问能够直接上传的报表", max_length=128,
-        null=True, blank=True)
+                                                                   null=True, blank=True)
 
     # 该客户的任务打回编辑是否显示
     task_edit_show = models.BooleanField(verbose_name="是否显示打回的任务", default=True)  # 默认显示
@@ -93,7 +93,7 @@ class UserProfile(models.Model):
     shangwutong_url = models.CharField(verbose_name="商务通地址", max_length=128, null=True, blank=True)
 
     jifei_start_date = models.DateField(verbose_name="计费开始时间", null=True, blank=True)
-    jifei_stop_date  =models.DateField(verbose_name="计费结束时间", null=True, blank=True)
+    jifei_stop_date = models.DateField(verbose_name="计费结束时间", null=True, blank=True)
 
     fugai_youxian_choices = (
         (1, "默认查询"),
@@ -236,11 +236,11 @@ class Task(models.Model):
     update_date = models.DateTimeField(verbose_name="更新时间", null=True, blank=True)
 
     receive_user = models.ForeignKey("UserProfile", verbose_name="接收任务的用户", related_name="receive_user", null=True,
-        blank=True)
+                                     blank=True)
     task_result_file_path = models.CharField(verbose_name="写问答结果", max_length=128, null=True, blank=True)
 
     publish_user = models.ForeignKey("UserProfile", verbose_name="发布任务的用户", related_name="publish_user", null=True,
-        blank=True)
+                                     blank=True)
     publish_task_result_file_path = models.CharField(verbose_name="发问答结果", max_length=128, null=True, blank=True)
 
     complete_date = models.DateTimeField(verbose_name="完成时间", null=True, blank=True)
@@ -498,8 +498,6 @@ class EditPublickTaskManagement(models.Model):
     content = models.TextField(verbose_name="答案")
     submit_num = models.SmallIntegerField(verbose_name="提交次数", default=0)
 
-
-
     status_choices = (
         (1, "发布中"),
         (2, "发布异常"),
@@ -537,11 +535,16 @@ class EditTaskLog(models.Model):
     remark = models.TextField(verbose_name="失败原因", null=True, blank=True)
     create_date = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
 
-    Choices_status = (
-            (1,'打回'),
-            (1,'修改'),
-        )
-    bianji_dahui_update = models.SmallIntegerField(verbose_name='修改or打回',choices=Choices_status,default=1)
+    bianji_dahui_update_choices = (
+        (1, '打回'),
+        (2, '修改'),
+    )
+    bianji_dahui_update = models.SmallIntegerField(
+        verbose_name='修改or打回',
+        choices=bianji_dahui_update_choices,
+        default=1
+    )
+
 
 # 敏感词库
 class SensitiveWordLibrary(models.Model):
@@ -589,7 +592,6 @@ class ClientCoveringData(models.Model):
     total_cover_num = models.IntegerField(verbose_name="总覆盖")
     total_publish_num = models.IntegerField(verbose_name="总发布次数")
     update_date = models.DateTimeField(verbose_name="更新时间", null=True, blank=True)
-
 
 
 # 指定首页关键词
@@ -733,11 +735,11 @@ class BianXieBaoBiao(models.Model):
         (4, "老问答编写"),
         (5, "新问答打回"),
         (6, "老问答打回"),
+        (7, "新问答修改"),
+        (8, "老问答修改"),
     )
 
     xiangmu = models.SmallIntegerField(verbose_name='项目', choices=xiangmu_choices)
     oper_user = models.ForeignKey(to='UserProfile', verbose_name="编辑")
     create_date = models.DateField(verbose_name="创建时间")
     edit_count = models.IntegerField(verbose_name='编写数量')
-
-

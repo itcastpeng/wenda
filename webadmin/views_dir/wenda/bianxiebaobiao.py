@@ -27,26 +27,28 @@ def bianxiebaobiao(request):
         start_time = request.GET.get('start_time')
         stop_time = request.GET.get('stop_time')
         xuantian = request.GET.get('xuantian')
-        # print('start--stop -->',start_time,stop_time)
+        print('start--stop -->', start_time, stop_time)
+        print('xuantian -->', xuantian)
         # print('request-->',request.GET)
 
-        column_list = ['id', 'xiangmu', 'oper_user_id', 'create_date', 'edit_count','oper','start_time','stop_time','xuantian']
+        column_list = ['id', 'xiangmu', 'oper_user_id', 'create_date', 'edit_count', 'oper', 'start_time', 'stop_time',
+                       'xuantian']
         q = Q()
         for index, field in enumerate(column_list):
-            if field in request.GET and request.GET[field]:     # 如果该字段存在并且不为空
+            if field in request.GET and request.GET[field]:  # 如果该字段存在并且不为空
                 if start_time:
                     # 起始时间和结束时间
                     if field == 'start_time':
-                        print('start - -',start_time)
+                        print('start - -', start_time)
                         q.add(Q(**{"create_date__gte": request.GET[field]}), Q.AND)
                     elif field == 'stop_time':
-                        print('stop - - ',stop_time)
+                        print('stop - - ', stop_time)
                         q.add(Q(**{"create_date__lte": request.GET[field]}), Q.AND)
                 else:
                     # 天数查询
                     if field == 'xuantian':
 
-                        if  xuantian == '1':
+                        if xuantian == '1':
                             start_time = datetime.datetime.today().strftime('%Y-%m-%d')
                             stop_time = datetime.datetime.today().strftime('%Y-%m-%d')
 
@@ -65,10 +67,9 @@ def bianxiebaobiao(request):
                         q.add(Q(**{"create_date__lte": stop_time}), Q.AND)
                     else:
                         q.add(Q(**{field + "__contains": request.GET[field]}), Q.AND)
-        # print('q-->',q)
+        print('q-->', q)
         task_list_objs = models.BianXieBaoBiao.objects.filter(q)
         # print('task_count---:>', task_list_objs.count())
-
 
         result_data = {
             "recordsFiltered": task_list_objs.count(),
@@ -81,7 +82,7 @@ def bianxiebaobiao(request):
         xiangmu_data = ["总数据"]
         xiangmu_data.extend([i[1] for i in models.BianXieBaoBiao.xiangmu_choices])
         series_data = []
-        objs = task_list_objs.values('xiangmu','oper_user__username').annotate(Sum('edit_count'))
+        objs = task_list_objs.values('xiangmu', 'oper_user__username').annotate(Sum('edit_count'))
         temp_dict = {}
         for obj in objs:
             username = obj['oper_user__username']
@@ -89,21 +90,20 @@ def bianxiebaobiao(request):
             count = obj['edit_count__sum']
 
             if username not in temp_dict:
-                temp_dict[username] = [0] * 7
+                temp_dict[username] = [0] * 9
             # 项目为索引 哪个项目就是第几个元素
             temp_dict[username][xiangmu] = count
 
-        for k,v in temp_dict.items():
+        for k, v in temp_dict.items():
             v[0] = sum(v)
             series_data.append({
-                    'data': v,
-                    'type': 'line',
-                    'smooth': True,
-                    'name': k
+                'data': v,
+                'type': 'line',
+                'smooth': True,
+                'name': k
             })
 
-
-        print('进入的数据----->',series_data)
+        print('进入的数据----->', series_data)
         option = {
             'xAxis': {
                 'type': 'category',
@@ -196,6 +196,3 @@ def bianxiebaobiao(request):
     if "_pjax" in request.GET:
         return render(request, '../../wenda/templates/wenda/bianxiebaobiao/bianxiebaobiao_pjax.html', locals())
     return render(request, '../../wenda/templates/wenda/bianxiebaobiao/bianxiebaobiao.html', locals())
-
-
-

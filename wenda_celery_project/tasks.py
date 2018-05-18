@@ -1402,89 +1402,86 @@ def update_EditTaskLog_dahui_cishu():
         'create_date',
         'edit_public_task_management__task__edit_user',
         'edit_public_task_management__task__task__task__wenda_type',
+        'bianji_dahui_update'
     ).annotate(Count('id'))
 
     data_dict = {
-        'xin': {},
-        'lao': {}
+        'xin_dahui': {},
+        'lao_dahui': {},
+        'xin_xiugai': {},
+        'lao_xiugai': {},
     }
 
     for obj in objs:
-        # print('obj -- > ',obj)
+        print('obj -- > ', obj)
         create_time = obj['create_date'].strftime('%Y-%m-%d')
         edit_user_id = obj['edit_public_task_management__task__edit_user']
-        wenda_type  = obj['edit_public_task_management__task__task__task__wenda_type']
+        wenda_type = obj['edit_public_task_management__task__task__task__wenda_type']
         count = obj['id__count']
-        print('数据---->',create_time,edit_user_id,wenda_type,count)
+        bianji_dahui_update = obj['bianji_dahui_update']
+        print('数据---->', create_time, edit_user_id, wenda_type, count)
 
+        type_oper = ""
+        if bianji_dahui_update == 1:
+            type_oper = "dahui"
+        elif bianji_dahui_update == 2:
+            type_oper = "xiugai"
 
-        if wenda_type == 2:# 老问答
+        if wenda_type == 2:  # 老问答
             # print('wenda_type ------- > ',wenda_type)
-            if edit_user_id in data_dict['lao']:
-                if create_time in data_dict['lao'][edit_user_id]:
-                    data_dict['lao'][edit_user_id][create_time] += count
+            type_oper = 'lao_' + type_oper
+
+            if edit_user_id in data_dict[type_oper]:
+                if create_time in data_dict[type_oper][edit_user_id]:
+                    data_dict[type_oper][edit_user_id][create_time] += count
                 else:
-                    data_dict['lao'][edit_user_id][create_time] = count
+                    data_dict[type_oper][edit_user_id][create_time] = count
 
             else:
-                data_dict['lao'][edit_user_id] = {
-                    create_time:count,
+                data_dict[type_oper][edit_user_id] = {
+                    create_time: count,
                 }
-        else:# 新问答
-            if edit_user_id in data_dict['xin']:
-                if create_time in data_dict['xin'][edit_user_id]:
-                    data_dict['xin'][edit_user_id][create_time] += count
+        else:  # 新问答
+            type_oper = 'xin_' + type_oper
+            if edit_user_id in data_dict[type_oper]:
+                if create_time in data_dict[type_oper][edit_user_id]:
+                    data_dict[type_oper][edit_user_id][create_time] += count
                 else:
-                    data_dict['xin'][edit_user_id][create_time] = count
+                    data_dict[type_oper][edit_user_id][create_time] = count
             else:
-                data_dict['xin'][edit_user_id] = {
-                    create_time:count,
+                data_dict[type_oper][edit_user_id] = {
+                    create_time: count,
                 }
 
-    for k1,v1 in data_dict.items():
-        # print('k1,v1  --- >',k1,v1)
-        if k1 == 'lao':
-            for k2,v2 in v1.items():
-                # print('k2,v2- - - ->',k2,v2)
-                for k3,v3 in v2.items():
-                    # print('k3,v3 --> ',k3,v3)
+    for k1, v1 in data_dict.items():
+        print('k1,v1  --- >', k1, v1)
+        xiangmu = 0
+        if k1 == 'xin_dahui':
+            xiangmu = 5
+        elif k1 == 'lao_dahui':
+            xiangmu = 6
+        elif k1 == 'xin_xiugai':
+            xiangmu = 7
+        elif k1 == 'lao_xiugai':
+            xiangmu = 8
 
-                    obj = models.BianXieBaoBiao.objects.filter(
-                        xiangmu=6,
+        for k2, v2 in v1.items():
+            print('k2,v2- - - ->', k2, v2)
+            for k3, v3 in v2.items():
+                # print('k3,v3 --> ',k3,v3)
+
+                obj = models.BianXieBaoBiao.objects.filter(
+                    xiangmu=xiangmu,
+                    create_date=k3,
+                    oper_user_id=k2,
+                )
+                if obj:
+                    # 如果存在只修改 总数
+                    obj.update(edit_count=v3)
+                else:
+                    obj.create(
+                        xiangmu=xiangmu,
                         create_date=k3,
                         edit_count=v3,
                         oper_user_id=k2,
                     )
-                    if obj:
-                        # 如果存在只修改 总数
-                        obj.update( edit_count=v3)
-                    else:
-                        obj.create(
-                            xiangmu=6,
-                            create_date=k3,
-                            edit_count=v3,
-                            oper_user_id=k2,
-                        )
-        else:
-            for ke2,va2 in v1.items():
-                # print('ke2,va2- - - ->',ke2,va2)
-                for ke3,va3 in va2.items():
-                    # print('ke3,va3 --> ',ke3,va3)
-                    obj = models.BianXieBaoBiao.objects.filter(
-                        xiangmu=5,
-                        create_date=ke3,
-                        edit_count=va3,
-                        oper_user_id=ke2,
-                    )
-                    if obj:
-                        # 如果存在只修改 总数
-                        obj.update( edit_count=va3)
-                    else:
-                        obj.create(
-                            xiangmu=5,
-                            create_date=ke3,
-                            edit_count=va3,
-                            oper_user_id=ke2,
-                        )
-
-    print('data_dict -- > ',data_dict)
