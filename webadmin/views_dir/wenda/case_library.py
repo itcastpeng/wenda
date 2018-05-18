@@ -38,7 +38,7 @@ def case_library(request):
         # 排序
         column_list = [
             "index", "keywords__client_user__username", "keywords__keyword", "title",
-            "page_type", "rank", "create_date", 'keywords__client_user_id', 'search_keyword', 'task_type','department_id'
+            "page_type", "rank", "create_date", 'keywords__client_user_id', 'search_keyword', 'task_type'
         ]
         order_column = request.GET.get('order[0][column]', 1)  # 第几列排序
         order = request.GET.get('order[0][dir]')  # 正序还是倒序
@@ -63,9 +63,18 @@ def case_library(request):
 
         if request.GET.get("department_id"):
             department_id = request.GET.get("department_id")
-            user_id_list = [i[0] for i in models.HospitalInformation.objects.filter(department_id=department_id, user__status=1, user__is_delete=False).values_list('id')]
+            user_id_list = [i[0] for i in models.HospitalInformation.objects.filter(
+                department_id=department_id,
+                # user__status=1,
+                user__is_delete=False,
+                user__role_id=5
+            ).values_list('user_id')]
+            print('user_id_list -->', user_id_list)
             q.add(Q(**{'keywords__client_user_id__in': user_id_list}), Q.AND)
 
+        objss = models.KeywordsCover.objects.filter(keywords__client_user_id__in=[37, 63, 66, 80, 104, 112, 113, 127])
+        print("objss -->", objss.count())
+        print('q -->', q)
         # 成都美尔贝不显示
         objs = models.KeywordsCover.objects.select_related('keywords', 'keywords__client_user').filter(q).exclude(keywords__client_user_id=175)
         if role_id == 12:
