@@ -921,7 +921,7 @@ def keywords_cover(request):
         page_type = request.POST.get("task_type")
         rank = request.POST.get("rank")
         url = request.POST.get("url")
-        is_zhedie = request.POST.get("is_zhedie")
+        is_zhedie = request.POST.get("is_zhedie", False)
 
         keywords_cover_obj = models.KeywordsCover.objects.filter(
             keywords_id=kid,
