@@ -38,7 +38,7 @@ def case_library(request):
         # 排序
         column_list = [
             "index", "keywords__client_user__username", "keywords__keyword", "title",
-            "page_type", "rank", "create_date", 'keywords__client_user_id', 'search_keyword', 'task_type'
+            "page_type", "rank", "create_date", 'keywords__client_user_id', 'search_keyword', 'task_type','department_id'
         ]
         order_column = request.GET.get('order[0][column]', 1)  # 第几列排序
         order = request.GET.get('order[0][dir]')  # 正序还是倒序
@@ -116,6 +116,7 @@ def case_library(request):
         user_objs = user_objs.exclude(username__contains='YZ-')
 
     department_objs = models.Department.objects.all()
+    print('department_objs-->',department_objs)
     if "_pjax" in request.GET:
         return render(request, 'wenda/case_library/case_library_pjax.html', locals())
     return render(request, 'wenda/case_library/case_library.html', locals())
