@@ -968,12 +968,12 @@ def keywords_cover(request):
         ).values("task__release_user_id").annotate(Count("id"))
         user_list_id = [i["task__release_user_id"] for i in user_data]
         print("--->2: ", datetime.datetime.now())
-        # user_list_id = [25]
+        # user_list_id = [214]
         print('user_list_id -->', user_list_id)
         q = Q(Q(client_user_id__in=user_list_id) & Q(is_delete=False) & Q(Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date)))
         # q = Q(Q(is_delete=False) & Q(Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date)))
         print(q)
-        keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).order_by('client_user')[0:10].values('id', 'keyword', 'client_user_id')
+        keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).order_by('-client_user__fugai_youxian')[0:10].values('id', 'keyword', 'client_user_id')
         # keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).order_by('?')[0:10]
         # keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').get(q).order_by('client_user')
         print("--->3: ", datetime.datetime.now())

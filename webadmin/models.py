@@ -95,6 +95,12 @@ class UserProfile(models.Model):
     jifei_start_date = models.DateField(verbose_name="计费开始时间", null=True, blank=True)
     jifei_stop_date  =models.DateField(verbose_name="计费结束时间", null=True, blank=True)
 
+    fugai_youxian_choices = (
+        (1, "默认查询"),
+        (2, "优先查询"),
+    )
+    fugai_youxian = models.SmallIntegerField(verbose_name="覆盖优先查", choices=fugai_youxian_choices, default=1)
+
     def __str__(self):
         return self.username
 
