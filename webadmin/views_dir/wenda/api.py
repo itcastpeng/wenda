@@ -552,7 +552,7 @@ def check_wenda_link(request):
             obj.save()
 
             if obj.status == '2':
-                wenda_objs = obj.task.wendarobottask_set.filter(wenda_url=obj.url)
+                wenda_objs = obj.task.wendarobottask_set.select_related('wenda_url','title','content').filter(wenda_url=obj.url)
                 print('wenda_objs -  -> ', wenda_objs)
                 wenda_obj = wenda_objs[0]
                 models.TongjiKeywords.objects.create(
