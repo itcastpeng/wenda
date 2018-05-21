@@ -75,6 +75,9 @@ urlpatterns = [
     # 渠道操作商务通存活
     url(r'api/qudao_shangwutong_cunhuo', api.qudao_shangwutong_cunhuo),
 
+    # 查询用户到期信息
+    url(r'api/jifeidaoqitixing/(?P<o_id>\d+)',api.jifeidaoqitixing),
+
     # #################### 问答 ####################
 
     # 问答机器人
