@@ -1222,3 +1222,54 @@ def qudao_shangwutong_cunhuo(request):
             response.data = None
 
     return JsonResponse(response.__dict__)
+
+def jifeidaoqitixing(request,o_id):
+    data_list = request.GET.get('data_list')
+    seventime = datetime.date.today() + datetime.timedelta(days=7)
+    q = Q()
+    q.add(Q(guwen__isnull=False) | Q(xiaoshou__isnull=False), Q.AND)
+    q.add(Q(jifei_stop_date__lte=seventime) & Q(is_delete=False) & Q(status=1), Q.AND)
+    q.add(Q(guwen_id=o_id)|Q(xiaoshou_id=o_id), Q.AND)
+
+    user_objs = models.UserProfile.objects.filter(q).order_by('jifei_stop_date')
+    # enumerate 索引和值
+    # for index,user_obj in enumerate(user_objs):
+    print('user_objs -->', user_objs)
+    data_list = []
+
+    for user_obj in user_objs:
+        print('user_obj ---- > ', user_obj)
+        if user_obj:
+            # 用户名
+            print('user_obj -- > ', user_obj)
+            # 结束日期
+            stop_time = user_obj.jifei_stop_date
+            print('stop--->', stop_time)
+
+            if user_obj.jifei_start_date:
+                jifei_start_date = user_obj.jifei_start_date.strftime('%Y-%m-%d')
+            if user_obj.jifei_stop_date:
+                jifei_stop_date = user_obj.jifei_stop_date.strftime('%Y-%m-%d')
+                now_date = datetime.datetime.now()
+                if user_obj.jifei_stop_date == datetime.date.today():
+                    data_str = '{}今天到期'.format(user_obj)
+                    data_list.append(data_str)
+                # 增加判断  已过期负数的  不加入列表
+                elif user_obj.jifei_stop_date < datetime.date.today():
+                    guoqishijian = user_obj.jifei_stop_date - datetime.date.today()
+
+                # 如果当前时间 大于等于 计费结束日期减去七天
+                else:
+                    if now_date.strftime('%Y-%m-%d') >= (
+                            user_obj.jifei_stop_date - datetime.timedelta(days=7)).strftime(
+                            '%Y-%m-%d'):
+                        # 用结束日期减去当前日期 剩余天数
+                        data_time = user_obj.jifei_stop_date - datetime.date.today()
+                        if data_time <= datetime.timedelta(days=7):
+                            data_str = '{}还有{}天到期'.format(user_obj, data_time.days)
+                            data_list.append(data_str)
+
+            print('\n' + '\n '.join(data_list))
+
+    return render(request,'api/chaxun_kehu_daoqishijian.html',locals())
+
