@@ -37,7 +37,8 @@ def login(request):
         username = request.POST.get("username")
         password = request.POST.get("password")
 
-        user_profile_obj = models.UserProfile.objects.filter(username=username, password=pub.str_encrypt(password), is_delete=False)
+        user_profile_obj = models.UserProfile.objects.filter(username=username, password=pub.str_encrypt(password),
+                                                             is_delete=False)
 
         if user_profile_obj:
 
@@ -107,7 +108,6 @@ def send_msg(wenda_robot_task_obj, yuanyin):
 
 # 发送微信公众号消息
 def send_msg_gongzhonghao(wenda_robot_task_obj, yuanyin):
-
     # 如果发布内容违规,则将判断该内容是否是由编辑写的
     edit_objs = models.EditPublickTaskManagement.objects.select_related('task__edit_user').filter(
         run_task=wenda_robot_task_obj
@@ -188,7 +188,6 @@ def task_ok(wenda_robot_task_obj):
 
 @csrf_exempt
 def get_wenda_task(request):
-
     response = pub.BaseResponse()
 
     if request.method == "POST":
@@ -215,20 +214,22 @@ def get_wenda_task(request):
                 if wenda_robot_task_objs:
                     wenda_robot_task_obj = wenda_robot_task_objs[0]
 
-                    if status == "1":     # 新发布问答
+                    if status == "1":  # 新发布问答
                         wenda_robot_task_obj.status = 2
 
                         if not current_url.endswith(".html"):
-                            current_url = re.findall(".*html", "https://zhidao.baidu.com/question/1612479735.html&fr=none")[0]
+                            current_url = \
+                            re.findall(".*html", "https://zhidao.baidu.com/question/1612479735.html&fr=none")[0]
 
                         wenda_robot_task_obj.wenda_url = current_url
                         if wenda_robot_task_obj.task.id == 356:
                             wenda_robot_task_obj.next_date = datetime.datetime.now() + datetime.timedelta(days=2)
                         else:
-                            wenda_robot_task_obj.next_date = datetime.datetime.now() + datetime.timedelta(minutes=random.randint(60*3, 60*5))
+                            wenda_robot_task_obj.next_date = datetime.datetime.now() + datetime.timedelta(
+                                minutes=random.randint(60 * 3, 60 * 5))
 
-                    elif status == "2":   # 回复问答
-                        if wenda_robot_task_obj.wenda_type == 2:        # 老问答
+                    elif status == "2":  # 回复问答
+                        if wenda_robot_task_obj.wenda_type == 2:  # 老问答
 
                             # 如果当前任务为已完成状态,不做任何处理
                             if wenda_robot_task_obj.status != 6:
@@ -249,14 +250,15 @@ def get_wenda_task(request):
                                     obj[0].content = wenda_robot_task_obj.content
                                     obj[0].save()
 
-                        elif not wenda_robot_task_obj.task:     # 养账号问答
+                        elif not wenda_robot_task_obj.task:  # 养账号问答
                             wenda_robot_task_obj.status = 6
 
-                        else:           # 新问答
+                        else:  # 新问答
                             wenda_robot_task_obj.status = 5
-                            wenda_robot_task_obj.next_date = datetime.datetime.now() + datetime.timedelta(minutes=random.randint(60 * 10, 60 * 15))
+                            wenda_robot_task_obj.next_date = datetime.datetime.now() + datetime.timedelta(
+                                minutes=random.randint(60 * 10, 60 * 15))
 
-                    elif status == "20":    # 回复内容异常
+                    elif status == "20":  # 回复内容异常
                         wenda_robot_task_obj.status = 20
                         # send_msg(wenda_robot_task_obj, "回复内容异常")
                         send_msg_gongzhonghao(wenda_robot_task_obj, "回复内容异常")
@@ -293,7 +295,7 @@ def get_wenda_task(request):
                         # 链接异常,操作老问答未找到链接
                         wenda_robot_task_obj.status = 70
 
-                    else:   # status == 5  # 采纳问答
+                    else:  # status == 5  # 采纳问答
                         task_ok(wenda_robot_task_obj)
 
                     wenda_robot_task_obj.update_date = datetime.datetime.now()
@@ -354,7 +356,7 @@ def get_wenda_task(request):
                     wenda_robot_task_objs = models.WendaRobotTask.objects.select_related("task__release_user").filter(
                         status__in=status_list,
                         next_date__lt=datetime.datetime.now(),
-                        wenda_type__in=[1, 10],     # 新问答或新问答补发
+                        wenda_type__in=[1, 10],  # 新问答或新问答补发
                     ).exclude(task__release_user_id=235).order_by('oper_num')[:500]
                     print('wenda_robot_task_objs 新问答 不包括养账号任务 -->', wenda_robot_task_objs)
 
@@ -418,7 +420,8 @@ def get_wenda_task(request):
 
                 response.status = True
 
-                release_platform = [i[0] for i in wenda_robot_task_obj.release_platform_choices if i[0] == wenda_robot_task_obj.release_platform][0]
+                release_platform = [i[0] for i in wenda_robot_task_obj.release_platform_choices if
+                                    i[0] == wenda_robot_task_obj.release_platform][0]
 
                 response.data = {
                     "task_id": wenda_robot_task_obj.id,
@@ -432,7 +435,7 @@ def get_wenda_task(request):
                 else:
                     response.data["yangzhanghao"] = False
 
-                if wenda_robot_task_obj.status == 1:    # 发布新问答
+                if wenda_robot_task_obj.status == 1:  # 发布新问答
                     response.data["title"] = wenda_robot_task_obj.title
 
                 elif wenda_robot_task_obj.status == 2:  # 回复问答
@@ -441,19 +444,22 @@ def get_wenda_task(request):
                     response.data["content"] = wenda_robot_task_obj.content
                     response.data["wenda_type"] = wenda_robot_task_obj.wenda_type
 
-                    if wenda_robot_task_obj.task_id:        # 如果没有task_id 则是测试任务
-                        response.data["shangwutong_url"] = "http://wenda.zhugeyingxiao.com/api/tiaozhuan/?id={uid}".format(
+                    if wenda_robot_task_obj.task_id:  # 如果没有task_id 则是测试任务
+                        response.data[
+                            "shangwutong_url"] = "http://wenda.zhugeyingxiao.com/api/tiaozhuan/?id={uid}".format(
                             uid=wenda_robot_task_obj.task.release_user.id
                         )
 
-                    if wenda_robot_task_obj.wenda_type == 2:    # 老问答
-                        keywords_top_info_objs = models.KeywordsTopInfo.objects.select_related('keyword').filter(url=wenda_robot_task_obj.wenda_url)
+                    if wenda_robot_task_obj.wenda_type == 2:  # 老问答
+                        keywords_top_info_objs = models.KeywordsTopInfo.objects.select_related('keyword').filter(
+                            url=wenda_robot_task_obj.wenda_url)
                         search_keywords_list = set()
                         for keywords_top_info_obj in keywords_top_info_objs:
                             search_keywords_list.add(keywords_top_info_obj.keyword.keyword)
                         response.data["search_keywords"] = list(search_keywords_list)
 
-                        wenda_robot_task_obj.oper_num = models.RobotAccountLog.objects.filter(wenda_robot_task=wenda_robot_task_obj).count()
+                        wenda_robot_task_obj.oper_num = models.RobotAccountLog.objects.filter(
+                            wenda_robot_task=wenda_robot_task_obj).count()
 
                     if wenda_robot_task_obj.add_map == 1:
                         response.data["map"] = {
@@ -462,7 +468,7 @@ def get_wenda_task(request):
                             "move_map_coordinate": wenda_robot_task_obj.task.release_user.move_map_coordinate,
                         }
 
-                elif wenda_robot_task_obj.status == 5:   # 采纳
+                elif wenda_robot_task_obj.status == 5:  # 采纳
                     response.data["title"] = wenda_robot_task_obj.title
                     response.data["url"] = wenda_robot_task_obj.wenda_url
                     response.data["content"] = wenda_robot_task_obj.content
@@ -505,10 +511,10 @@ def check_ipaddr(request):
             ipaddr_list = RedisOper.read_from_cache('api_check_ipaddr_ip_list')
             if ipaddr in ipaddr_list:
 
-            # up_hours_time = datetime.datetime.now() - datetime.timedelta(hours=6)
-            # robot_account_log_obj = models.RobotAccountLog.objects.filter(ipaddr=ipaddr, create_date__lt=up_hours_time)
-            #
-            # if robot_account_log_obj:
+                # up_hours_time = datetime.datetime.now() - datetime.timedelta(hours=6)
+                # robot_account_log_obj = models.RobotAccountLog.objects.filter(ipaddr=ipaddr, create_date__lt=up_hours_time)
+                #
+                # if robot_account_log_obj:
                 response.status = False
                 response.message = "该ip不能使用"
 
@@ -587,7 +593,7 @@ def set_keywords_rank(request):
             else:
                 q = Q(Q(update_date__isnull=True) | Q(update_date__lt=filter_datetime))
             objs = models.SearchKeywordsRank.objects.filter(q).order_by('?')
-            if objs:    # 有任务
+            if objs:  # 有任务
                 obj = objs[0]
                 response.status = True
                 response.data = {
@@ -602,11 +608,11 @@ def set_keywords_rank(request):
                     obj.update_date = datetime.datetime.now()
                 obj.save()
 
-            else:   # 无任务
+            else:  # 无任务
                 response.status = True
                 response.message = "当前无任务"
 
-        else:   # POST
+        else:  # POST
 
             url = request.POST.get("url")
             task_type = request.POST.get("task_type")
@@ -620,12 +626,12 @@ def set_keywords_rank(request):
                 is_delete=False,
             ).exclude(status=11)
 
-            number = re.search("\d+", url).group()     # 过滤出url中的数字
+            number = re.search("\d+", url).group()  # 过滤出url中的数字
             print(number)
 
             flag = False
             for obj in task_objs:
-                wendalink_objs = obj.wendalink_set.filter(url__contains=number)     # 在数据库中所属url中的数字,看是否能匹配到
+                wendalink_objs = obj.wendalink_set.filter(url__contains=number)  # 在数据库中所属url中的数字,看是否能匹配到
                 if wendalink_objs:  # 表示匹配到了
 
                     # datetime.datetime.strftime("%y-%m-%d %H:%M:%S")
@@ -851,7 +857,7 @@ def keywords_top_set_oper(request, oper_type):
                 obj[0].is_update = True
                 obj[0].update_date = datetime.datetime.now()
 
-                if not obj[0].run_task:     # 没有该值表示是渠道做的
+                if not obj[0].run_task:  # 没有该值表示是渠道做的
                     obj[0].delete()
                     response.status = True
                     response.message = "修改成功 - 渠道操作"
@@ -859,7 +865,7 @@ def keywords_top_set_oper(request, oper_type):
                     robot_task_obj = models.WendaRobotTask.objects.get(id=obj[0].run_task.id)
                     edit_pulick_task_obj = models.EditPublickTaskManagement.objects.get(run_task=robot_task_obj)
 
-                    if not is_pause:    # is_pause = False 任务没有关闭,需要打回
+                    if not is_pause:  # is_pause = False 任务没有关闭,需要打回
                         robot_task_obj.status = 20
                         robot_task_obj.next_date = datetime.datetime.now() + datetime.timedelta(minutes=10)
 
@@ -876,14 +882,14 @@ def keywords_top_set_oper(request, oper_type):
                                 content=edit_pulick_task_obj.content,
                                 remark="查询覆盖无匹配答案"
                             )
-                    else:   # 任务被关闭  is_pause = True
+                    else:  # 任务被关闭  is_pause = True
                         robot_task_obj.status = 6
                         robot_task_obj.next_date = datetime.datetime.now() + datetime.timedelta(minutes=10)
                         edit_pulick_task_obj.status = 3
                         edit_pulick_task_obj.is_select_cover_back = True
                         edit_pulick_task_obj.update_date = datetime.datetime.now()
 
-                        if not obj[0].is_pause:     # 如果该任务当前状态为未暂停状态
+                        if not obj[0].is_pause:  # 如果该任务当前状态为未暂停状态
                             models.EditTaskLog.objects.create(
                                 edit_public_task_management=edit_pulick_task_obj,
                                 title=edit_pulick_task_obj.title,
@@ -981,18 +987,22 @@ def keywords_cover(request):
         print("--->2: ", datetime.datetime.now())
         # user_list_id = [214]
         print('user_list_id -->', user_list_id)
-        q = Q(Q(client_user_id__in=user_list_id) & Q(is_delete=False) & Q(Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date)))
+        q = Q(Q(client_user_id__in=user_list_id) & Q(is_delete=False) & Q(
+            Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date)))
         # q = Q(Q(is_delete=False) & Q(Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date)))
         print(q)
-        keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).order_by('-client_user__fugai_youxian')[0:10].values('id', 'keyword', 'client_user_id')
+        keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).order_by(
+            '-client_user__fugai_youxian')[0:10].values('id', 'keyword', 'client_user_id')
         # keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).order_by('?')[0:10]
         # keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').get(q).order_by('client_user')
         print("--->3: ", datetime.datetime.now())
 
         # 如果查询覆盖的词查完,则查询指定关键词中未查询的词
         if not keywords_objs:
-            q = Q(Q(status=1) & Q(is_delete=False) & Q(Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date)))
-            keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).order_by('client_user')[0:10].values('id', 'keyword', 'client_user_id')
+            q = Q(Q(status=1) & Q(is_delete=False) & Q(
+                Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date)))
+            keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).order_by(
+                'client_user')[0:10].values('id', 'keyword', 'client_user_id')
 
         print('keywords_objs -->', keywords_objs)
         if keywords_objs:
@@ -1005,9 +1015,9 @@ def keywords_cover(request):
             print("--->4: ", datetime.datetime.now())
 
             data = {
-                "kid": obj['id'],              # 关键词id
-                "keyword": obj['keyword'],     # 关键词
-                "client_user_id": obj['client_user_id'],     # 客户id
+                "kid": obj['id'],  # 关键词id
+                "keyword": obj['keyword'],  # 关键词
+                "client_user_id": obj['client_user_id'],  # 客户id
             }
 
             response.status = True
@@ -1046,7 +1056,7 @@ def check_zhidao_url(request):
         # 如果统计表中存在,则表示操作过
         if tongji_keywords_objs:
             if is_pause:
-                tongji_keywords_objs.update(is_pause = True)
+                tongji_keywords_objs.update(is_pause=True)
             #     models.EditPublickTaskManagement.objects.filter(run_task_id=obj[0].run_task_id).update(status=3)
             #     models.WendaRobotTask.objects.filter(id=obj[0].run_task_id).update(status=6)
 
@@ -1105,7 +1115,7 @@ def check_zhidao_url(request):
                     keywords_top_info_objs.update(update_date=datetime.datetime.now())
 
             response.status = True
-            response.data = None        # data 为空,表示不是我们的数据
+            response.data = None  # data 为空,表示不是我们的数据
 
     else:
         response.status = False
@@ -1163,12 +1173,15 @@ def current_oper_task(request):
         user_list_id = [i["task__release_user_id"] for i in user_data]
         q = Q(Q(client_user_id__in=user_list_id) & Q(is_delete=False) & Q(
             Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date)))
-        keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).order_by('client_user')[0:10]
+        keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).order_by('client_user')[
+                        0:10]
 
         # 如果查询覆盖的词查完,则查询指定关键词中未查询的词
         if not keywords_objs:
-            q = Q(Q(status=1) & Q(is_delete=False) & Q(Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date)))
-            keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).order_by('client_user')[0:10]
+            q = Q(Q(status=1) & Q(is_delete=False) & Q(
+                Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date)))
+            keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).order_by(
+                'client_user')[0:10]
 
         if keywords_objs:
             select_keyword_cover_flag = True
@@ -1197,12 +1210,13 @@ def qudao_shangwutong_cunhuo(request):
     if request.method == "POST":
         tid = request.POST.get('tid')
         status = request.POST.get('status')
-        if status == '1':   # 1 表示存在, 0表示不存在
+        if status == '1':  # 1 表示存在, 0表示不存在
             t_status = 21
         else:
             t_status = 22
 
-        models.EditPublickTaskManagement.objects.filter(id=tid).update(status=t_status, update_date=datetime.datetime.now())
+        models.EditPublickTaskManagement.objects.filter(id=tid).update(status=t_status,
+                                                                       update_date=datetime.datetime.now())
     else:
         dtime = datetime.datetime.now() - datetime.timedelta(days=1)
         q = Q(Q(update_date__isnull=True) | Q(update_date__lt=dtime))
@@ -1226,7 +1240,7 @@ def qudao_shangwutong_cunhuo(request):
 
 # 查询用户到期信息
 @csrf_exempt
-def jifeidaoqitixing(request,oper_type,o_id):
+def jifeidaoqitixing(request, oper_type, o_id):
     print('进入')
     response = pub.BaseResponse()
     data_list = request.GET.get('data_list')
@@ -1234,7 +1248,7 @@ def jifeidaoqitixing(request,oper_type,o_id):
     q = Q()
     q.add(Q(guwen__isnull=False) | Q(xiaoshou__isnull=False), Q.AND)
     q.add(Q(jifei_stop_date__lte=seventime) & Q(is_delete=False) & Q(status=1), Q.AND)
-    q.add(Q(guwen_id=o_id)|Q(xiaoshou_id=o_id), Q.AND)
+    q.add(Q(guwen_id=o_id) | Q(xiaoshou_id=o_id), Q.AND)
 
     user_objs = models.UserProfile.objects.filter(q).order_by('jifei_stop_date')
     # enumerate 索引和值
@@ -1261,8 +1275,8 @@ def jifeidaoqitixing(request,oper_type,o_id):
                     data_str = '{}今天到期'.format(user_obj.username)
                     data_list.append(data_str)
                     api_data_list.append({
-                        'username':user_obj.username,
-                        'text':'今天到期'
+                        'username': user_obj.username,
+                        'text': '今天到期'
                     })
                 # 增加判断  已过期负数的  不加入列表
                 elif user_obj.jifei_stop_date < datetime.date.today():
@@ -1272,7 +1286,7 @@ def jifeidaoqitixing(request,oper_type,o_id):
                 else:
                     if now_date.strftime('%Y-%m-%d') >= (
                             user_obj.jifei_stop_date - datetime.timedelta(days=7)).strftime(
-                            '%Y-%m-%d'):
+                        '%Y-%m-%d'):
                         # 用结束日期减去当前日期 剩余天数
                         data_time = user_obj.jifei_stop_date - datetime.date.today()
                         if data_time <= datetime.timedelta(days=7):
@@ -1283,10 +1297,9 @@ def jifeidaoqitixing(request,oper_type,o_id):
                                 'text': '{}天到期'.format(data_time.days)
                             })
 
-
     if oper_type == 'json':
         response.code = 200
         response.data = api_data_list
         return JsonResponse(response.__dict__)
     else:
-        return render(request,'api/chaxun_kehu_daoqishijian.html',locals())
+        return render(request, 'api/chaxun_kehu_daoqishijian.html', locals())
