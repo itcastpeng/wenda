@@ -1258,10 +1258,10 @@ def jifeidaoqitixing(request,oper_type,o_id):
                 jifei_stop_date = user_obj.jifei_stop_date.strftime('%Y-%m-%d')
                 now_date = datetime.datetime.now()
                 if user_obj.jifei_stop_date == datetime.date.today():
-                    data_str = '{}今天到期'.format(user_obj)
+                    data_str = '{}今天到期'.format(user_obj.username)
                     data_list.append(data_str)
                     api_data_list.append({
-                        'username':user_obj,
+                        'username':user_obj.username,
                         'text':'今天到期'
                     })
                 # 增加判断  已过期负数的  不加入列表
@@ -1276,16 +1276,17 @@ def jifeidaoqitixing(request,oper_type,o_id):
                         # 用结束日期减去当前日期 剩余天数
                         data_time = user_obj.jifei_stop_date - datetime.date.today()
                         if data_time <= datetime.timedelta(days=7):
-                            data_str = '{}还有{}天到期'.format(user_obj, data_time.days)
+                            data_str = '{}还有{}天到期'.format(user_obj.username, data_time.days)
                             data_list.append(data_str)
                             api_data_list.append({
-                                'username': user_obj,
+                                'username': user_obj.username,
                                 'text': '{}天到期'.format(data_time.days)
                             })
 
+
     if oper_type == 'json':
         response.code = 200
-        response.data = data_list
+        response.data = api_data_list
         return JsonResponse(response.__dict__)
     else:
         return render(request,'api/chaxun_kehu_daoqishijian.html',locals())
