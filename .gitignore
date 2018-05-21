@@ -6,4 +6,3 @@ migrations/
 __pycache__/
 test
 *.bak
-wechat_data.json
