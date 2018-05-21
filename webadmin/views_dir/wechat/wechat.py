@@ -34,10 +34,10 @@ def index(request):
     nonce = request.GET.get("nonce")
     echostr = request.GET.get("echostr")
 
-    wechat_data_path = os.path.join(os.getcwd(), "webadmin/modules/wechat_data.json")
+    wechat_data_path = os.path.join(os.getcwd(), "webadmin/views_dir/wechat/wechat_data.json")
     with open(wechat_data_path, "r", encoding="utf8") as f:
         wechat_data = json.loads(f.read())
-        token = wechat_data["access_token"]
+        token = wechat_data["token"]
         EncodingAESKey = wechat_data["EncodingAESKey"]
 
     check_result = checkSignature(timestamp, nonce, token, signature)
