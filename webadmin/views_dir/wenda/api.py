@@ -1241,6 +1241,7 @@ def jifeidaoqitixing(request,oper_type,o_id):
     # for index,user_obj in enumerate(user_objs):
     print('user_objs -->', user_objs)
     data_list = []
+    api_data_list = []
 
     for user_obj in user_objs:
         print('user_obj ---- > ', user_obj)
@@ -1259,6 +1260,10 @@ def jifeidaoqitixing(request,oper_type,o_id):
                 if user_obj.jifei_stop_date == datetime.date.today():
                     data_str = '{}今天到期'.format(user_obj)
                     data_list.append(data_str)
+                    api_data_list.append({
+                        'username':user_obj,
+                        'text':'今天到期'
+                    })
                 # 增加判断  已过期负数的  不加入列表
                 elif user_obj.jifei_stop_date < datetime.date.today():
                     guoqishijian = user_obj.jifei_stop_date - datetime.date.today()
@@ -1273,6 +1278,10 @@ def jifeidaoqitixing(request,oper_type,o_id):
                         if data_time <= datetime.timedelta(days=7):
                             data_str = '{}还有{}天到期'.format(user_obj, data_time.days)
                             data_list.append(data_str)
+                            api_data_list.append({
+                                'username': user_obj,
+                                'text': '{}天到期'.format(data_time.days)
+                            })
 
     if oper_type == 'json':
         response.code = 200
