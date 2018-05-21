@@ -1223,6 +1223,9 @@ def qudao_shangwutong_cunhuo(request):
 
     return JsonResponse(response.__dict__)
 
+
+# 查询用户到期信息
+@csrf_exempt
 def jifeidaoqitixing(request,oper_type,o_id):
     print('进入')
     response = pub.BaseResponse()
