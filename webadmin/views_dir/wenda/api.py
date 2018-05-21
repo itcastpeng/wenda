@@ -1223,7 +1223,9 @@ def qudao_shangwutong_cunhuo(request):
 
     return JsonResponse(response.__dict__)
 
-def jifeidaoqitixing(request,o_id):
+def jifeidaoqitixing(request,oper_type,o_id):
+    print('进入')
+    response = pub.BaseResponse()
     data_list = request.GET.get('data_list')
     seventime = datetime.date.today() + datetime.timedelta(days=7)
     q = Q()
@@ -1269,7 +1271,9 @@ def jifeidaoqitixing(request,o_id):
                             data_str = '{}还有{}天到期'.format(user_obj, data_time.days)
                             data_list.append(data_str)
 
-            print('\n' + '\n '.join(data_list))
-
-    return render(request,'api/chaxun_kehu_daoqishijian.html',locals())
-
+    if oper_type == 'json':
+        response.code = 200
+        response.data = data_list
+        return JsonResponse(response.__dict__)
+    else:
+        return render(request,'api/chaxun_kehu_daoqishijian.html',locals())
