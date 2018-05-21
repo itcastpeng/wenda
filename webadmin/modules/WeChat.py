@@ -18,7 +18,7 @@ class WeChatPublicSendMsg(object):
         if wechat_data_path:
             self.wechat_data_path = wechat_data_path
         else:
-            self.wechat_data_path = os.path.join(os.getcwd(), "webadmin/modules/wechat_data.json")
+            self.wechat_data_path = os.path.join(os.getcwd(), "webadmin", "modules", "wechat_data.json")
 
         print(wechat_data_path)
         with open(self.wechat_data_path, "r", encoding="utf8") as f:
@@ -29,11 +29,11 @@ class WeChatPublicSendMsg(object):
             self.access_token = data["access_token"]
             self.create_datetime = data["create_datetime"]
 
-            print(type(self.create_datetime), self.create_datetime)
-            print(time.time())
-            print((int(time.time()) - self.create_datetime))
-
             if not self.create_datetime or (int(time.time()) - self.create_datetime) > 7200:
+                # print(type(self.create_datetime), self.create_datetime)
+                # print(time.time())
+                # print((int(time.time()) - self.create_datetime))
+
                 self.get_access_token()
 
         self.get_users()
