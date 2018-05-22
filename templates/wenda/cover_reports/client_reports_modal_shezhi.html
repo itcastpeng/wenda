@@ -1,0 +1,71 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h3 class="modal-title">设置</h3>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal" id="modal_form" onsubmit="return false">
+        {% csrf_token %}
+        <div class="checkbox-custom checkbox-primary">
+            <input type="checkbox" id="zhanshibianji" {% if obj.task_edit_show %}checked{% endif %} name="zhanshibianji">
+            <label for="zhanshibianji" style="margin-right: 20px">是否展示编辑内容</label> <span>注:打钩代表展示编辑内容</span>
+        </div>
+          <div class="checkbox-custom checkbox-primary">
+            <input type="checkbox" id="fasongbaobiao" {% if obj.send_statement %}checked{% endif %} name="fasongbaobiao">
+            <label for="fasongbaobiao"  style="margin-right: 20px">是否开启发送报表</label> <span>注:打钩代表开启发送报表</span>
+        </div>
+          <div class="checkbox-custom checkbox-primary">
+            <input type="checkbox" id="chongchafugai"  name="chongchafugai">
+            <label for="chongchafugai"  style="margin-right: 48px">是否重查覆盖</label> <span>注:打钩代表重查覆盖</span>
+        </div>
+        <hr>
+      <div class="form-group">
+            <label class="col-md-2 control-label" for="delete_lianjie">链接名称 <span class="form-span-active">*</span></label>
+            <div class="col-md-8">
+                <textarea name="delete_lianjie" id="delete_lianjie" class="form-control" rows="10" placeholder="请输入要删除的不计覆盖链接"></textarea>
+            </div>
+        </div>
+        <hr>
+        <div style="margin-left: 20px">修改计费时间</div>
+
+         <div class="form-group" id="div_xiugaijifeiriqistart">
+            <label class="col-md-2 control-label" for="xiugaijifeiriqistart">开始日期 </label>
+               <div class="col-md-8">
+                   <input class="Wdate form-control" id="xiugaijifeiriqistart" name="xiugaijifeiriqistart"  onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" type="text" value="{{ start_time }}">
+             </div>
+        </div>
+
+       <div class="form-group">
+            <label class="col-md-2 control-label" for="xiugaijifeiriqistop">结束日期 </label>
+             <div class="col-md-8">
+                   <input class="Wdate form-control" id="xiugaijifeiriqistop" name="xiugaijifeiriqistop" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" type="text"  placeholder="默认值为一个月,可只选开始时间">
+             </div>
+        </div>
+
+    </form>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" id="create_button">提交</button>
+</div>
+
+<script>
+    $("#exampleFormModal .modal-dialog").css("width", "700px");
+
+    $("#create_button").on('click', function () {
+        var data = $("#modal_form").serialize();
+        var url = '{% url "cover_reports" %}shezhi_oper/{{ o_id }}/';
+        $.post(url, data, function (result) {
+            if(!result['status']){
+                toastr['error'](result['message']);
+            }else{
+                toastr['success'](result['message']);
+                $('.modal').modal("hide");
+                table.ajax.reload();
+            }
+            }, 'json')
+
+    })
+
+</script>
