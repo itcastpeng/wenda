@@ -181,65 +181,66 @@ def cover_reports(request):
             jifei_start_date = ''
             jifei_stop_date = ''
 
-            if obj.client_user.jifei_start_date:
-                jifei_start_date = obj.client_user.jifei_start_date.strftime('%Y-%m-%d')
-            if obj.client_user.jifei_stop_date:
-                jifei_stop_date = obj.client_user.jifei_stop_date.strftime('%Y-%m-%d')
+            if role_id in [1,4,6,7]:
+                if obj.client_user.jifei_start_date:
+                    jifei_start_date = obj.client_user.jifei_start_date.strftime('%Y-%m-%d')
+                if obj.client_user.jifei_stop_date:
+                    jifei_stop_date = obj.client_user.jifei_stop_date.strftime('%Y-%m-%d')
 
-                now_date = datetime.datetime.now()
-
-
-                if obj.client_user.jifei_stop_date == datetime.date.today():
-                    username += "<span style='color: red'> (今天到期)</span>"
-
-                elif obj.client_user.jifei_stop_date <datetime.date.today():
-                    username += "<span style='color: red'> (已到期)</span>"
-                # 如果当前时间 大于等于 计费结束日期减去七天
-                else:
-                    if now_date.strftime('%Y-%m-%d') >= (obj.client_user.jifei_stop_date - datetime.timedelta(days=7)).strftime('%Y-%m-%d'):
-                        # 用结束日期减去当前日期 剩余天数
-                        temp = obj.client_user.jifei_stop_date - datetime.date.today()
-                        username += "<span style='color: #ff9900'> (还有{}天到期)</span>".format(temp.days)
+                    now_date = datetime.datetime.now()
 
 
+                    if obj.client_user.jifei_stop_date == datetime.date.today():
+                        username += "<span style='color: red'> (今天到期)</span>"
 
-            result_data["data"].append(
-                {
-                    "index": index,
-                    "id": obj.client_user_id,
-                    "username": username,
-                    "xiaoshou_username": obj.client_user.xiaoshou.username,
-                    "cover_total": obj.total_cover_num,
-                    "select_status": select_status,
-                    "keyword_count": keyword_count_str,
-                    "oper": oper,
-                    "today_cover": today_cover,
-                    "total_oper_num": total_oper_num,
-                    "xiugaijifeiriqi": xiugaijifeiriqi,
-                    'xiugaijifeiriqistart': jifei_start_date,
-                    'xiugaijifeiriqistop': jifei_stop_date,
-                }
-            )
-            # print("4 -->", datetime.datetime.now())
-        return HttpResponse(json.dumps(result_data))
+                    elif obj.client_user.jifei_stop_date <datetime.date.today():
+                        username += "<span style='color: red'> (已到期)</span>"
+                    # 如果当前时间 大于等于 计费结束日期减去七天
+                    else:
+                        if now_date.strftime('%Y-%m-%d') >= (obj.client_user.jifei_stop_date - datetime.timedelta(days=7)).strftime('%Y-%m-%d'):
+                            # 用结束日期减去当前日期 剩余天数
+                            temp = obj.client_user.jifei_stop_date - datetime.date.today()
+                            username += "<span style='color: #ff9900'> (还有{}天到期)</span>".format(temp.days)
 
-    if role_id == 12:
-        client_data = models.ClientCoveringData.objects.filter(client_user__is_delete=False).filter(**filter_dict).exclude(
-            client_user__username__contains='YZ-'
-        ).values(
-            'client_user__username',
-            'client_user_id'
-        ).annotate(Count("id"))
-    else:
-        client_data = models.ClientCoveringData.objects.filter(client_user__is_delete=False).filter(**filter_dict).values(
-            'client_user__username',
-            'client_user_id'
-        ).annotate(Count("id"))
 
-    xiaoshou_data = models.ClientCoveringData.objects.filter(**filter_dict).values('client_user__xiaoshou__username',
-        'client_user__xiaoshou_id').annotate(Count("id"))
-    print("client_data -->", client_data)
-    status_choices = models.UserProfile.status_choices
+
+                result_data["data"].append(
+                    {
+                        "index": index,
+                        "id": obj.client_user_id,
+                        "username": username,
+                        "xiaoshou_username": obj.client_user.xiaoshou.username,
+                        "cover_total": obj.total_cover_num,
+                        "select_status": select_status,
+                        "keyword_count": keyword_count_str,
+                        "oper": oper,
+                        "today_cover": today_cover,
+                        "total_oper_num": total_oper_num,
+                        "xiugaijifeiriqi": xiugaijifeiriqi,
+                        'xiugaijifeiriqistart': jifei_start_date,
+                        'xiugaijifeiriqistop': jifei_stop_date,
+                    }
+                )
+                # print("4 -->", datetime.datetime.now())
+            return HttpResponse(json.dumps(result_data))
+
+        if role_id == 12:
+            client_data = models.ClientCoveringData.objects.filter(client_user__is_delete=False).filter(**filter_dict).exclude(
+                client_user__username__contains='YZ-'
+            ).values(
+                'client_user__username',
+                'client_user_id'
+            ).annotate(Count("id"))
+        else:
+            client_data = models.ClientCoveringData.objects.filter(client_user__is_delete=False).filter(**filter_dict).values(
+                'client_user__username',
+                'client_user_id'
+            ).annotate(Count("id"))
+
+        xiaoshou_data = models.ClientCoveringData.objects.filter(**filter_dict).values('client_user__xiaoshou__username',
+            'client_user__xiaoshou_id').annotate(Count("id"))
+        print("client_data -->", client_data)
+        status_choices = models.UserProfile.status_choices
     if "_pjax" in request.GET:
         return render(request, 'wenda/cover_reports/cover_reports_pjax.html', locals())
     return render(request, 'wenda/cover_reports/cover_reports.html', locals())

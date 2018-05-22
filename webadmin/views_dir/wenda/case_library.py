@@ -120,7 +120,11 @@ def case_library(request):
 
     page_type_choices = models.KeywordsCover.page_type_choices
     task_type_choices = models.KeywordsCover.task_type_choices
-    user_objs = models.UserProfile.objects.filter(role_id=5, status=1, is_delete=False)
+    user_objs = models.UserProfile.objects.filter(
+        role_id=5,
+        # status=1,
+        is_delete=False
+     )
     if role_id == 12:
         user_objs = user_objs.exclude(username__contains='YZ-')
 
