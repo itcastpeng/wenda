@@ -222,9 +222,6 @@ def cover_reports(request):
             # print("4 -->", datetime.datetime.now())
         return HttpResponse(json.dumps(result_data))
 
-    if "_pjax" in request.GET:
-        return render(request, 'wenda/cover_reports/cover_reports_pjax.html', locals())
-
     if role_id == 12:
         client_data = models.ClientCoveringData.objects.filter(client_user__is_delete=False).filter(**filter_dict).exclude(
             client_user__username__contains='YZ-'
@@ -243,6 +240,9 @@ def cover_reports(request):
     print("client_data -->", client_data)
 
     status_choices = models.UserProfile.status_choices
+
+    if "_pjax" in request.GET:
+        return render(request, 'wenda/cover_reports/cover_reports_pjax.html', locals())
     return render(request, 'wenda/cover_reports/cover_reports.html', locals())
 
 
