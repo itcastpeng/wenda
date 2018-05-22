@@ -202,47 +202,47 @@ def cover_reports(request):
                             temp = obj.client_user.jifei_stop_date - datetime.date.today()
                             username += "<span style='color: #ff9900'> (还有{}天到期)</span>".format(temp.days)
 
+            result_data["data"].append(
+                {
+                    "index": index,
+                    "id": obj.client_user_id,
+                    "username": username,
+                    "xiaoshou_username": obj.client_user.xiaoshou.username,
+                    "cover_total": obj.total_cover_num,
+                    "select_status": select_status,
+                    "keyword_count": keyword_count_str,
+                    "oper": oper,
+                    "today_cover": today_cover,
+                    "total_oper_num": total_oper_num,
+                    "xiugaijifeiriqi": xiugaijifeiriqi,
+                    'xiugaijifeiriqistart': jifei_start_date,
+                    'xiugaijifeiriqistop': jifei_stop_date,
+                }
+            )
+            # print("4 -->", datetime.datetime.now())
+        return HttpResponse(json.dumps(result_data))
 
-
-                result_data["data"].append(
-                    {
-                        "index": index,
-                        "id": obj.client_user_id,
-                        "username": username,
-                        "xiaoshou_username": obj.client_user.xiaoshou.username,
-                        "cover_total": obj.total_cover_num,
-                        "select_status": select_status,
-                        "keyword_count": keyword_count_str,
-                        "oper": oper,
-                        "today_cover": today_cover,
-                        "total_oper_num": total_oper_num,
-                        "xiugaijifeiriqi": xiugaijifeiriqi,
-                        'xiugaijifeiriqistart': jifei_start_date,
-                        'xiugaijifeiriqistop': jifei_stop_date,
-                    }
-                )
-                # print("4 -->", datetime.datetime.now())
-            return HttpResponse(json.dumps(result_data))
-
-        if role_id == 12:
-            client_data = models.ClientCoveringData.objects.filter(client_user__is_delete=False).filter(**filter_dict).exclude(
-                client_user__username__contains='YZ-'
-            ).values(
-                'client_user__username',
-                'client_user_id'
-            ).annotate(Count("id"))
-        else:
-            client_data = models.ClientCoveringData.objects.filter(client_user__is_delete=False).filter(**filter_dict).values(
-                'client_user__username',
-                'client_user_id'
-            ).annotate(Count("id"))
-
-        xiaoshou_data = models.ClientCoveringData.objects.filter(**filter_dict).values('client_user__xiaoshou__username',
-            'client_user__xiaoshou_id').annotate(Count("id"))
-        print("client_data -->", client_data)
-        status_choices = models.UserProfile.status_choices
     if "_pjax" in request.GET:
         return render(request, 'wenda/cover_reports/cover_reports_pjax.html', locals())
+
+    if role_id == 12:
+        client_data = models.ClientCoveringData.objects.filter(client_user__is_delete=False).filter(**filter_dict).exclude(
+            client_user__username__contains='YZ-'
+        ).values(
+            'client_user__username',
+            'client_user_id'
+        ).annotate(Count("id"))
+    else:
+        client_data = models.ClientCoveringData.objects.filter(client_user__is_delete=False).filter(**filter_dict).values(
+            'client_user__username',
+            'client_user_id'
+        ).annotate(Count("id"))
+
+    xiaoshou_data = models.ClientCoveringData.objects.filter(**filter_dict).values('client_user__xiaoshou__username',
+        'client_user__xiaoshou_id').annotate(Count("id"))
+    print("client_data -->", client_data)
+
+    status_choices = models.UserProfile.status_choices
     return render(request, 'wenda/cover_reports/cover_reports.html', locals())
 
 
