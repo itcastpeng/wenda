@@ -15,8 +15,7 @@ from webadmin.modules.WeChat import WeChatPublicSendMsg
 
 print('执行定时任务 - - - - - -发送微信公众号')
 # 调用发送微信公众号模块
-wechat_date = './wechat_data.json'
-webchat_obj = WeChatPublicSendMsg(wechat_date)
+webchat_obj = WeChatPublicSendMsg()
 
 # 判断日期满足日期的查出来
 seventime = datetime.date.today() + datetime.timedelta(days=7)
