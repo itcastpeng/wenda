@@ -76,7 +76,7 @@ urlpatterns = [
     url(r'api/qudao_shangwutong_cunhuo', api.qudao_shangwutong_cunhuo),
 
     # 查询用户到期信息
-    url(r'^api/jifeidaoqitixing/(?P<oper_type>\w+)/(?P<o_id>\d+)',api.jifeidaoqitixing),
+    url(r'^api/jifeidaoqitixing/(?P<oper_type>\w+)/(?P<p_id>\d+)',api.jifeidaoqitixing),
 
     # #################### 问答 ####################
 

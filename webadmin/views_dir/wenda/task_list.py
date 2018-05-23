@@ -92,7 +92,9 @@ def task_list(request):
         wendaClientUserObjs = [{"id": i["release_user_id"], "username": i["release_user__username"]} for i in wendaClientUserObjs.values('release_user_id', 'release_user__username').distinct()]
 
     elif role_id == 7:  # 营销顾问
-        wendaClientUserObjs = models.UserProfile.objects.filter(is_delete=False, status=1, role_id=5, guwen_id=user_id).values('id', 'username')
+        print('user_id - - -- - -> ',user_id)
+        # wendaClientUserObjs = models.UserProfile.objects.filter(is_delete=False, status=1, role_id=5, guwen_id=user_id).values('id', 'username')
+        wendaClientUserObjs = models.UserProfile.objects.filter(is_delete=False, status=1, role_id=5).values('id', 'username')
 
     elif role_id == 12:     # 销售
         wendaClientUserObjs = models.UserProfile.objects.filter(is_delete=False, status=1, role_id=5, xiaoshou_id=user_id).values('id', 'username')
@@ -830,16 +832,18 @@ def task_list_oper(request, oper_type, o_id):
 
 # 对客户扣费记录明细
 def kouFei(task_obj):
+    num = int(task_obj.num)
     global_settings_obj = models.GlobalSettings.objects.all()[0]
+    # print('task--> ',type(num) ,global_settings_obj.new_wenda_money, global_settings_obj.old_wenda_money)
 
     if task_obj.wenda_type == 1:  # 新问答
-        money = task_obj.num * global_settings_obj.new_wenda_money
-        remark = "新增新问答{num}条".format(num=task_obj.num)
+        money = num * global_settings_obj.new_wenda_money
+        remark = "新增新问答{num}条".format(num=num)
 
     else:  # 老问答
-        money = task_obj.num * global_settings_obj.old_wenda_money
-        remark = "新增老问答{num}条".format(num=task_obj.num)
-
+        money = num * global_settings_obj.old_wenda_money
+        remark = "新增老问答{num}条".format(num=num)
+    print('money - - -  - - > ',money)
     # 记录消费明细
     models.BalanceDetail.objects.create(
         user=task_obj.release_user,

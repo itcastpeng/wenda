@@ -615,6 +615,10 @@ def my_task_oper(request, oper_type, o_id):
 
                 task_obj.update_date = datetime.datetime.now()
                 task_obj.save()
+                objs = models.EditContentManagement.objects.filter(id=task_obj.id)
+                if objs:
+                    objs.update(status=2)
+                    objs[0].edittaskmanagement_set.update(status=1)
 
             else:
                 response.status = False

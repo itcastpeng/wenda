@@ -95,7 +95,8 @@ def bianxiebaobiao(request):
             temp_dict[username][xiangmu] = count
 
         for k, v in temp_dict.items():
-            v[0] = sum(v)
+            # v[0] = sum(v)
+            v[0] = sum(v) - (v[5] + v[6])
             series_data.append({
                 'data': v,
                 'type': 'line',

@@ -1240,15 +1240,17 @@ def qudao_shangwutong_cunhuo(request):
 
 # 查询用户到期信息
 @csrf_exempt
-def jifeidaoqitixing(request, oper_type, o_id):
-    print('进入')
+def jifeidaoqitixing(request, oper_type, p_id):
+    # print('oper_type ----',oper_type)
+    print('进入--->',p_id)
     response = pub.BaseResponse()
     data_list = request.GET.get('data_list')
+    # print('data_list -- -- > ',data_list)
     seventime = datetime.date.today() + datetime.timedelta(days=7)
     q = Q()
     q.add(Q(guwen__isnull=False) | Q(xiaoshou__isnull=False), Q.AND)
     q.add(Q(jifei_stop_date__lte=seventime) & Q(is_delete=False) & Q(status=1), Q.AND)
-    q.add(Q(guwen_id=o_id) | Q(xiaoshou_id=o_id), Q.AND)
+    q.add(Q(guwen_id=p_id) | Q(xiaoshou_id=p_id), Q.AND)
 
     user_objs = models.UserProfile.objects.filter(q).order_by('jifei_stop_date')
     # enumerate 索引和值
@@ -1258,13 +1260,12 @@ def jifeidaoqitixing(request, oper_type, o_id):
     api_data_list = []
 
     for user_obj in user_objs:
-        print('user_obj ---- > ', user_obj)
         if user_obj:
             # 用户名
             print('user_obj -- > ', user_obj)
             # 结束日期
             stop_time = user_obj.jifei_stop_date
-            print('stop--->', stop_time)
+            # print('stop--->', stop_time)
 
             if user_obj.jifei_start_date:
                 jifei_start_date = user_obj.jifei_start_date.strftime('%Y-%m-%d')
