@@ -1244,7 +1244,7 @@ def jifeidaoqitixing(request, oper_type, p_id):
     # print('oper_type ----',oper_type)
     print('进入--->',p_id)
     response = pub.BaseResponse()
-    data_list = request.GET.get('data_list')
+    # data_list = request.GET.get('data_list')
     # print('data_list -- -- > ',data_list)
     seventime = datetime.date.today() + datetime.timedelta(days=7)
     q = Q()
@@ -1266,7 +1266,6 @@ def jifeidaoqitixing(request, oper_type, p_id):
             # 结束日期
             stop_time = user_obj.jifei_stop_date
             # print('stop--->', stop_time)
-
             if user_obj.jifei_start_date:
                 jifei_start_date = user_obj.jifei_start_date.strftime('%Y-%m-%d')
             if user_obj.jifei_stop_date:
@@ -1297,6 +1296,7 @@ def jifeidaoqitixing(request, oper_type, p_id):
                                 'username': user_obj.username,
                                 'text': '{}天到期'.format(data_time.days)
                             })
+                o_id = p_id
 
     if oper_type == 'json':
         response.code = 200
@@ -1304,3 +1304,4 @@ def jifeidaoqitixing(request, oper_type, p_id):
         return JsonResponse(response.__dict__)
     else:
         return render(request, 'api/chaxun_kehu_daoqishijian.html', locals())
+
