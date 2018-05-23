@@ -119,6 +119,11 @@ app.conf.beat_schedule = {
     'update_EditTaskLog_dahui_cishu': {
         'task': 'wenda_celery_project.tasks.update_EditTaskLog_dahui_cishu',
         'schedule': crontab('*/10', '*', '*', '*', '*'),
+    },
+    'weixindaoqiyonghutuisong':{
+        'task':'wenda_celery_project.tasks.weixin_daoqi_yonghu_tuisong',
+        'schedule':crontab('*/5', '*', '*', '*', '*'),
+
     }
 }
 

@@ -1248,8 +1248,8 @@ def jifeidaoqitixing(request, oper_type, p_id):
     # print('data_list -- -- > ',data_list)
     seventime = datetime.date.today() + datetime.timedelta(days=7)
     q = Q()
-    q.add(Q(guwen__isnull=False) | Q(xiaoshou__isnull=False), Q.AND)
-    q.add(Q(jifei_stop_date__lte=seventime) & Q(is_delete=False) & Q(status=1), Q.AND)
+    q.add(Q(xiaoshou__isnull=False), Q.AND)
+    q.add(Q(jifei_stop_date__lte=seventime) & Q(is_delete=False) & Q(status=1) & Q(jifei_start_date__isnull=False) & Q(jifei_stop_date__isnull=False), Q.AND)
     q.add(Q(guwen_id=p_id) | Q(xiaoshou_id=p_id), Q.AND)
 
     user_objs = models.UserProfile.objects.filter(q).order_by('jifei_stop_date')
