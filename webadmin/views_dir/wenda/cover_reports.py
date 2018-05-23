@@ -307,9 +307,6 @@ def cover_reports_oper(request, oper_type, o_id):
             response.status = True
             response.message = "删除成功"
 
-
-
-
         # 覆盖报表所有功能 修改计费 删除链接....
         elif oper_type == 'shezhi_oper':
             data_objs = models.UserProfile.objects.filter(
