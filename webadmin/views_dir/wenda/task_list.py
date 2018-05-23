@@ -137,7 +137,8 @@ def task_list(request):
 
         else:   # 营销顾问角色
             # release_user__oper_user_id=user_id   用于判断该任务对应的客户是否是当前营销顾问角色的用户创建的
-            task_objs = models.Task.objects.filter(is_delete=False).filter(release_user__guwen_id=user_id).filter(q).order_by(order_column).exclude(status=11)
+            # task_objs = models.Task.objects.filter(is_delete=False).filter(release_user__guwen_id=user_id).filter(q).order_by(order_column).exclude(status=11)
+            task_objs = models.Task.objects.filter(is_delete=False).filter(q).order_by(order_column).exclude(status=11)
 
         result_data = {
             "recordsFiltered": task_objs.count(),
