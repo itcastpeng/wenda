@@ -1483,6 +1483,6 @@ def update_EditTaskLog_dahui_cishu():
 
 @app.task
 def weixin_daoqi_yonghu_tuisong():
-    from custom.weixin_daoqi_yonghu_tuisong import guwen_weixin, xiaoshou_weixin
+    from weixin_daoqi_yonghu_tuisong import guwen_weixin, xiaoshou_weixin
     guwen_weixin()
     xiaoshou_weixin()
