@@ -202,7 +202,9 @@ def cover_reports(request):
                             # 用结束日期减去当前日期 剩余天数
                             temp = obj.client_user.jifei_stop_date - datetime.date.today()
                             username += "<span style='color: #ff9900'> (还有{}天到期)</span>".format(temp.days)
-            jifeishijian = jifei_start_date + '\r\n' + jifei_stop_date
+
+
+            jifeishijian = jifei_start_date + '<br>' + jifei_stop_date
             result_data["data"].append(
                 {
                     "index": index,
@@ -632,4 +634,5 @@ def cover_reports_oper(request, oper_type, o_id):
             o_id=o_id
             obj = models.UserProfile.objects.get(id=o_id)
             start_time = obj.jifei_start_date.strftime('%Y-%m-%d')
+            stop_time = obj.jifei_stop_date.strftime('%Y-%m-%d')
             return render(request,'wenda/cover_reports/client_reports_modal_shezhi.html',locals())
