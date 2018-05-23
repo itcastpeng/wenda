@@ -308,6 +308,8 @@ def cover_reports_oper(request, oper_type, o_id):
         elif oper_type == 'shezhi_oper':
             data_objs = models.UserProfile.objects.filter(
                 id=o_id)
+            print('requeat -----> ',request.POST)
+            print('data_objs - -- - - -- - > ',data_objs)
             zhanshibianji = request.POST.get('zhanshibianji')
             fasongbaobiao = request.POST.get('fasongbaobiao')
             chongchafugai = request.POST.get('chongchafugai')
@@ -316,15 +318,18 @@ def cover_reports_oper(request, oper_type, o_id):
             xiugaijifeiriqistop = request.POST.get('xiugaijifeiriqistop')
             # 展示编辑
             if zhanshibianji == 'on':
-                data_objs[0].task_edit_show = True
-                data_objs[0].save()
+                print('进入展示编辑   ')
+                data_objs.update(task_edit_show=True)
+                # data_objs[0].save()
+                # print('data_objs -- - -- > ',data_objs[0].task_edit_show)
             else:
+                print('展示编辑else')
                 data_objs[0].task_edit_show = False
                 data_objs[0].save()
 
             # 发送报表
             if fasongbaobiao == 'on':
-                data_objs[0].send_statement = True
+                data_objs.update(send_statement=True)
                 data_objs[0].save()
             else:
                 data_objs[0].send_statement = False
@@ -633,6 +638,12 @@ def cover_reports_oper(request, oper_type, o_id):
         elif oper_type == 'quanbushezhi':
             o_id=o_id
             obj = models.UserProfile.objects.get(id=o_id)
-            start_time = obj.jifei_start_date.strftime('%Y-%m-%d')
-            stop_time = obj.jifei_stop_date.strftime('%Y-%m-%d')
+            print('obj - ---  -> ',obj )
+            start_time = ''
+            stop_time = ''
+            if obj.jifei_start_date:
+                start_time = obj.jifei_start_date.strftime('%Y-%m-%d')
+            if obj.jifei_stop_date:
+                stop_time = obj.jifei_stop_date.strftime('%Y-%m-%d')
+
             return render(request,'wenda/cover_reports/client_reports_modal_shezhi.html',locals())
