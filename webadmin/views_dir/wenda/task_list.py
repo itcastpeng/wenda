@@ -832,16 +832,18 @@ def task_list_oper(request, oper_type, o_id):
 
 # 对客户扣费记录明细
 def kouFei(task_obj):
+    num = int(task_obj.num)
     global_settings_obj = models.GlobalSettings.objects.all()[0]
+    # print('task--> ',type(num) ,global_settings_obj.new_wenda_money, global_settings_obj.old_wenda_money)
 
     if task_obj.wenda_type == 1:  # 新问答
-        money = task_obj.num * global_settings_obj.new_wenda_money
-        remark = "新增新问答{num}条".format(num=task_obj.num)
+        money = num * global_settings_obj.new_wenda_money
+        remark = "新增新问答{num}条".format(num=num)
 
     else:  # 老问答
-        money = task_obj.num * global_settings_obj.old_wenda_money
-        remark = "新增老问答{num}条".format(num=task_obj.num)
-
+        money = num * global_settings_obj.old_wenda_money
+        remark = "新增老问答{num}条".format(num=num)
+    print('money - - -  - - > ',money)
     # 记录消费明细
     models.BalanceDetail.objects.create(
         user=task_obj.release_user,
