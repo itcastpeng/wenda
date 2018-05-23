@@ -324,16 +324,16 @@ def cover_reports_oper(request, oper_type, o_id):
                 # print('data_objs -- - -- > ',data_objs[0].task_edit_show)
             else:
                 print('展示编辑else')
-                data_objs[0].task_edit_show = False
-                data_objs[0].save()
+                data_objs.update(task_edit_show=False)
+
 
             # 发送报表
             if fasongbaobiao == 'on':
                 data_objs.update(send_statement=True)
                 data_objs[0].save()
             else:
-                data_objs[0].send_statement = False
-                data_objs[0].save()
+                data_objs.update(send_statement=False)
+
 
             # 重查覆盖
             if chongchafugai == 'on':
