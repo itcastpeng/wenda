@@ -1483,6 +1483,6 @@ def update_EditTaskLog_dahui_cishu():
 
 @app.task
 def weixin_daoqi_yonghu_tuisong():
-    import weixin_daoqi_yonghu_tuisong as wd
+    from custom import weixin_daoqi_yonghu_tuisong as wd
     wd.guwen_weixin()
     wd.xiaoshou_weixin()
