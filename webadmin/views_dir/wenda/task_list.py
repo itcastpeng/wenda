@@ -92,7 +92,9 @@ def task_list(request):
         wendaClientUserObjs = [{"id": i["release_user_id"], "username": i["release_user__username"]} for i in wendaClientUserObjs.values('release_user_id', 'release_user__username').distinct()]
 
     elif role_id == 7:  # 营销顾问
-        wendaClientUserObjs = models.UserProfile.objects.filter(is_delete=False, status=1, role_id=5, guwen_id=user_id).values('id', 'username')
+        print('user_id - - -- - -> ',user_id)
+        # wendaClientUserObjs = models.UserProfile.objects.filter(is_delete=False, status=1, role_id=5, guwen_id=user_id).values('id', 'username')
+        wendaClientUserObjs = models.UserProfile.objects.filter(is_delete=False, status=1, role_id=5).values('id', 'username')
 
     elif role_id == 12:     # 销售
         wendaClientUserObjs = models.UserProfile.objects.filter(is_delete=False, status=1, role_id=5, xiaoshou_id=user_id).values('id', 'username')
