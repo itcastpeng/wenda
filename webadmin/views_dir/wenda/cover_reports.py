@@ -158,13 +158,13 @@ def cover_reports(request):
             total_oper_num = obj.total_publish_num
 
             oper = ""
+            zhanshibianji = ''
             if role_id in [1, 4, 7]:
-                oper += "<a href='quanbushezhi/{client_user_id}/' data-toggle='modal' data-target='#exampleFormModal'>设置</a>"
-                # if obj.client_user.task_edit_show:  # True 表示当前任务为编辑状态, False 为不编辑状态
-                #     oper += "<a href='task_edit_show/{client_user_id}/'>不展示编辑内容</a>"
-                # else:
-                #     oper += "<a href='task_edit_show/{client_user_id}/'>展示编辑内容</a>"
-                #
+                if obj.client_user.task_edit_show:  # True 表示当前任务为编辑状态, False 为不编辑状态
+                    zhanshibianji += "<a href='task_edit_show/{client_user_id}/'>不展示</a>".format(client_user_id=obj.client_user_id)
+                else:
+                    zhanshibianji += "<a href='task_edit_show/{client_user_id}/'>展示 </a>".format(client_user_id=obj.client_user_id)
+
                 # oper += " / "
                 # if obj.client_user.send_statement:  # True 表示当前任务发送报表, False 为不发送报表
                 #     oper += "<a href='send_statement/{client_user_id}/'>暂停发送报表</a>"
@@ -174,8 +174,10 @@ def cover_reports(request):
                 # oper += " / <a href='chongcha/{client_user_id}/'>重查覆盖</a>"
                 #
                 # oper += " / <a href='shanchulianjie/{client_user_id}/' data-toggle='modal' data-target='#exampleFormModal'>删除不计覆盖链接</a>"
+                oper += "<a href='quanbushezhi/{client_user_id}/' data-toggle='modal' data-target='#exampleFormModal'>设置</a>".format(client_user_id=obj.client_user_id)
 
-            oper = oper.format(client_user_id=obj.client_user_id)
+            # oper = oper.format(client_user_id=obj.client_user_id)
+            # zhanshibianji = zhanshibianji.format(client_user_id=obj.client_user_id)
             # xiugaijifeiriqi = " <a href='xiugaijifeiriqi/{client_user_id}/' data-toggle='modal' data-target='#exampleFormModal'>修改计费日期</a>".format(
             #     client_user_id=obj.client_user_id)
             username = obj.client_user.username
@@ -217,9 +219,10 @@ def cover_reports(request):
                     "oper": oper,
                     "today_cover": today_cover,
                     "total_oper_num": total_oper_num,
+                    'zhanshibianji':zhanshibianji,
+                    'xiugaijifeiriqistop': jifeishijian,
                     # "xiugaijifeiriqi": xiugaijifeiriqi,
                     # 'xiugaijifeiriqistart': jifei_start_date,
-                    'xiugaijifeiriqistop': jifeishijian,
                 }
             )
             # print("4 -->", datetime.datetime.now())
@@ -310,22 +313,22 @@ def cover_reports_oper(request, oper_type, o_id):
                 id=o_id)
             print('requeat -----> ',request.POST)
             print('data_objs - -- - - -- - > ',data_objs)
-            zhanshibianji = request.POST.get('zhanshibianji')
+            # zhanshibianji = request.POST.get('zhanshibianji')
             fasongbaobiao = request.POST.get('fasongbaobiao')
             chongchafugai = request.POST.get('chongchafugai')
             shanchufugai = request.POST.get('delete_lianjie')
             xiugaijifeiriqistart = request.POST.get('xiugaijifeiriqistart')
             xiugaijifeiriqistop = request.POST.get('xiugaijifeiriqistop')
             # 展示编辑
-            if zhanshibianji == 'on':
-                print('进入展示编辑   ')
-                data_objs.update(task_edit_show=True)
+            # if zhanshibianji == 'on':
+            #     print('进入展示编辑   ')
+            #     data_objs.update(task_edit_show=True)
 
                 # data_objs[0].save()
                 # print('data_objs -- - -- > ',data_objs[0].task_edit_show)
-            else:
-                print('展示编辑else')
-                data_objs.update(task_edit_show=False)
+            # else:
+            #     print('展示编辑else')
+            #     data_objs.update(task_edit_show=False)
 
             # 发送报表
             if fasongbaobiao == 'on':
@@ -375,11 +378,6 @@ def cover_reports_oper(request, oper_type, o_id):
                     response.message = '请填写正确日期'
             response.status = True
             response.message = "操作成功"
-
-
-
-
-
 
         # 下载报表
 
@@ -561,6 +559,17 @@ def cover_reports_oper(request, oper_type, o_id):
             result_data = result_data.format(tr_html=tr_html)
             return HttpResponse(result_data)
 
+            # 展示编辑内容
+        elif oper_type == 'task_edit_show':
+            data_objs = models.UserProfile.objects.filter(
+                id=o_id
+            )
+            if data_objs:
+                data_objs[0].task_edit_show = not data_objs[0].task_edit_show
+                data_objs[0].save()
+
+            return redirect(reverse("cover_reports"))
+
         elif oper_type == "chongcha":
             today_date = datetime.datetime.now().strftime("%Y-%m-%d")
             models.KeywordsCover.objects.filter(keywords__client_user_id=o_id, create_date__gte=today_date).delete()
@@ -569,15 +578,18 @@ def cover_reports_oper(request, oper_type, o_id):
 
             return redirect(reverse("cover_reports"))
 
+
         elif oper_type == 'shanchulianjie':
             objs = models.UserProfile.objects.filter(id=o_id)
             user = objs[0]
             return render(request, 'wenda/cover_reports/client_reports_modal_shanchulianjie.html', locals())
             # return redirect(reverse("cover_reports"))
 
+
         elif oper_type == 'xiugaijifeiriqi':
             o_id = o_id
             return render(request, 'wenda/cover_reports/client_reports_modal_xiugaijifeiriqi.html', locals())
+
 
         elif oper_type == 'quanbushezhi':
             o_id=o_id

@@ -7,11 +7,11 @@
 <div class="modal-body">
     <form class="form-horizontal" id="modal_form" onsubmit="return false">
         {% csrf_token %}
-        <div class="checkbox-custom checkbox-primary">
-            <input type="checkbox" id="zhanshibianji" {% if obj.task_edit_show %} checked {% endif %} name="zhanshibianji">
-            <label for="zhanshibianji" style="margin-right: 20px">是否展示编辑内容</label> <span>注:打钩代表展示编辑内容</span>
+{#        <div class="checkbox-custom checkbox-primary">#}
+{#            <input type="checkbox" id="zhanshibianji" {% if obj.task_edit_show %} checked {% endif %} name="zhanshibianji">#}
+{#            <label for="zhanshibianji" style="margin-right: 20px">是否展示编辑内容</label> <span>注:打钩代表展示编辑内容</span>#}
 {#            <label for="zhanshibianji" style="margin-right: 20px">{{ obj.task_edit_show }}</label> <span>注:打钩代表展示编辑内容</span>#}
-        </div>
+{#        </div>#}
           <div class="checkbox-custom checkbox-primary">
             <input type="checkbox" id="fasongbaobiao" {% if obj.send_statement %}checked{% endif %} name="fasongbaobiao">
             <label for="fasongbaobiao"  style="margin-right: 20px">是否开启发送报表</label> <span>注:打钩代表开启发送报表</span>
