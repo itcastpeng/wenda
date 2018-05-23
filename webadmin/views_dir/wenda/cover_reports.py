@@ -320,20 +320,19 @@ def cover_reports_oper(request, oper_type, o_id):
             if zhanshibianji == 'on':
                 print('进入展示编辑   ')
                 data_objs.update(task_edit_show=True)
+
                 # data_objs[0].save()
                 # print('data_objs -- - -- > ',data_objs[0].task_edit_show)
             else:
                 print('展示编辑else')
                 data_objs.update(task_edit_show=False)
 
-
             # 发送报表
             if fasongbaobiao == 'on':
                 data_objs.update(send_statement=True)
-                data_objs[0].save()
+
             else:
                 data_objs.update(send_statement=False)
-
 
             # 重查覆盖
             if chongchafugai == 'on':
@@ -343,9 +342,6 @@ def cover_reports_oper(request, oper_type, o_id):
                 user_obj.keywords_top_page_cover_excel_path = None
                 user_obj.keywords_top_page_cover_yingxiao_excel_path = None
                 user_obj.save()
-
-                response.status = True
-                response.message = "开始重查"
 
             # 删除链接
             if shanchufugai:
@@ -363,8 +359,7 @@ def cover_reports_oper(request, oper_type, o_id):
                     print('objs - - -- -- -- - - 》',objs )
                     if objs:
                         objs.delete()
-                response.status = True
-                response.message = "删除成功"
+
 
             # 修改计费日期
             if xiugaijifeiriqistart or xiugaijifeiriqistop:
@@ -375,62 +370,11 @@ def cover_reports_oper(request, oper_type, o_id):
                         jifei_start_date=xiugaijifeiriqistart,
                         jifei_stop_date=xiugaijifeiriqistop
                     )
-                    response.status = True
-                    response.message = "修改成功"
                 else:
                     response.status = False
                     response.message = '请填写正确日期'
-
-        # elif oper_type == "task_edit_show":
-        #     data_objs = models.UserProfile.objects.filter(
-        #         id=o_id
-        #     )
-        #     if data_objs:
-        #         data_objs[0].task_edit_show = not data_objs[0].task_edit_show
-        #         data_objs[0].save()
-        #
-        #     return redirect(reverse("cover_reports"))
-        #
-        # elif oper_type == "send_statement":
-        #     data_objs = models.UserProfile.objects.filter(
-        #         id=o_id
-        #     )
-        #     if data_objs:
-        #         data_objs[0].send_statement = not data_objs[0].send_statement
-        #         data_objs[0].save()
-        #
-        #     return redirect(reverse("cover_reports"))
-        #
-        # # 客户重查
-        # elif oper_type == "chongcha":
-        #     models.KeywordsTopInfo.objects.filter(keyword__client_user_id=o_id).delete()
-        #     models.KeywordsTopSet.objects.filter(client_user_id=o_id).update(status=1)
-        #     user_obj = models.UserProfile.objects.get(id=o_id)
-        #     user_obj.keywords_top_page_cover_excel_path = None
-        #     user_obj.keywords_top_page_cover_yingxiao_excel_path = None
-        #     user_obj.save()
-        #
-        #     response.status = True
-        #     response.message = "开始重查"
-        #
-        # # 删除指定链接
-        # elif oper_type == 'shanchulianjie':
-        #     # response.message = "删除成功"
-        #     delete_lianjie = request.POST.get('delete_lianjie')
-        #     delete_lianjie_list = set(delete_lianjie.splitlines())
-        #     print('delete_lianjie_list - - - - - - >', delete_lianjie_list)
-        #     for delete_lianjie in delete_lianjie_list:
-        #         if not delete_lianjie:
-        #             continue
-        #         objs = models.TongjiKeywords.objects.filter(
-        #             url=delete_lianjie,
-        #             task__release_user_id=o_id,
-        #         )
-        #         if objs:
-        #             objs.delete()
-        #     response.status = True
-        #     response.message = "删除成功"
-        #
+            response.status = True
+            response.message = "操作成功"
 
 
 
