@@ -126,11 +126,9 @@ def task_list(request):
         q = Q()
         for index, field in enumerate(column_list):
             if field in request.GET and request.GET.get(field):  # 如果该字段存在并且不为空
-                if field == 'create_date':
-                    create_date = request.GET.get('create_date')
-                    create_date + datetime.timedelta()
+                if field == "create_date":
+                    q.add(Q(**{field + "__contains": request.GET[field]}), Q.AND)
 
-                    print('create_date - -- - > ',create_date)
                 else:
                     q.add(Q(**{field: request.GET[field]}), Q.AND)
 
