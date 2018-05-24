@@ -6,36 +6,38 @@
         color: white;
     }
 
-    .search_form>div{
+    .search_form > div {
         margin-bottom: 10px;
     }
 
-    .search_form label{
+    .search_form label {
 
         width: 85px;
         text-align: right;
     }
 
-    .search_form input, .search_form select{
+    .search_form input, .search_form select {
         display: inline-block;
         width: 300px
     }
-    .search_form select{
+
+    .search_form select {
         display: inline-block;
         width: 100px
     }
 
-    #create_date{
+    #create_date {
         width: 120px;
     }
-    tbody{
+
+    tbody {
         text-align: center;
     }
 
 </style>
 
 {% csrf_token %}
-<div class="page animation-fade page-index page-data-tables" >
+<div class="page animation-fade page-index page-data-tables">
     <div class="page-content">
 
         <div class="panel" style="padding: 10px; height: auto">
@@ -43,7 +45,8 @@
                 <div>
                     {% if role_id != 5 %}
                         <label for="client_user_id">用户名称：</label>
-                        <select class="form-control select2-hidden-accessible" data-plugin="select2" tabindex="-1" aria-hidden="true" id="client_user_id" name="client_user_id">
+                        <select class="form-control select2-hidden-accessible" data-plugin="select2" tabindex="-1"
+                                aria-hidden="true" id="client_user_id" name="client_user_id">
                             <option value="">全部</option>
                             {% for i in client_data %}
                                 <option value="{{ i.client_user_id }}">{{ i.client_user__username }}</option>
@@ -51,7 +54,8 @@
                         </select>
 
                         <label for="client_user__xiaoshou_id">销售名称：</label>
-                        <select class="form-control select2-hidden-accessible" data-plugin="select2" tabindex="-1" aria-hidden="true" id="client_user__xiaoshou_id" name="client_user__xiaoshou_id">
+                        <select class="form-control select2-hidden-accessible" data-plugin="select2" tabindex="-1"
+                                aria-hidden="true" id="client_user__xiaoshou_id" name="client_user__xiaoshou_id">
                             <option value="">全部</option>
                             {% for i in xiaoshou_data %}
                                 <option value="{{ i.client_user__xiaoshou_id }}">{{ i.client_user__xiaoshou__username }}</option>
@@ -60,7 +64,7 @@
 
                         <label for="client_user__status">查看启用：</label>
                         <select class="form-control" name="client_user__status" id="client_user__status">
-    {#                        <option value="">全部</option>#}
+                            {#                        <option value="">全部</option>#}
                             {% for obj in status_choices %}
                                 <option value="{{ obj.0 }}">{{ obj.1 }}</option>
                             {% endfor %}
@@ -70,7 +74,9 @@
                 </div>
 
                 <div style="position: absolute; bottom:0; right: 20px;">
-                    <button type="button" class="btn btn-primary" id="search_button"><i class="icon fa-search" aria-hidden="true"></i>搜索</button>
+                    <button type="button" class="btn btn-primary" id="search_button"><i class="icon fa-search"
+                                                                                        aria-hidden="true"></i>搜索
+                    </button>
                 </div>
 
             </form>
@@ -81,33 +87,35 @@
 
                 <div class="col-md-12 form-group" style="margin-bottom: 10px">
                     {% if role_id != 5 %}
-                        <button type="button" href="download/0/" data-toggle="modal" data-target="#exampleFormModal" class="btn btn-info pull-left margin-right-5">
+                        <button type="button" href="download/0/" data-toggle="modal" data-target="#exampleFormModal"
+                                class="btn btn-info pull-left margin-right-5">
                             <i class="icon fa-download" aria-hidden="true"></i> 一键导出
                         </button>
                     {% endif %}
 
                 </div>
 
-                <table class="table table-bordered table-hover dataTable table-striped width-full text-nowrap" id="dataTable" data-scroll-x="True">
+                <table class="table table-bordered table-hover dataTable table-striped width-full text-nowrap"
+                       id="dataTable" data-scroll-x="True">
                     <thead>
-                        <tr>
-                            <th>编号</th>
-                            <th>客户ID</th>
-                            <th>客户名称</th>
-                            <th>销售名称</th>
-                            <th>关键词数</th>
-                            <th>查询状态</th>
-                            <th>操作</th>
-                            <th>今日覆盖</th>
-                            <th>总覆盖</th>
-                            <th>总发布次数</th>
-                            <th>计费时间</th>
-                            <th>设置</th>
-{#                            <th>修改计费</th>#}
-                            <th></th>
+                    <tr>
+                        <th>编号</th>
+                        <th>客户ID</th>
+                        <th>客户名称</th>
+                        <th>销售名称</th>
+                        <th>关键词数</th>
+                        <th>查询状态</th>
+                        <th>操作</th>
+                        <th>今日覆盖</th>
+                        <th>总覆盖</th>
+                        <th>总发布次数</th>
+                        <th>计费时间</th>
+                        <th>设置</th>
+                        {#                            <th>修改计费</th>#}
+                        <th></th>
 
 
-                        </tr>
+                    </tr>
 
                     </thead>
 
@@ -125,8 +133,8 @@
 <script>
 
 
-        {# 在模态对话框关闭时清空数据 #}
-    $(".modal").on("hidden.bs.modal", function() {
+    {# 在模态对话框关闭时清空数据 #}
+    $(".modal").on("hidden.bs.modal", function () {
         $(this).removeData("bs.modal");
         $(this).find(".modal-content").children().remove();
     });
@@ -162,7 +170,7 @@
         "ajax": "?type=ajax_json", // ajax 取数据
         "bFilter": false,   // 去掉搜索框
         "destroy": true,
-        "aaSorting": [[ 5, "desc" ]],
+        "aaSorting": [[5, "desc"]],
         "columns": [
             {"data": "index"},
             {
@@ -178,7 +186,7 @@
             {"data": "cover_total"},
             {"data": "total_oper_num"},
             {#{'data':'xiugaijifeiriqistart'},#}
-            {'data':'xiugaijifeiriqistop'   },
+            {'data': 'xiugaijifeiriqistop'},
             {"data": "oper"},
             {#{"data": "xiugaijifeiriqi"},#}
             {
@@ -194,27 +202,26 @@
                 "targets": [0],     // 这些列禁止搜索
                 "searchable": false,
                 "sortable": false
-{#                "visible": false       // 不可见#}
+                {#                "visible": false       // 不可见#}
             }
             {# 客户不可见的数据 #}
             {% if role_id == 5 %}
                 ,{
-                    "targets": [3, 8, 9, 10, 12],
-                    "visible": false
-                }
+                "targets": [3, 9, 10, 11],
+                "visible": false
+            }
                 {# 销售不可见的数据 #}
             {% elif role_id == 12 %}
                 ,{
-                    "targets": [8, 9, 10, 12],
-                    "visible": false
-                }
+                "targets": [9, 10, 11],
+                "visible": false
+            }
             {% endif %}
 
 
         ]
 
     });
-
 
 
     /* 格式化详情功能 - 根据需要修改 */
@@ -226,7 +233,7 @@
 
 
         $.ajaxSetup({
-            async : false
+            async: false
         });
         $.get(url, function (data) {
             result = data;
@@ -265,8 +272,8 @@
 
     {# 搜框中的input标签 回车键被触发 #}
     $(".search_form input").keydown(function () {
-        var e=window.event||arguments.callee.caller.arguments[0];
-        if(e.keyCode==13){
+        var e = window.event || arguments.callee.caller.arguments[0];
+        if (e.keyCode == 13) {
             $("#search_button").click();
         }
     });
@@ -275,7 +282,6 @@
     $(".search_form select").change(function () {
         $("#search_button").click();
     });
-
 
 
 </script>
