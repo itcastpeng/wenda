@@ -840,8 +840,9 @@ def cover_reports_generate_excel(file_name, data_list, debug=False):
     ws.cell(row=1, column=4, value="链接")
     ws.cell(row=1, column=5, value="排名")
     ws.cell(row=1, column=6, value="创建时间")
+    ws.cell(row=1, column=7, value="发布时间")
     if debug:
-        ws.cell(row=1, column=7, value="类型")
+        ws.cell(row=1, column=8, value="类型")
 
     for row, i in enumerate(data_list, start=2):
         try:
@@ -850,7 +851,7 @@ def cover_reports_generate_excel(file_name, data_list, debug=False):
             ws.cell(row=row, column=3, value=i["page_type"])
             if debug:
                 ws.cell(row=row, column=4, value=i["link"])
-                ws.cell(row=row, column=7, value=i["is_zhedie"])
+                ws.cell(row=row, column=8, value=i["is_zhedie"])
             else:
                 if i["link"]:
                     ws["D{row}".format(row=row)].hyperlink = i["link"]
@@ -858,6 +859,7 @@ def cover_reports_generate_excel(file_name, data_list, debug=False):
 
             ws.cell(row=row, column=5, value=i["rank"])
             ws.cell(row=row, column=6, value=i["create_date"])
+            ws.cell(row=row, column=7, value=i["create_time"])
 
             row += 1
         except IllegalCharacterError:
@@ -922,7 +924,17 @@ def userprofile_keywords_cover(debug=False):
 
         for search_obj in search_objs:
             print(search_obj.create_date)
-
+            url = search_obj.url
+            objs = models.WendaRobotTask.objects.filter(
+                wenda_url=url,
+                task__release_user=search_obj.keywords.client_user
+            )
+            create_time = ''
+            if objs:
+                print(url, search_obj.keywords.client_user.id)
+                robotaccountlog_objs = objs[0].robotaccountlog_set.all()
+                if robotaccountlog_objs:
+                    create_time = robotaccountlog_objs.last().create_date.strftime("%Y-%m-%d")
             is_zhedie = "0"
             if search_obj.is_zhedie:
                 is_zhedie = "1"
@@ -934,7 +946,8 @@ def userprofile_keywords_cover(debug=False):
                 "rank": search_obj.rank,
                 "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
                 "link": search_obj.url,
-                "is_zhedie": is_zhedie
+                "is_zhedie": is_zhedie,
+                'create_time':create_time
             })
 
         # 客户查看报表的名称
