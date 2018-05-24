@@ -620,6 +620,7 @@ def my_task_oper(request, oper_type, o_id):
                 if objs:
                     objs.update(status=2)
                     objs[0].edittaskmanagement_set.update(status=1)
+                    models.EditPublickTaskManagement.objects.filter(task__task=objs[0]).delete()
 
             else:
                 response.status = False
