@@ -126,8 +126,15 @@ def task_list(request):
         q = Q()
         for index, field in enumerate(column_list):
             if field in request.GET and request.GET.get(field):  # 如果该字段存在并且不为空
-                print('____----->',index,field)
-                q.add(Q(**{field: request.GET[field]}), Q.AND)
+                if field == 'create_date':
+                    create_date = request.GET.get('create_date')
+                    create_date + datetime.timedelta()
+
+                    print('create_date - -- - > ',create_date)
+                else:
+                    q.add(Q(**{field: request.GET[field]}), Q.AND)
+
+
 
         # 管理员能看到所有
         if role_id <= 4:

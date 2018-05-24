@@ -489,9 +489,9 @@ def cover_reports_oper(request, oper_type, o_id):
             #     "keywords__client_user",
             #     "keywords"
             # ).filter(keywords__client_user_id=o_id).values("create_date").annotate(count=Count('id'))
-
             temp_data = {}
             for obj in data_objs:
+                print(' = = = == = = = >    ',obj)
                 date_format = obj.create_date.strftime("%Y-%m-%d")
                 temp_data[date_format] = {
                     "cover_num": obj.cover_num,
@@ -518,7 +518,8 @@ def cover_reports_oper(request, oper_type, o_id):
 
                 # 销售角色只能下载属于自己客户的报表
                 file_path = temp_data[date]["statement_path"]
-
+                print('file_path - -- - - - - -> ',file_path)
+                print('temp_data -- - —— -> ',temp_data)
                 # 超级管理员 管理员 营销顾问看对应的报表
                 if role_id in [1, 4, 7]:
                     temp = temp_data[date]["statement_path"].split('/')
@@ -526,7 +527,7 @@ def cover_reports_oper(request, oper_type, o_id):
 
                     file_name = 'yingxiaoguwen_' + temp[-1]
                     file_path = '/'.join(temp[:-1]) + '/' + file_name
-                    print(file_path)
+                    # print(file_path)
 
                 statement_path = "<a href='/{file_path}' download='{download}'>下载报表</a>".format(
                     file_path=file_path,
@@ -559,7 +560,8 @@ def cover_reports_oper(request, oper_type, o_id):
             result_data = result_data.format(tr_html=tr_html)
             return HttpResponse(result_data)
 
-            # 展示编辑内容
+
+        # 展示编辑内容
         elif oper_type == 'task_edit_show':
             data_objs = models.UserProfile.objects.filter(
                 id=o_id
