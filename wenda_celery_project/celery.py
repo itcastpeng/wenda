@@ -122,7 +122,7 @@ app.conf.beat_schedule = {
     },
     'weixindaoqiyonghutuisong': {
         'task': 'wenda_celery_project.tasks.weixin_daoqi_yonghu_tuisong',
-        'schedule': crontab('*/5', '*', '*', '*', '*'),
+        'schedule': crontab('0', '1', '*', '*', '*'),   # 每天早上9点发送微信通知
 
     }
 }

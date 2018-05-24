@@ -57,7 +57,7 @@ def gonggong_weixin():
 # 公用发送链接
 def gongyong(openid, gongyong_id):
     post_data = {
-        "touser": "o7Xw_0UI33YPrBRb9zRnRul3CbtQ",
+        "touser": "o7Xw_0fq6LrmCjBbxAzDZHTbtQ3g",
         # "touser": "{openid}".format(openid=openid),
         "template_id": "ksNf6WiqO5JEqd3bY6SUqJvWeL2-kEDqukQC4VeYVvw",
         "url": "http://wenda.zhugeyingxiao.com/api/jifeidaoqitixing/null/{gongyong_id}".format(
