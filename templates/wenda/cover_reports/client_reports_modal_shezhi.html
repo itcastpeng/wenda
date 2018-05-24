@@ -56,7 +56,7 @@
 
     $("#create_button").on('click', function () {
         var data = $("#modal_form").serialize();
-        var url = '{% url "cover_reports" %}shezhi_oper/{{ o_id }}/';
+        var url = '{% url "cover_reports" %}quanbushezhi/{{ o_id }}/';
         $.post(url, data, function (result) {
             if(!result['status']){
                 toastr['error'](result['message']);

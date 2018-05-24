@@ -308,7 +308,7 @@ def cover_reports_oper(request, oper_type, o_id):
             response.message = "删除成功"
 
         # 覆盖报表所有功能 修改计费 删除链接....
-        elif oper_type == 'shezhi_oper':
+        elif oper_type == 'quanbushezhi':
             data_objs = models.UserProfile.objects.filter(
                 id=o_id)
             print('requeat -----> ',request.POST)
@@ -316,7 +316,7 @@ def cover_reports_oper(request, oper_type, o_id):
             # zhanshibianji = request.POST.get('zhanshibianji')
             fasongbaobiao = request.POST.get('fasongbaobiao')
             chongchafugai = request.POST.get('chongchafugai')
-            shanchufugai = request.POST.get('delete_lianjie')
+            delete_lianjie = request.POST.get('delete_lianjie')
             xiugaijifeiriqistart = request.POST.get('xiugaijifeiriqistart')
             xiugaijifeiriqistop = request.POST.get('xiugaijifeiriqistop')
             # 展示编辑
@@ -339,16 +339,13 @@ def cover_reports_oper(request, oper_type, o_id):
 
             # 重查覆盖
             if chongchafugai == 'on':
-                models.KeywordsTopInfo.objects.filter(keyword__client_user_id=o_id).delete()
-                models.KeywordsTopSet.objects.filter(client_user_id=o_id).update(status=1)
-                user_obj = models.UserProfile.objects.get(id=o_id)
-                user_obj.keywords_top_page_cover_excel_path = None
-                user_obj.keywords_top_page_cover_yingxiao_excel_path = None
-                user_obj.save()
+                today_date = datetime.datetime.now().strftime("%Y-%m-%d")
+                models.KeywordsCover.objects.filter(keywords__client_user_id=o_id, create_date__gte=today_date).delete()
+                models.KeywordsTopSet.objects.filter(client_user_id=o_id).update(update_select_cover_date=None)
+                models.UserprofileKeywordsCover.objects.filter(client_user_id=o_id, create_date__gte=today_date).delete()
 
             # 删除链接
-            if shanchufugai:
-                delete_lianjie = request.POST.get('delete_lianjie')
+            if delete_lianjie:
                 print('进入删除 - - -- > ', delete_lianjie)
                 delete_lianjie_list = set(delete_lianjie.splitlines())
                 print('delete_lianjie_list - - - - - - >', delete_lianjie_list)
@@ -362,7 +359,6 @@ def cover_reports_oper(request, oper_type, o_id):
                     print('objs - - -- -- -- - - 》',objs )
                     if objs:
                         objs.delete()
-
 
             # 修改计费日期
             if xiugaijifeiriqistart or xiugaijifeiriqistop:

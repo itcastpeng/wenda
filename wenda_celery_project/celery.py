@@ -18,9 +18,9 @@ app = Celery(
 app.conf.beat_schedule = {
 
     # 配置每隔一个小时执行一次
-    'CheckWenda': {                                           # 此处的命名不要用 tasks 开头,否则会报错
-        'task': 'wenda_celery_project.tasks.CheckWenda',                      # 要执行的任务函数名
-        'schedule': crontab("*", '*', '*', '*', '*'),       # 此处跟 linux 中 crontab 的格式一样
+    'CheckWenda': {  # 此处的命名不要用 tasks 开头,否则会报错
+        'task': 'wenda_celery_project.tasks.CheckWenda',  # 要执行的任务函数名
+        'schedule': crontab("*", '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
         # 'args': (2, 2),                                     # 传递的参数
     },
 
@@ -120,13 +120,12 @@ app.conf.beat_schedule = {
         'task': 'wenda_celery_project.tasks.update_EditTaskLog_dahui_cishu',
         'schedule': crontab('*/10', '*', '*', '*', '*'),
     },
-    'weixindaoqiyonghutuisong':{
-        'task':'wenda_celery_project.tasks.weixin_daoqi_yonghu_tuisong',
-        'schedule':crontab('*/5', '*', '*', '*', '*'),
+    'weixindaoqiyonghutuisong': {
+        'task': 'wenda_celery_project.tasks.weixin_daoqi_yonghu_tuisong',
+        'schedule': crontab('*/5', '*', '*', '*', '*'),
 
     }
 }
-
 
 # Optional configuration, see the application user guide.
 app.conf.update(
@@ -135,4 +134,3 @@ app.conf.update(
 
 if __name__ == '__main__':
     app.start()
-
