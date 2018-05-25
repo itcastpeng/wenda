@@ -395,6 +395,10 @@ class RobotAccountLog(models.Model):
 
     create_date = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
 
+# 机器人发布统计数量
+class RobotReleaseNum(models.Model):
+    create_date = models.DateTimeField(verbose_name="创建时间", null=True, blank=True)
+    robot_count = models.IntegerField(verbose_name='发布数量', null=True, blank=True)
 
 # 全局设置
 class GlobalSettings(models.Model):
