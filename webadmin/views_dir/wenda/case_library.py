@@ -52,14 +52,14 @@ def case_library(request):
         for index, field in enumerate(column_list):
             if field in request.GET and request.GET.get(field):  # 如果该字段存在并且不为空
                 if field == "create_date":
-                    q.add(Q(**{field + "__contains": request.GET[field]}), Q.AND)
+                    q.add(Q(**{field + "__gte": request.GET[field]}), Q.AND)
                 elif field == "search_keyword":
                     q.add(Q(**{"keywords__keyword__contains": request.GET[field]}), Q.AND)
                 else:
                     q.add(Q(**{field: request.GET[field]}), Q.AND)
 
         if not request.GET.get('create_date'):
-            q.add(Q(**{"create_date__contains": now_date}), Q.AND)
+            q.add(Q(**{"create_date__gte": now_date}), Q.AND)
 
         if request.GET.get("department_id"):
             department_id = request.GET.get("department_id")
@@ -75,16 +75,21 @@ def case_library(request):
         objss = models.KeywordsCover.objects.filter(keywords__client_user_id__in=[37, 63, 66, 80, 104, 112, 113, 127])
         print("objss -->", objss.count())
         print('q -->', q)
+
         # 成都美尔贝不显示
         objs = models.KeywordsCover.objects.select_related('keywords', 'keywords__client_user').filter(q).exclude(keywords__client_user_id=175)
         if role_id == 12:
             objs = objs.exclude(keywords__client_user__username__contains='YZ-')
 
         objs = objs.order_by(order_column)
+        print("01-->", datetime.datetime.now())
+        count = objs.count()
+        print(objs.query)
+        print("0-->", datetime.datetime.now())
 
         result_data = {
-            "recordsFiltered": objs.count(),
-            "recordsTotal": objs.count(),
+            "recordsFiltered": count,
+            "recordsTotal": count,
             "data": []
         }
 
