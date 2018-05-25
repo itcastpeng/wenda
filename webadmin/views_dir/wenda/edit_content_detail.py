@@ -91,7 +91,7 @@ def edit_content_detail(request):
 
         data_list = []
         for obj in objs:
-            if obj.task.task.task.wenda_type == 2 and role_id != 14 and not obj.task.task.client_user.task_edit_show:
+            if obj.task.task.task.wenda_type == 2 and role_id == 14 and not obj.task.task.client_user.task_edit_show:
                 continue
             else:
                 data_list.append(obj)
