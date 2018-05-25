@@ -28,7 +28,7 @@ import sys
 import datetime
 import os
 from django.db.models import Q, Count
-project_dir = os.path.dirname(os.path.dirname(os.getcwd()))
+project_dir = os.path.dirname(os.getcwd())
 sys.path.append(project_dir)
 print(project_dir)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'wenda.settings'
