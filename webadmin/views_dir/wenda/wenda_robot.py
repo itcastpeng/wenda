@@ -165,7 +165,6 @@ def wenda_robot_oper(request, oper_type, o_id):
     response = pub.BaseResponse()
 
     if request.method == "POST":
-
         if oper_type == "create":
             print("xxx")
             form_obj = WendaRobotTaskCreateForm(request.POST)
@@ -238,7 +237,47 @@ def wenda_robot_oper(request, oper_type, o_id):
             response.status = True
             response.message = "添加地图成功"
 
+        elif oper_type == 'jiqirenfabutongji':
+            robotstart = request.POST.get('robotstart')
+            robotstop = request.POST.get('robotstop')
+            if robotstart and robotstop:
+                objs = models.RobotReleaseNum.objects.filter(
+                    create_date__gte=robotstart,
+                    create_date__lt=robotstop,
+                ).values(
+                    'robot_count',
+                    'create_date'
+                ).annotate(Count('id'))
+                print('objs---->',objs)
+                temp_data = {}
+                data_list = []
+                for obj in objs:
+                    robot_count = obj['robot_count']
+                    create_date = obj['create_date'].strftime('%Y-%m-%d')
+                    if robot_count == None:
+                        robot_count = 0
+                    if 'data' in temp_data:
+                        if create_date in temp_data['data']:
+                            temp_data['data'][create_date] += robot_count
+                        else:
+                            temp_data['data'][create_date] = robot_count
+                    else:
+                        temp_data['data'] = {
+                            create_date:robot_count
+                        }
+                for k,data in temp_data.items():
+                    for k1,v1 in data.items():
+                        data_list.append({
+                            'date_time':k1,
+                            'count':v1
+                        })
+                print('data_list---->',data_list)
+
+
+                response.code = 200
+                response.data = data_list
         return JsonResponse(response.__dict__)
+
 
     else:
         # 添加
@@ -266,3 +305,35 @@ def wenda_robot_oper(request, oper_type, o_id):
                 map_flag = False
 
             return render(request, "wenda/wenda_robot/wenda_robot_modal_add_map.html", locals())
+
+        elif oper_type == 'jiqirenfabutongji':
+            now_data = datetime.datetime.now()
+            now_data = now_data.strftime('%Y-%m-%d')
+            objs = models.RobotReleaseNum.objects.filter(
+                create_date__gte=now_data,
+            ).values(
+                'robot_count',
+                'create_date'
+            ).annotate(Count('id'))
+            data_temp = {}
+            for obj in objs:
+                create_data = obj['create_date'].strftime('%Y-%m-%d')
+                robot_count = obj['robot_count']
+                if 'count' in data_temp:
+                    if create_data in data_temp['count']:
+                        data_temp['count'][create_data] += robot_count
+                    else:
+                        data_temp['count'[create_data]] = robot_count
+                else:
+                    data_temp['count'] = {
+                        create_data: robot_count
+                    }
+            print(data_temp)
+            data = ''
+            for index, data in data_temp.items():
+                for k,v in data.items():
+                    data = str(v)
+            response.code = 200
+            response.data = data
+            return render(request,'wenda/wenda_robot/wenda_robot_release_num.html',locals())
+

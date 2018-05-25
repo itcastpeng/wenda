@@ -1494,8 +1494,67 @@ def update_EditTaskLog_dahui_cishu():
                     )
 
 
+# 微信推送到期用户
 @app.task
 def weixin_daoqi_yonghu_tuisong():
     from wenda_celery_project.weixin_daoqi_yonghu_tuisong import guwen_weixin, xiaoshou_weixin
     guwen_weixin()
     xiaoshou_weixin()
+
+
+# 更新机器人日志发布次数
+def robot_release_num():
+    now_date = datetime.datetime.today().strftime('%Y-%m-%d %H:00:00')
+    objs = models.RobotAccountLog.objects.filter(
+        lapse=False,
+        # create_date__gte = now_date
+    ).values(
+        'status',
+        'create_date',
+    ).annotate(Count('id'))
+    date_temp = {}
+    two_temp = {}
+    for obj in objs:
+        status = obj['status']
+        create_time = obj['create_date'].strftime('%Y-%m-%d %H')
+        id_count = obj['id__count']
+        if status in date_temp:
+            if create_time in date_temp[status]:
+                date_temp[status][create_time] += id_count
+            else:
+                date_temp[status][create_time] = id_count
+        else:
+            date_temp[status] = {
+                create_time: id_count
+            }
+        for key, val in date_temp.items():
+            for key1, val1 in val.items():
+                data_key = key1 + ':00:00'
+                if data_key in two_temp:
+                    if val1 in two_temp[data_key]:
+                        two_temp[data_key]['count'] += val1
+                    else:
+                        two_temp[data_key]['count'] = val1
+                else:
+                    two_temp[data_key] = {
+                        'count': val1
+                    }
+    for k, v in two_temp.items():
+        for k1, v1 in v.items():
+            time = k
+            count = v1
+            objs = models.RobotReleaseNum.objects.filter(
+                create_date=time,
+            )
+            if objs:
+                objs.update(
+                    create_time=time,
+                    robot_count=count
+                )
+            else:
+                objs.create(
+                    create_time=time,
+                    robot_count=count
+                )
+
+
