@@ -386,11 +386,11 @@ def cover_reports_oper(request, oper_type, o_id):
 
             if startfugai and stopfugai:
 
-                objs = models.ClientCoveringNumber.objects.filter(
-                    client_id=client_id,
-                    date__gte=startfugai,
-                    date__lt=stopfugai
-                ).values('covering_number')
+                objs = models.UserprofileKeywordsCover.objects.filter(
+                    client_user_id=client_id,
+                    create_date__gte=startfugai,
+                    create_date__lt=stopfugai
+                ).values('cover_num')
                 # print('objs -->', objs)
                 data_list = []
                 data_obj = 0
