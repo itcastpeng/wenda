@@ -22,7 +22,7 @@ from webadmin.views_dir.myadmin import account, user_management, role_management
 from webadmin.views_dir.wenda import task_list, personal_center, financial_center, message, wenda_robot, api, \
     wait_clearing, my_task, set_keywords, rank_data, edit_content_management, my_task_edit, edit_error_content,\
     sensitive_word_library, big_data, edit_content_detail, client_day_covering_num, keywords_top_set, cover_reports, \
-    show_wenda_cover_num, zhidaohuida, case_library ,bianxiebaobiao
+    show_wenda_cover_num, zhidaohuida, case_library ,bianxiebaobiao,according_geturl
 
 from webadmin.views_dir.wechat import wechat
 
@@ -171,7 +171,7 @@ urlpatterns = [
     # 编辑编写报表
     url(r'^bianxiebaobiao/', bianxiebaobiao.bianxiebaobiao, name="bianxiebaobiao"),
 
-
+    url(r'^according/',according_geturl.according_geturl,name='according_geturl'),
 
     # #################### 后台管理 ####################
     # 用户管理
