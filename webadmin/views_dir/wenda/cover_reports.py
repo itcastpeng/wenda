@@ -13,7 +13,7 @@ from webadmin.forms.form_cover_update_jifei import jifeiupdateForm
 from django.db.models import F
 from django.db.models import Q
 from webadmin.views_dir.wenda.message import AddMessage
-from django.db.models import Count
+from django.db.models import Count,Sum
 import os
 import time
 from wenda_celery_project import tasks
@@ -375,8 +375,38 @@ def cover_reports_oper(request, oper_type, o_id):
             response.status = True
             response.message = "操作成功"
 
-        # 下载报表
+        # 查询覆盖量
+        elif oper_type == 'chaxunfugai':
+            startfugai = request.POST.get('startfugai')
+            stopfugai = request.POST.get('stopfugai')
+            client_id = request.POST.get('client_id')
+            print( '开始时间--结束时间 --  - ->',startfugai,stopfugai)
+            print('id -- -- -> ',client_id)
 
+
+            if startfugai and stopfugai:
+
+                objs = models.ClientCoveringNumber.objects.filter(
+                    client_id=client_id,
+                    date__gte=startfugai,
+                    date__lt=stopfugai
+                ).values('covering_number')
+                # print('objs -->', objs)
+                data_list = []
+                data_obj = 0
+                for obj in objs:
+                    print(obj)
+                    for k,v in obj.items():
+                        data_list.append(v)
+                print(data_list)
+                for data in data_list:
+                    data_obj += int(data)
+                print('data - - - - >',data_obj)
+                response.code = 200
+                response.message = '查询成功'
+                response.data = data_obj
+            return JsonResponse(response.__dict__)
+        # 下载报表
         if oper_type == "download":
             user_id = request.POST.get("user_id")
             if not user_id:
@@ -556,7 +586,6 @@ def cover_reports_oper(request, oper_type, o_id):
             result_data = result_data.format(tr_html=tr_html)
             return HttpResponse(result_data)
 
-
         # 展示编辑内容
         elif oper_type == 'task_edit_show':
             data_objs = models.UserProfile.objects.filter(
@@ -568,6 +597,7 @@ def cover_reports_oper(request, oper_type, o_id):
 
             return redirect(reverse("cover_reports"))
 
+        # 重查报表
         elif oper_type == "chongcha":
             today_date = datetime.datetime.now().strftime("%Y-%m-%d")
             models.KeywordsCover.objects.filter(keywords__client_user_id=o_id, create_date__gte=today_date).delete()
@@ -576,19 +606,19 @@ def cover_reports_oper(request, oper_type, o_id):
 
             return redirect(reverse("cover_reports"))
 
-
+        # 删除链接
         elif oper_type == 'shanchulianjie':
             objs = models.UserProfile.objects.filter(id=o_id)
             user = objs[0]
             return render(request, 'wenda/cover_reports/client_reports_modal_shanchulianjie.html', locals())
             # return redirect(reverse("cover_reports"))
 
-
+        # 修改计费日期
         elif oper_type == 'xiugaijifeiriqi':
             o_id = o_id
             return render(request, 'wenda/cover_reports/client_reports_modal_xiugaijifeiriqi.html', locals())
 
-
+        # 设置按钮
         elif oper_type == 'quanbushezhi':
             o_id=o_id
             obj = models.UserProfile.objects.get(id=o_id)
@@ -601,3 +631,11 @@ def cover_reports_oper(request, oper_type, o_id):
                 stop_time = obj.jifei_stop_date.strftime('%Y-%m-%d')
 
             return render(request,'wenda/cover_reports/client_reports_modal_shezhi.html',locals())
+
+        # 查讯覆盖量
+        elif oper_type == 'chaxunfugai':
+            client_data = models.ClientCoveringData.objects.filter(client_user__is_delete=False).values(
+                'client_user__username',
+                'client_user_id'
+            ).annotate(Count("id"))
+            return render(request,'wenda/cover_reports/client_reports__modal_select_fugai_liang.html',locals())
