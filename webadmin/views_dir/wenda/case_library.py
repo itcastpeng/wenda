@@ -52,7 +52,10 @@ def case_library(request):
         for index, field in enumerate(column_list):
             if field in request.GET and request.GET.get(field):  # 如果该字段存在并且不为空
                 if field == "create_date":
+                    tomorrow_dt = datetime.datetime.strptime(request.GET[field], "%Y-%m-%d") + datetime.timedelta(days=1)
                     q.add(Q(**{field + "__gte": request.GET[field]}), Q.AND)
+                    q.add(Q(**{field + "__lt": tomorrow_dt}), Q.AND)
+
                 elif field == "search_keyword":
                     q.add(Q(**{"keywords__keyword__contains": request.GET[field]}), Q.AND)
                 else:
