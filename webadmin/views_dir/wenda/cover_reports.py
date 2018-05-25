@@ -406,6 +406,7 @@ def cover_reports_oper(request, oper_type, o_id):
                 response.message = '查询成功'
                 response.data = data_obj
             return JsonResponse(response.__dict__)
+
         # 下载报表
         if oper_type == "download":
             user_id = request.POST.get("user_id")
