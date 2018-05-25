@@ -9,15 +9,27 @@
         {% csrf_token %}
             <div class="form-group">
             <label class="col-md-2 control-label" for="client_id">用户选择 </label>
-            <div class="col-md-8">
-                <select style="width: 300px;" class="form-control modalSelect" data-plugin="select2" tabindex="-1" aria-hidden="true"  name="client_id" id="client_id">
+{#            <div class="col-md-8">#}
+{#                <select style="width: 300px;" class="form-control modalSelect" data-plugin="select2" tabindex="-1" aria-hidden="true"  name="client_id" id="client_id">#}
+{#                    <option value="">请选择</option>#}
+{#                    {% for i in client_data %}#}
+{#                        <option value="{{ i.client_user_id }}">{{ i.client_user__username }}</option>#}
+{#                    {% endfor %}#}
+{##}
+{#                </select>#}
+{#            </div>#}
+                 <div class="col-md-8">
+                <select style="width: 300px;" class="form-control" data-plugin="select2" tabindex="-1" aria-hidden="true" id="client_id" name="client_id">
                     <option value="">请选择</option>
-                    {% for i in client_data %}
-                        <option value="{{ i.client_user_id }}">{{ i.client_user__username }}</option>
+                    {% for obj in client_data %}
+                        <option value="{{ obj.client_user_id }}">{{ obj.client_user__username }}</option>
                     {% endfor %}
-
                 </select>
             </div>
+
+
+
+
         </div>
 
         <div class="form-group" id="div_startfugai">
@@ -49,6 +61,10 @@
             <button type="button" class="btn btn-primary " id="select_button">确认查询</button>
         </div>
 <script>
+
+    $("#client_id").select2({
+        dropdownParent:$("#exampleFormModal")
+    });
     $("#exampleFormModal .modal-dialog").css("width", "700px");
 
     $('#startfugai').bind('change',function () {

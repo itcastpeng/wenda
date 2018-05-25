@@ -1,0 +1,91 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h3 class="modal-title">查询机器人覆盖量</h3>
+</div>
+<form class="form-horizontal modal_form" onsubmit="return false" >
+    <div class="modal-body">
+        {% csrf_token %}
+        <div class="form-group" id="div_xiugaijifeiriqistart">
+            <label class="col-md-2 control-label" for="robotstart">开始日期 </label>
+               <div class="col-md-8">
+{#                   <input class="Wdate form-control" id="xiugaijifeiriqistart" name="xiugaijifeiriqistart"  oninput="alert(444)"  onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" type="text">#}
+                   <input class="Wdate form-control" id="robotstart" name="robotstart" onchange="" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" type="text">
+             </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="robotstop">结束日期 </label>
+             <div class="col-md-8">
+                   <input class="Wdate form-control" id="robotstop" name="robotstop" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" type="text"  placeholder="默认值为一个月,可只选开始时间">
+             </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="jinrifugai" style="padding-left: 35px">今日覆盖 </label>
+               <div class="col-md-2 ">
+                    <input type="text" class="form-control" id="jinrifugai" placeholder="被禁用的文本框" disabled="" value="{{ data }}">
+               </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="inputfugai">覆盖量为</label>
+               <div class="col-md-4 " id="fugaidata">
+
+               </div>
+        </div>
+    </div>
+</form>
+
+
+
+
+
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="update_button">确认查询</button>
+        </div>
+<script>
+    $("#exampleFormModal .modal-dialog").css("width", "700px");
+
+    $('#robotstart').bind('change',function () {
+        var start_time_str = $('#robotstart').val();
+        var start_time = new Date(start_time_str);
+        stop_time = start_time.setDate(start_time.getDate() + 10);
+        var newDate = new Date();
+        newDate.setTime(stop_time);
+        var year = newDate.getFullYear(); // 四位数字表示的年份
+        var month = newDate.getMonth() + 1; // 数字表示的月份,0-11, 0表示1月
+        var date = newDate.getDate(); // 日期,1~31
+        if(month<10) {
+            month = '0' + month
+        }
+        if(date<10) {
+            date = '0' + date
+        }
+        var date1 = year +"-"+ month +"-"+ date;
+        $('#robotstop').val(date1);
+    });
+
+    $("#update_button").on('click', function () {
+        var data = $(".modal_form").serialize();
+        var url = '{% url "wenda_robot" %}jiqirenfabutongji/{{ o_id }}/';
+        $.post(url, data, function (result) {
+            if(!result['status']){
+                toastr['error'](result['message']);
+            }else{
+                for(var i in result.data){
+                    var p_tag = '<p>'+ result.data[i].date_time + '&nbsp;&nbsp;&nbsp;&nbsp;' + result.data[i].count +'</p>';
+                    $("#fugaidata").append(p_tag);
+                }
+                {#toastr['success'](result['message']);#}
+                {#$('.modal').modal("hide");#}
+                {#table.ajax.reload();#}
+
+            }
+        }, 'json')
+    }
+);
+
+
+
+</script>

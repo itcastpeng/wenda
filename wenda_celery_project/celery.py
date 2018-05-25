@@ -120,11 +120,17 @@ app.conf.beat_schedule = {
         'task': 'wenda_celery_project.tasks.update_EditTaskLog_dahui_cishu',
         'schedule': crontab('*/10', '*', '*', '*', '*'),
     },
+    # 微信推送到期用户
     'weixindaoqiyonghutuisong': {
         'task': 'wenda_celery_project.tasks.weixin_daoqi_yonghu_tuisong',
         'schedule': crontab('0', '1', '*', '*', '*'),   # 每天早上9点发送微信通知
 
-    }
+    },
+    # 更新机器人日志发布次数
+    'robot_release_num': {
+        'task': 'wenda_celery_project.tasks.robot_release_num',
+        'schedule': crontab('*/10', '*', '*', '*', '*'),
+    },
 }
 
 # Optional configuration, see the application user guide.
