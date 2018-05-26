@@ -13,15 +13,15 @@ from webadmin.modules.WeChat import WeChatPublicSendMsg
 
 
 # 调用发送微信公众号模块
-wechat_date = './wechat_data.json'
-webchat_obj = WeChatPublicSendMsg(wechat_date)
-now_date = datetime.datetime.today().strftime('%Y-%m-%d')
+# wechat_date = './wechat_data.json'
+webchat_obj = WeChatPublicSendMsg()
+# now_date = datetime.datetime.today().strftime('%Y-%m-%d')
 # 判断日期满足日期的查出来
 seventime = datetime.date.today() + datetime.timedelta(days=7)
 q = Q()
 q.add(Q(guwen__isnull=False) | Q(xiaoshou__isnull=False), Q.AND)
-# q.add(Q(jifei_stop_date__lte=seventime) & Q(is_delete=False) & Q(status=1) & Q(jifei_start_date__isnull=False) & Q(jifei_stop_date__isnull=False), Q.AND)
-q.add(Q(jifei_stop_date__lte=seventime) & Q(is_delete=False) & Q(status=1) & Q(jifei_start_date__isnull=False) & Q(jifei_stop_date__isnull=False) & Q(create_date__gte=now_date), Q.AND)
+q.add(Q(jifei_stop_date__lte=seventime) & Q(is_delete=False) & Q(status=1) & Q(jifei_start_date__isnull=False) & Q(jifei_stop_date__isnull=False), Q.AND)
+# q.add(Q(jifei_stop_date__lte=seventime) & Q(is_delete=False) & Q(status=1) & Q(jifei_start_date__isnull=False) & Q(jifei_stop_date__isnull=False) & Q(create_date__gte=now_date), Q.AND)
 
 
 # 公用判断日期
