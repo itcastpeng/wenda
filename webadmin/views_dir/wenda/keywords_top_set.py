@@ -18,7 +18,7 @@ from django.db.models import Q
 from webadmin.views_dir.wenda.message import AddMessage
 from django.db.models import Count
 import datetime
-
+import os ,time
 from webadmin.modules import RedisOper
 
 from wenda_celery_project import tasks
@@ -109,6 +109,8 @@ def init_data(role_id=None, q=Q(), start=0, length=-1):
             )
 
         oper = """
+            <a class="download" uid="{client_user_id}" href="#">关键词下载</a>
+            /
             <a class="chongcha" uid="{client_user_id}" href="#">重查</a>
             /
             <a class="shanchuhuifuyichang" uid="{client_user_id}" href="#">删除回复异常</a>
@@ -358,6 +360,30 @@ def keywords_top_set_oper(request, oper_type, o_id):
             response.status = True
             response.message = "报表生成中,请稍后查看"
 
+        # 下载关键词
+        elif oper_type == 'download':
+            if o_id:
+                print('o_id - - -- > 下载',o_id)
+                objs = models.KeywordsTopSet.objects.filter(
+                    client_user_id=o_id,
+                    is_delete=False,
+                )
+                data_list = []
+                file_name = ''
+                for obj in objs:
+                    file_name = os.path.join("statics", "task_excel", "keywords_top_set", obj.client_user.username + ".xlsx")
+                    keyword = obj.keyword
+                    keywords_type = obj.get_keywords_type_display()
+                    data_list.append({
+                        'keyword': keyword,
+                        'keywords_type': keywords_type
+                    })
+
+                response.status = True
+                response.message = "导出成功"
+                response.download_url = "/" + file_name
+                print('下载路径----> ',file_name)
+                tasks.guanjianci_xiazai(file_name, data_list)
         # RedisOper.write_to_cache("keywords_top_set-init-data", None)
         return JsonResponse(response.__dict__)
 

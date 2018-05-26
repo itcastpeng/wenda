@@ -326,6 +326,22 @@
                 table.draw();
             }
         }, 'json');
+    });
+    {# 下载关键词 #}
+    $("#dataTable").on('click', '.download', function () {
+        var uid = $(this).attr("uid");
+        var csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
+        var data = "csrfmiddlewaretoken=" + csrfmiddlewaretoken;
+        var url = 'download/' + uid + '/';
+        $.post(url, data, function (result) {
+
+            if (!result['status']) {
+                toastr['error'](result['message']);
+            } else {
+                toastr['success'](result['message']);
+                table.draw();
+            }
+        }, 'json');
     })
 
 
