@@ -4,8 +4,15 @@
 
 <body>
 
-    <textarea id="textarea" cols="200" rows="50">
+{#    <textarea id="textarea" cols="200" rows="50">#}
+{##}
+{#    </textarea>#}
 
-    </textarea>
+{% for data in data_list %}
+
+    <p>{{ data.name }}</p>
+    <p>{{ data.count }}</p>
+{% endfor %}
+
 </body>
 </html>
