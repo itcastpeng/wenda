@@ -78,6 +78,8 @@ urlpatterns = [
     # 查询用户到期信息
     url(r'^api/jifeidaoqitixing/(?P<oper_type>\w+)/(?P<p_id>\d+)',api.jifeidaoqitixing),
 
+    # 查询每日覆盖量
+    url(r'^api/fugailiangtixing/(?P<oper_type>\w+)/(?P<o_id>\d+)',api.fugailiangtixing),
     # #################### 问答 ####################
 
     # 问答机器人

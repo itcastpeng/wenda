@@ -1558,3 +1558,95 @@ def robot_release_num():
                 )
 
 
+# 微信推送每日覆盖量
+@app.task
+def weixin_meiri_fugai_tuisong():
+    # 调用发送微信公众号模块
+    # wechat_date = './wechat_data.json'
+    webchat_obj = WeChatPublicSendMsg()
+    now_date = datetime.datetime.today().strftime('%Y-%m-%d')
+    q = Q()
+
+    # 公用发送链接
+    def gongyong(openid, gongyong_id):
+        post_data = {
+            # "touser": "o7Xw_0fq6LrmCjBbxAzDZHTbtQ3g +",
+            "touser": "{openid}".format(openid=openid),
+            "template_id": "ksNf6WiqO5JEqd3bY6SUqJvWeL2-kEDqukQC4VeYVvw",
+            # "url": "http://wenda.zhugeyingxiao.com/api/jifeidaoqitixing/null/{gongyong_id}".format(
+            #     gongyong_id=gongyong_id),
+            "url": "http://127.0.0.1:8005/api/fugailiangtixing/null/{gongyong_id}".format(gongyong_id=gongyong_id),
+            "data": {
+                "first": {
+                    "value": "诸葛霸屏王提醒有计费到期！",
+                    "color": "#000"
+                },
+                "keyword1": {
+                    "value": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    # "color": "#173177"
+                },
+                "keyword2": {
+                    "value": "请见详情页面",
+                },
+            }
+        }
+        print('post_data', post_data['url'])
+        print('---------========================')
+        webchat_obj.sendTempMsg(post_data)
+
+    # 顾问
+    def guwen_weixin():
+        q.add(Q(client_user__is_delete=False) & Q(client_user__status=1) & Q(create_date__gte=now_date) & (Q(client_user__guwen__isnull=False)), Q.AND)
+        objs = models.UserprofileKeywordsCover.objects.filter(q).order_by('create_date')
+        if objs:
+            data_list = []
+            new_list = []
+            for obj in objs:
+                guwen_openid = obj.client_user.guwen.openid
+                guwen_id = obj.client_user.guwen_id
+                data_list.append({
+                    'openid':guwen_openid,
+                    'id':guwen_id
+                })
+            seen = set()
+            for data in data_list:
+                t_data = tuple(data.items())
+                if t_data not in seen:
+                    seen.add(t_data)
+                    new_list.append(data)
+            for data_set in new_list:
+                guwen_openid = data_set['openid']
+                guwen_id = data_set['id']
+                gongyong(guwen_openid, guwen_id)
+
+    # 销售
+    def xiaoshou_weixin():
+        q.add(Q(client_user__is_delete=False) & Q(client_user__status=1) & Q(create_date=now_date) & (Q(client_user__xiaoshou__isnull=False)), Q.AND)
+        objs = models.UserprofileKeywordsCover.objects.select_related('client_user').filter(q).order_by('create_date')
+
+        if objs:
+            data_list = []
+            new_list = []
+            for obj in objs:
+                xiaoshou_openid = obj.client_user.xiaoshou.openid
+                xiaoshou_id = obj.client_user.xiaoshou_id
+                data_list.append({
+                    'openid': xiaoshou_openid,
+                    'id': xiaoshou_id
+                })
+            seen = set()
+            for data in data_list:
+                t_data = tuple(data.items())
+                if t_data not in seen:
+                    seen.add(t_data)
+                    new_list.append(data)
+            for data_set in new_list:
+                xiaoshou_openid = data_set['openid']
+                xiaoshou_id = data_set['id']
+                gongyong(xiaoshou_openid, xiaoshou_id)
+
+
+    print('顾问 - -- - 》 ')
+    guwen_weixin()
+    print('销售 - - -- 》 ')
+    xiaoshou_weixin()

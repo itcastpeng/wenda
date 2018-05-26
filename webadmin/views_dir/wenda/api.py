@@ -1305,3 +1305,36 @@ def jifeidaoqitixing(request, oper_type, p_id):
     else:
         return render(request, 'api/chaxun_kehu_daoqishijian.html', locals())
 
+# 查询每日覆盖量微信推送
+@csrf_exempt
+def fugailiangtixing(request, oper_type, o_id):
+    print('进入--->',o_id)
+    response = pub.BaseResponse()
+    now_date = datetime.datetime.today().strftime('%Y-%m-%d')
+    q = Q()
+    q.add(Q(client_user__is_delete=False) & Q(client_user__status=1) & Q(create_date__gte=now_date),Q.AND)
+    q.add(Q(client_user__xiaoshou__isnull=False) | Q(client_user__guwen__isnull=False), Q.AND)
+    q.add(Q(client_user__xiaoshou_id=o_id) | Q(client_user__guwen_id=o_id),Q.AND)
+    objs = models.UserprofileKeywordsCover.objects.select_related('client_user').filter(q).values(
+        'create_date',
+        'cover_num',
+        'client_user__username',
+    ).annotate(Count('id'))
+    data_list = []
+    for obj in objs:
+        client_name = obj['client_user__username']
+        cover_num = obj['cover_num']
+        create_time = obj['create_date']
+        print(
+            client_name,cover_num,create_time
+        )
+        data_list.append({
+            'name':client_name,
+            'count':cover_num
+        })
+    if oper_type == 'json':
+        response.code = 200
+        response.data = data_list
+        return JsonResponse(response.__dict__)
+    else:
+        return render(request, 'test.html', locals())
