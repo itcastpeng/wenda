@@ -2,66 +2,54 @@ import sys
 import datetime
 import os
 from django.db.models import Q, Count
-
 project_dir = os.path.dirname(os.path.dirname(os.getcwd()))
 sys.path.append(project_dir)
 print(project_dir)
-os.environ['DJANGO_SETTINGS_MODULE'] = 'wenda.settings'
+os.environ['DJANGO_SETTINGS_MODULE'] ='wenda.settings'
 import django
-
 django.setup()
 from webadmin import models
 from webadmin.modules.WeChat import WeChatPublicSendMsg
 
-print('执行定时任务 - - - - - -发送微信公众号')
-# 调用发送微信公众号模块
-webchat_obj = WeChatPublicSendMsg()
 
+# 调用发送微信公众号模块
+# wechat_date = './wechat_data.json'
+webchat_obj = WeChatPublicSendMsg()
+# now_date = datetime.datetime.today().strftime('%Y-%m-%d')
 # 判断日期满足日期的查出来
 seventime = datetime.date.today() + datetime.timedelta(days=7)
 q = Q()
 q.add(Q(guwen__isnull=False) | Q(xiaoshou__isnull=False), Q.AND)
-q.add(Q(jifei_stop_date__lte=seventime) & Q(is_delete=False) & Q(status=1) & Q(jifei_start_date__isnull=False) & Q(
-    jifei_stop_date__isnull=False), Q.AND)
+q.add(Q(jifei_stop_date__lte=seventime) & Q(is_delete=False) & Q(status=1) & Q(jifei_start_date__isnull=False) & Q(jifei_stop_date__isnull=False), Q.AND)
+# q.add(Q(jifei_stop_date__lte=seventime) & Q(is_delete=False) & Q(status=1) & Q(jifei_start_date__isnull=False) & Q(jifei_stop_date__isnull=False) & Q(create_date__gte=now_date), Q.AND)
 
 
 # 公用判断日期
 def gonggong_weixin():
     objs = models.UserProfile.objects.filter(q)
-    for obj in objs:
-        if obj:
-            # 用户名
-            # print('user_obj -- > ', obj)
-            # 结束日期
-            stop_time = obj.jifei_stop_date
-            # print('stop--->', stop_time)
+    if objs:
+        for obj in objs:
             now_date = datetime.datetime.now()
+            # 今天到期
             if obj.jifei_stop_date == datetime.date.today():
-                openid = obj.guwen.openid
-            # 增加判断  已过期负数的  不加入列表
+                return objs
+            # 已到期
             elif obj.jifei_stop_date < datetime.date.today():
                 guoqishijian = obj.jifei_stop_date - datetime.date.today()
-
-            # 如果当前时间 大于等于 计费结束日期减去七天
-            else:
-                if now_date.strftime('%Y-%m-%d') >= (
-                        obj.jifei_stop_date - datetime.timedelta(days=7)).strftime(
-                    '%Y-%m-%d'):
-                    # 用结束日期减去当前日期 剩余天数
+            elif now_date.strftime('%Y-%m-%d') >= (obj.jifei_stop_date - datetime.timedelta(days=7)).strftime('%Y-%m-%d'):
                     data_time = obj.jifei_stop_date - datetime.date.today()
+                    # 还有七天到期
                     if data_time <= datetime.timedelta(days=7):
-                        data_str = '{}还有{}天到期'.format(obj.username, data_time.days)
-            return obj
+                        return objs
 
 
 # 公用发送链接
-def gongyong(openid, gongyong_id):
+def gongyong(openid,gongyong_id):
     post_data = {
-        "touser": "o7Xw_0fq6LrmCjBbxAzDZHTbtQ3g",
-        # "touser": "{openid}".format(openid=openid),
+        # "touser": "o7Xw_0UI33YPrBRb9zRnRul3CbtQ",
+        "touser": "{openid}".format(openid=openid),
         "template_id": "ksNf6WiqO5JEqd3bY6SUqJvWeL2-kEDqukQC4VeYVvw",
-        "url": "http://wenda.zhugeyingxiao.com/api/jifeidaoqitixing/null/{gongyong_id}".format(
-            gongyong_id=gongyong_id),
+        "url": "http://wenda.zhugeyingxiao.com/api/jifeidaoqitixing/null/{gongyong_id}".format(gongyong_id=gongyong_id),
         # "url": "http://127.0.0.1:8005/api/jifeidaoqitixing/null/{gongyong_id}".format(gongyong_id=gongyong_id),
         "data": {
             "first": {
@@ -75,19 +63,6 @@ def gongyong(openid, gongyong_id):
             "keyword2": {
                 "value": "请见详情页面",
             },
-            # "keyword3": {
-            #     "value": "发布失败",
-            #     "color": "#173177"
-            # },
-            # "keyword4": {
-            #     "value": "请修改",
-            #     "color": "#173177"
-            # },
-
-            # "remark": {
-            #     "value":'\n' + '\n '.join(data_list),
-            #     "color": "#FF0000"
-            # }
         }
     }
     print('post_data', post_data['url'])
@@ -97,37 +72,62 @@ def gongyong(openid, gongyong_id):
 
 # 发送顾问链接
 def guwen_weixin():
-    obj = gonggong_weixin()
-    user_objs = models.UserProfile.objects.filter(q).values(
-        'guwen_id'
-    ).annotate(Count('id'))
-    # enumerate 索引和值
-    # for index,user_obj in enumerate(user_objs):
-    openid = obj.guwen.openid
-    for user_obj in user_objs:
-        print('user_obj - - -- - - ->', user_obj)
-        print('user_obj[xiaoshou_id] - - -- - - ->', user_obj['guwen_id'])
-        print('openid - - -- - - ->', openid)
-        gongyong(openid, user_obj['guwen_id'])
+    objs = gonggong_weixin()
+    data_list = []
+    list_set = []
+    for obj in objs:
+        openid = obj.guwen.openid
+        guwen_id = obj.guwen_id
+        data_list.append({
+            'openid':openid,
+            'id':guwen_id
+        })
+    print('data_list - -- > ',data_list)
+    seen = set()
+    for data in data_list:
+      t_data = tuple(data.items())
+      if t_data not in seen:
+          seen.add(t_data)
+          list_set.append(data)
+    for data_set in list_set:
+      guwen_openid = data_set['openid']
+      guwen_id = data_set['id']
+      gongyong(guwen_openid, guwen_id)
 
 
 # 发送销售链接
 def xiaoshou_weixin():
-    obj = gonggong_weixin()
-    user_objs = models.UserProfile.objects.filter(q).values(
-        'xiaoshou_id'
-    ).annotate(Count('id'))
-    # enumerate 索引和值
-    # for index,user_obj in enumerate(user_objs):
-    openid = obj.guwen.openid
-    for user_obj in user_objs:
-        if obj.xiaoshou.id:
-            print('user_obj - - -- - - ->', user_obj)
-            print('user_obj[xiaoshou_id] - - -- - - ->', user_obj['xiaoshou_id'])
-            print('openid - - -- - - ->', openid)
-            gongyong(openid, user_obj['xiaoshou_id'])
+    objs = gonggong_weixin()
+    data_list = []
+    list_set = []
+    for obj in objs:
+        openid = obj.xiaoshou.openid
+        xiaoshou_id = obj.guwen_id
+        data_list.append({
+            'openid': openid,
+            'id': xiaoshou_id
+        })
+    print('data_list - -- > ', data_list)
+    seen = set()
+    for data in data_list:
+        t_data = tuple(data.items())
+        if t_data not in seen:
+            seen.add(t_data)
+            list_set.append(data)
+    for data_set in list_set:
+        xiaoshou_openid = data_set['openid']
+        xiaoshou_id = data_set['id']
+        gongyong(xiaoshou_openid, xiaoshou_id)
+
 
 
 if __name__ == '__main__':
     guwen_weixin()
     xiaoshou_weixin()
+#
+
+
+
+
+
+
