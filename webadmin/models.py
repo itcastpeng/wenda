@@ -433,6 +433,7 @@ class SearchKeywordsRank(models.Model):
         unique_together = ('client_user', 'keywords')
 
 
+
 # 关键词效果
 class SearchKeywordsRankLog(models.Model):
     keywords = models.ForeignKey(to='SearchKeywordsRank', verbose_name="所属关键词")

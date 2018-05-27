@@ -317,6 +317,7 @@
         var csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
         var data = "csrfmiddlewaretoken=" + csrfmiddlewaretoken;
         var url = 'laowendaYouxianQuxiao/' + uid + '/';
+
         $.post(url, data, function (result) {
 
             if (!result['status']) {
@@ -324,9 +325,32 @@
             } else {
                 toastr['success'](result['message']);
                 table.draw();
+
             }
         }, 'json');
-    })
-
-
+    });
+    {# 下载关键词 #}
+    $("#dataTable").on('click', '.download_keyword', function () {
+        $('.download_keyword').attr('disabled','disabled');
+        var uid = $(this).attr("uid");
+        $(this).text('生成中...');
+        var csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
+        var data = "csrfmiddlewaretoken=" + csrfmiddlewaretoken ;
+        var url = 'download_keyword/' + uid + '/';
+        var domain  = window.location.href;
+        var download = domain.split('keywords_top_set',1);
+        $.post(url, data, function (result) {
+            if (!result['status']) {
+                toastr['error'](result['message']);
+            } else {
+             setTimeout(function () {
+                toastr['success'](result['message']);
+                var a = document.createElement("a");
+                a.href = download + result.download_url;
+                a.click();
+                $('.download_keyword').text('关键词下载')
+               }, 2000)
+            }
+        }, 'json');
+    });
 </script>

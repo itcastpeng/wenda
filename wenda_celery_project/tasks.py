@@ -1627,3 +1627,20 @@ def weixin_meiri_fugai_tuisong():
     guwen_weixin()
     print('销售 - - -- 》 ')
     xiaoshou_weixin()
+
+
+# 下载关键词与关键词类型
+def guanjianci_xiazai(file_name,data_list):
+    wb = Workbook()
+    ws = wb.active
+    print('进入下载 关键词 ')
+    ws.cell(row=1, column=1, value="关键词")
+    ws.cell(row=1, column=2, value="关键词类型")
+    for row, i in enumerate(data_list, start=2):
+        try:
+            ws.cell(row=row, column=1, value=i["keyword"])
+            ws.cell(row=row, column=2, value=i["keywords_type"])
+            row += 1
+        except IllegalCharacterError:
+            print("error -->", i)
+    wb.save(file_name)
