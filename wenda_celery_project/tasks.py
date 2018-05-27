@@ -1630,6 +1630,7 @@ def weixin_meiri_fugai_tuisong():
 
 
 # 下载关键词与关键词类型
+@app.task
 def guanjianci_xiazai(file_name,data_list):
     wb = Workbook()
     ws = wb.active
