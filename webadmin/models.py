@@ -617,7 +617,7 @@ class KeywordsTopSet(models.Model):
         (2, "核心词"),
         (3, "任务词"),
     )
-    keywords_type = models.SmallIntegerField(verbose_name="关键词类型", choices=status_choices, default=1)
+    keywords_type = models.SmallIntegerField(verbose_name="关键词类型", choices=keywords_type_choices, default=1)
     top_page_cover = models.SmallIntegerField(verbose_name="首页覆盖条数", default=0)
     create_date = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
     update_date = models.DateTimeField(verbose_name="更新时间", null=True, blank=True)
