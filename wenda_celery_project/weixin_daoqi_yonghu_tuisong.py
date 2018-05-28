@@ -20,8 +20,8 @@ now_date = datetime.datetime.today().strftime('%Y-%m-%d')
 seventime = datetime.date.today() + datetime.timedelta(days=7)
 q = Q()
 q.add(Q(guwen__isnull=False) | Q(xiaoshou__isnull=False), Q.AND)
-# q.add(Q(jifei_stop_date__lte=seventime) & Q(is_delete=False) & Q(status=1) & Q(jifei_start_date__isnull=False) & Q(jifei_stop_date__isnull=False), Q.AND)
-q.add(Q(jifei_stop_date__lte=seventime) & Q(is_delete=False) & Q(status=1) & Q(jifei_start_date__isnull=False) & Q(jifei_stop_date__isnull=False) & Q(create_date__gte=now_date), Q.AND)
+q.add(Q(jifei_stop_date__lte=seventime) & Q(is_delete=False) & Q(status=1) & Q(jifei_start_date__isnull=False) & Q(jifei_stop_date__isnull=False), Q.AND)
+# q.add(Q(jifei_stop_date__lte=seventime) & Q(is_delete=False) & Q(status=1) & Q(jifei_start_date__isnull=False) & Q(jifei_stop_date__isnull=False) & Q(create_date__gte=now_date), Q.AND)
 
 
 # 公用判断日期
