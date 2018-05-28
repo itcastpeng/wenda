@@ -1550,19 +1550,19 @@ def robot_release_num():
                     }
     for k, v in two_temp.items():
         for k1, v1 in v.items():
-            time = k
+            create_date = k
             count = v1
             objs = models.RobotReleaseNum.objects.filter(
-                create_date=time,
+                create_date=create_date,
             )
             if objs:
                 objs.update(
-                    create_time=time,
+                    create_date=create_date,
                     robot_count=count
                 )
             else:
-                objs.create(
-                    create_time=time,
+                models.RobotReleaseNum.objects.create(
+                    create_date=create_date,
                     robot_count=count
                 )
 
