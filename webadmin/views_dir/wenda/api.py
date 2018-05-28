@@ -226,7 +226,8 @@ def get_wenda_task(request):
                             wenda_robot_task_obj.next_date = datetime.datetime.now() + datetime.timedelta(days=2)
                         else:
                             wenda_robot_task_obj.next_date = datetime.datetime.now() + datetime.timedelta(
-                                minutes=random.randint(60 * 3, 60 * 5))
+                                # minutes=random.randint(60 * 3, 60 * 5))
+                                minutes=random.randint(60 * 1, 60 * 2))
 
                     elif status == "2":  # 回复问答
                         if wenda_robot_task_obj.wenda_type == 2:  # 老问答
@@ -256,7 +257,7 @@ def get_wenda_task(request):
                         else:  # 新问答
                             wenda_robot_task_obj.status = 5
                             wenda_robot_task_obj.next_date = datetime.datetime.now() + datetime.timedelta(
-                                minutes=random.randint(60 * 10, 60 * 15))
+                                minutes=random.randint(60 * 5, 60 * 6))
 
                     elif status == "20":  # 回复内容异常
                         wenda_robot_task_obj.status = 20
