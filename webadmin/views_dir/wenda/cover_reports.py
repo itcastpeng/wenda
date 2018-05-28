@@ -431,10 +431,10 @@ def cover_reports_oper(request, oper_type, o_id):
                         "link": obj.url
                     })
                 xianshifabushijian = ''
-                if role_id == 7:
-                    xianshifabushijian = True
-                else:
+                if role_id in [5, 12]:
                     xianshifabushijian = False
+                else:
+                    xianshifabushijian = True
                 tasks.cover_reports_generate_excel.delay(file_name, data_list,xianshifabushijian)
                 tasks.userprofile_keywords_cover.delay()
 
