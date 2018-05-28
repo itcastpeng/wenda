@@ -433,13 +433,10 @@ def cover_reports_oper(request, oper_type, o_id):
                 xianshifabushijian = ''
                 if role_id == 7:
                     xianshifabushijian = True
-                    tasks.cover_reports_generate_excel.delay(file_name, data_list,xianshifabushijian)
-                    tasks.userprofile_keywords_cover.delay()
-
                 else:
                     xianshifabushijian = False
-                    tasks.cover_reports_generate_excel.delay(file_name, data_list,xianshifabushijian)
-                    tasks.userprofile_keywords_cover.delay()
+                tasks.cover_reports_generate_excel.delay(file_name, data_list,xianshifabushijian)
+                tasks.userprofile_keywords_cover.delay()
 
                 response.status = True
                 response.message = "导出成功"
