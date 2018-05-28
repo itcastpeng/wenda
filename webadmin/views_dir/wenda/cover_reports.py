@@ -430,8 +430,12 @@ def cover_reports_oper(request, oper_type, o_id):
                         "create_date": obj.create_date.strftime("%Y-%m-%d"),
                         "link": obj.url
                     })
-
-                tasks.cover_reports_generate_excel.delay(file_name, data_list)
+                xianshifabushijian = ''
+                if role_id == 7:
+                    xianshifabushijian = True
+                else:
+                    xianshifabushijian = False
+                tasks.cover_reports_generate_excel.delay(file_name, data_list,xianshifabushijian)
                 tasks.userprofile_keywords_cover.delay()
 
                 response.status = True
