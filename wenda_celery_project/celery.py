@@ -136,6 +136,11 @@ app.conf.beat_schedule = {
         'task': 'wenda_celery_project.tasks.fugailiangtixing',
         'schedule': crontab('*', '1', '*', '*', '*'),
     },
+    # 宕机微信推送提醒
+    'dangjitixing': {
+        'task': 'wenda_celery_project.tasks.dangjitixing',
+        'schedule': crontab('*/10', '23-12', '*', '*', '*'),
+    },
 }
 
 # Optional configuration, see the application user guide.
