@@ -1654,3 +1654,36 @@ def guanjianci_xiazai(file_name,data_list):
         except IllegalCharacterError:
             print("error -->", i)
     wb.save(file_name)
+
+
+# 宕机微信推送提醒
+@app.task
+def dangjitixing():
+    webchat_obj = WeChatPublicSendMsg()
+    # 请求得URL获取备注宕机信息
+    url = 'http://websiteaccount.bjhzkq.com/api/checkVpsStatus'
+    # 请求URL的参数
+    ret = requests.get(url)
+    if ret:
+        post_data = {
+            # 李汉杰openid
+            "touser": "o7Xw_0c264_Xjns8vKxHaFakAfIw",
+            # 自己openid
+            # "touser": "o7Xw_0fq6LrmCjBbxAzDZHTbtQ3g",
+            "template_id": "JHyJHGz4QP_wpe67yucklAl3KM1tdWxbnmcqNLPhZaU",
+            "data": {
+                "first": {
+                    "value": "宕机提醒,请及时处理！",
+                    "color": "#000"
+                },
+                "time": {
+                    "value": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    # "color": "#173177"
+                },
+                "reason": {
+                    "value": "{}".format(ret.text),
+                },
+            }
+        }
+        print('---------========================')
+        webchat_obj.sendTempMsg(post_data)
