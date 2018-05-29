@@ -828,7 +828,8 @@ def tongji_kehu_shiyong():
 
 # 覆盖报表功能中生成客户覆盖报表
 @app.task
-def cover_reports_generate_excel(file_name, data_list, xianshifabushijian=False, debug=False):
+def cover_reports_generate_excel(file_name, data_list,  debug=False):
+    # 生成客户查看的覆盖报表
     # 生成客户查看的覆盖报表
     wb = Workbook()
     ws = wb.active
@@ -839,12 +840,7 @@ def cover_reports_generate_excel(file_name, data_list, xianshifabushijian=False,
     ws.cell(row=1, column=4, value="链接")
     ws.cell(row=1, column=5, value="排名")
     ws.cell(row=1, column=6, value="创建时间")
-    if xianshifabushijian:
-        ws.cell(row=1, column=9, value="问答类型")
-        ws.cell(row=1, column=7, value="发布时间")
-    elif debug:
-        ws.cell(row=1, column=8, value="类型")
-    else:
+    if debug:
         ws.cell(row=1, column=7, value="类型")
 
     for row, i in enumerate(data_list, start=2):
@@ -852,16 +848,9 @@ def cover_reports_generate_excel(file_name, data_list, xianshifabushijian=False,
             ws.cell(row=row, column=1, value=i["username"])
             ws.cell(row=row, column=2, value=i["keywords"])
             ws.cell(row=row, column=3, value=i["page_type"])
-            if xianshifabushijian:
-                ws.cell(row=row, column=9, value=i["wenda_type"])
-                if debug:
-                    ws.cell(row=row, column=8, value=i["is_zhedie"])
-            else:
-                if debug:
-                    ws.cell(row=row, column=7, value=i["is_zhedie"])
             if debug:
                 ws.cell(row=row, column=4, value=i["link"])
-
+                ws.cell(row=row, column=7, value=i["is_zhedie"])
             else:
                 if i["link"]:
                     ws["D{row}".format(row=row)].hyperlink = i["link"]
@@ -869,12 +858,11 @@ def cover_reports_generate_excel(file_name, data_list, xianshifabushijian=False,
 
             ws.cell(row=row, column=5, value=i["rank"])
             ws.cell(row=row, column=6, value=i["create_date"])
-            if xianshifabushijian:
-                ws.cell(row=row, column=7, value=i["create_date"])
 
             row += 1
         except IllegalCharacterError:
             print("error -->", i)
+
     wb.save(file_name)
 
 

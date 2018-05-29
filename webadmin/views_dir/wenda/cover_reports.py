@@ -407,6 +407,16 @@ def cover_reports_oper(request, oper_type, o_id):
                 response.data = data_obj
             return JsonResponse(response.__dict__)
 
+        # 重新生成覆盖报表
+        elif oper_type == 'rebuild':
+            date_obj = datetime.datetime.now()
+            date = date_obj.strftime("%Y-%m-%d")
+            objs = models.UserprofileKeywordsCover.objects.filter(
+                create_date=date,
+            )
+            objs.delete()
+            response.code = 200
+            response.message = '生成成功'
         # 下载报表
         if oper_type == "download":
             user_id = request.POST.get("user_id")
@@ -416,43 +426,22 @@ def cover_reports_oper(request, oper_type, o_id):
             else:
                 file_name = os.path.join("statics", "upload_files", str(int(time.time() * 1000)) + ".xlsx")
 
-                url_list = []
                 search_objs = models.KeywordsCover.objects.select_related(
                     'keywords', 'keywords__client_user'
                 ).filter(keywords__client_user_id=user_id).order_by("-create_date")
-                for data in search_objs:
-                    url_list.append(data)
+
                 data_list = []
-                xianshifabushijian = ''
-                for data in url_list:
-                    objs = models.WendaRobotTask.objects.filter(wenda_url=data.url)
-                    if objs:
-                        for obj in objs:
-                            print('data = = = = = > ', data.url)
-                            print('obj - - - - -> ', obj)
-                            if role_id in [5, 12]:
-                                xianshifabushijian = False
-                                data_list.append({
-                                    "username": data.keywords.client_user.username,
-                                    "keywords": data.keywords.keyword,
-                                    "page_type": data.get_page_type_display(),
-                                    "rank": data.rank,
-                                    "create_date": data.create_date.strftime("%Y-%m-%d"),
-                                    "link": data.url,
-                                })
-                                print('进入if判断')
-                            else:
-                                xianshifabushijian = True
-                                data_list.append({
-                                    "username": data.keywords.client_user.username,
-                                    "keywords": data.keywords.keyword,
-                                    "page_type": data.get_page_type_display(),
-                                    "rank": data.rank,
-                                    "create_date": data.create_date.strftime("%Y-%m-%d"),
-                                    "link": data.url,
-                                    'wenda_type': obj.get_wenda_type_display()
-                                })
-                tasks.cover_reports_generate_excel.delay(file_name, data_list,xianshifabushijian)
+                for obj in search_objs:
+                    data_list.append({
+                        "username": obj.keywords.client_user.username,
+                        "keywords": obj.keywords.keyword,
+                        "page_type": obj.get_page_type_display(),
+                        "rank": obj.rank,
+                        "create_date": obj.create_date.strftime("%Y-%m-%d"),
+                        "link": obj.url
+                    })
+
+                tasks.cover_reports_generate_excel.delay(file_name, data_list)
                 tasks.userprofile_keywords_cover.delay()
 
                 response.status = True
@@ -661,3 +650,7 @@ def cover_reports_oper(request, oper_type, o_id):
                 'client_user_id'
             ).annotate(Count("id"))
             return render(request,'wenda/cover_reports/client_reports__modal_select_fugai_liang.html',locals())
+
+        # 重新生成覆盖报表
+        elif oper_type == 'rebuild':
+            return render(request,'wenda/cover_reports/cover_chongxin_shengcheng_baobiao.html',locals())

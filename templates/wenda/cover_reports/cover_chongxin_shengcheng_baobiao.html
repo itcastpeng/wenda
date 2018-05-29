@@ -1,0 +1,36 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h3 class="modal-title">重新生成报表</h3>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal" id="modal_form" onsubmit="return false">
+    {% csrf_token %}
+    </form>
+    </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="rebuild_button">确认生成</button>
+        </div>
+<script>
+    $("#exampleFormModal .modal-dialog").css("width", "700px");
+
+    $("#rebuild_button").on('click', function () {
+        var data = $(".form-horizontal").serialize();
+
+        var url = '{% url "cover_reports" %}rebuild/0/';
+        $.post(url, data, function (result) {
+            if(!result['status']){
+                toastr['error'](result['message']);
+            }else{
+                toastr['success'](result['message']);
+                {#$('.modal').modal("hide");#}
+                {#table.ajax.reload();#}
+            }
+        }, 'json')
+    }
+);
+
+
+
+</script>

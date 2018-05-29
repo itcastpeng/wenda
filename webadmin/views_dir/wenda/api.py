@@ -589,11 +589,17 @@ def set_keywords_rank(request):
     if user_objs:
         if request.method == "GET":
             filter_datetime = datetime.datetime.strptime(datetime.datetime.now().strftime("%Y-%m-%d"), '%Y-%m-%d')
+
+            q = Q()
             if select_type:
+                # q.add(Q(Q(z_update_date__isnull=True) | Q(z_update_date__lt=filter_datetime))
                 q = Q(Q(z_update_date__isnull=True) | Q(z_update_date__lt=filter_datetime))
+                # q.add(Q(task__wenda_type__in=[1,10]),Q.AND())
             else:
                 q = Q(Q(update_date__isnull=True) | Q(update_date__lt=filter_datetime))
-            objs = models.SearchKeywordsRank.objects.filter(q).order_by('?')
+            q.add(Q(task__wenda_type__in=[1, 10]), Q.AND)
+            print('q -- > ',q)
+            objs = models.SearchKeywordsRank.objects.select_related('task').filter(q).order_by('?')
             if objs:  # 有任务
                 obj = objs[0]
                 response.status = True
