@@ -1665,7 +1665,7 @@ def dangjitixing():
     url = 'http://websiteaccount.bjhzkq.com/api/checkVpsStatus'
     # 请求URL的参数
     ret = requests.get(url)
-    if ret:
+    if ret.text:
         post_data = {
             # 李汉杰openid
             "touser": "o7Xw_0c264_Xjns8vKxHaFakAfIw",
