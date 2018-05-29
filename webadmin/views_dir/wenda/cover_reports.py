@@ -415,7 +415,8 @@ def cover_reports_oper(request, oper_type, o_id):
                 create_date=date,
             )
             objs.delete()
-
+            response.code = 200
+            response.message = '生成成功'
         # 下载报表
         if oper_type == "download":
             user_id = request.POST.get("user_id")

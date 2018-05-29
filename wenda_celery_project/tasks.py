@@ -828,7 +828,7 @@ def tongji_kehu_shiyong():
 
 # 覆盖报表功能中生成客户覆盖报表
 @app.task
-def cover_reports_generate_excel(file_name, data_list, xianshifabushijian=False, debug=False):
+def cover_reports_generate_excel(file_name, data_list,  debug=False):
     # 生成客户查看的覆盖报表
     # 生成客户查看的覆盖报表
     wb = Workbook()
