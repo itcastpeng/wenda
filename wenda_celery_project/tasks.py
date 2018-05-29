@@ -833,7 +833,6 @@ def cover_reports_generate_excel(file_name, data_list,  debug=False):
     # 生成客户查看的覆盖报表
     wb = Workbook()
     ws = wb.active
-
     ws.cell(row=1, column=1, value="客户名称")
     ws.cell(row=1, column=2, value="关键词")
     ws.cell(row=1, column=3, value="覆盖类型")
@@ -842,8 +841,12 @@ def cover_reports_generate_excel(file_name, data_list,  debug=False):
     ws.cell(row=1, column=6, value="创建时间")
     if debug:
         ws.cell(row=1, column=7, value="类型")
+    else:
+        ws.cell(row=1, column=8, value="发布时间")
+        ws.cell(row=1, column=9, value="问答类型")
 
     for row, i in enumerate(data_list, start=2):
+        print('报表 里 - - - - - - - -> ', i['create_time'])
         try:
             ws.cell(row=row, column=1, value=i["username"])
             ws.cell(row=row, column=2, value=i["keywords"])
@@ -855,6 +858,8 @@ def cover_reports_generate_excel(file_name, data_list,  debug=False):
                 if i["link"]:
                     ws["D{row}".format(row=row)].hyperlink = i["link"]
                     ws["D{row}".format(row=row)].value = "点击打开知道问答页面"
+                    ws.cell(row=row, column=8, value=i["create_time"])
+                    ws.cell(row=row, column=9, value=i["wenda_type"])
 
             ws.cell(row=row, column=5, value=i["rank"])
             ws.cell(row=row, column=6, value=i["create_date"])
@@ -921,32 +926,41 @@ def userprofile_keywords_cover(debug=False):
         data_day_list = []
 
         for search_obj in search_objs:
-            print(search_obj.create_date)
-            url = search_obj.url
-            objs = models.WendaRobotTask.objects.filter(
-                wenda_url=url,
-                task__release_user=search_obj.keywords.client_user
-            )
-            create_time = ''
-            if objs:
-                print(url, search_obj.keywords.client_user.id)
-                robotaccountlog_objs = objs[0].robotaccountlog_set.all()
-                if robotaccountlog_objs:
-                    create_time = robotaccountlog_objs.last().create_date.strftime("%Y-%m-%d")
-            is_zhedie = "0"
-            if search_obj.is_zhedie:
-                is_zhedie = "1"
+            if search_obj:
+                print('search_obj - - - > ', search_obj.id)
+                url = search_obj.url
+                print('url_', url)
+                print('search _ obj ', search_obj.keywords.client_user)
+                objs = models.WendaRobotTask.objects.filter(
+                    wenda_url=url,
+                    task__release_user=search_obj.keywords.client_user
+                )
+                create_time = ''
+                print('objs - -- - =--==- > ', objs)
+                if objs:
+                    robotaccountlog_objs = objs[0].robotaccountlog_set.all()
+                    if robotaccountlog_objs:
+                        create_time = robotaccountlog_objs.last().create_date.strftime("%Y-%m-%d")
 
-            data_day_list.append({
-                "username": username,
-                "keywords": search_obj.keywords.keyword,
-                "page_type": search_obj.get_page_type_display(),
-                "rank": search_obj.rank,
-                "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
-                "link": search_obj.url,
-                "is_zhedie": is_zhedie,
-                'create_time':create_time
-            })
+                        print('create_time -- >', create_time)
+                    print('url - - - - -- -  - - - -> ', url)
+                    for obj in objs:
+                        wenda_type = obj.get_wenda_type_display()
+
+                        is_zhedie = "0"
+                        if search_obj.is_zhedie:
+                            is_zhedie = "1"
+                        data_day_list.append({
+                            "username": username,
+                            "keywords": search_obj.keywords.keyword,
+                            "page_type": search_obj.get_page_type_display(),
+                            "rank": search_obj.rank,
+                            "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
+                            "link": search_obj.url,
+                            "is_zhedie": is_zhedie,
+                            'create_time': create_time,
+                            'wenda_type': wenda_type
+                        })
 
         # 客户查看报表的名称
         file_name = "{username}_{date}.xlsx".format(
