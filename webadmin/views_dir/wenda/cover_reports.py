@@ -407,6 +407,15 @@ def cover_reports_oper(request, oper_type, o_id):
                 response.data = data_obj
             return JsonResponse(response.__dict__)
 
+        # 重新生成覆盖报表
+        elif oper_type == 'rebuild':
+            date_obj = datetime.datetime.now()
+            date = date_obj.strftime("%Y-%m-%d")
+            objs = models.UserprofileKeywordsCover.objects.filter(
+                create_date=date,
+            )
+            objs.delete()
+
         # 下载报表
         if oper_type == "download":
             user_id = request.POST.get("user_id")
@@ -640,3 +649,7 @@ def cover_reports_oper(request, oper_type, o_id):
                 'client_user_id'
             ).annotate(Count("id"))
             return render(request,'wenda/cover_reports/client_reports__modal_select_fugai_liang.html',locals())
+
+        # 重新生成覆盖报表
+        elif oper_type == 'rebuild':
+            return render(request,'wenda/cover_reports/cover_chongxin_shengcheng_baobiao.html',locals())
