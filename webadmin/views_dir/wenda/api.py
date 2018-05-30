@@ -597,8 +597,8 @@ def set_keywords_rank(request):
                 # q.add(Q(task__wenda_type__in=[1,10]),Q.AND())
             else:
                 q = Q(Q(update_date__isnull=True) | Q(update_date__lt=filter_datetime))
-            q.add(Q(task__wenda_type__in=[1, 10]), Q.AND)
-            print('q -- > ',q)
+            # q.add(Q(task__wenda_type__in=[1, 10]), Q.AND)
+            # print('q -- > ',q)
             objs = models.SearchKeywordsRank.objects.select_related('task').filter(q).order_by('?')
             if objs:  # 有任务
                 obj = objs[0]
@@ -631,6 +631,7 @@ def set_keywords_rank(request):
             task_objs = models.Task.objects.filter(
                 release_user_id=client_user_id,
                 is_delete=False,
+                wenda_type__in=[1,10]
             ).exclude(status=11)
 
             number = re.search("\d+", url).group()  # 过滤出url中的数字
