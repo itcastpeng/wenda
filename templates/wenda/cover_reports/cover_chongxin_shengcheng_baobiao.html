@@ -24,8 +24,8 @@
                 toastr['error'](result['message']);
             }else{
                 toastr['success'](result['message']);
-                {#$('.modal').modal("hide");#}
-                {#table.ajax.reload();#}
+                $('.modal').modal("hide");
+                table.ajax.reload();
             }
         }, 'json')
     }
