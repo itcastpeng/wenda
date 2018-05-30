@@ -1,0 +1,135 @@
+<title>营销顾问对接表</title>
+<script src="/statics/custom/js/echarts.min.js"></script>
+
+<style>
+
+    .btn.focus, .btn:focus, .btn:hover {
+        color: white;
+    }
+
+    .search_form>div{
+        margin-bottom: 10px;
+    }
+
+    .search_form label{
+
+        width: 95px;
+        text-align: right;
+    }
+
+    .search_form input, .search_form select{
+        display: inline-block;
+        width: 300px
+    }
+    .search_form select{
+        display: inline-block;
+        width: 100px
+    }
+
+    #create_date{
+        width: 120px;
+    }
+    tbody{
+        text-align: center;
+    }
+
+</style>
+
+{% csrf_token %}
+<div class="page animation-fade page-index page-data-tables">
+    <div class="page-content">
+
+        <div class="panel" style="padding: 10px; height: auto">
+            <form class="form-horizontal search_form">
+                <div>
+                    <label for="department_id">开始时间：</label>
+                     <input class="Wdate form-control" id="start_time" name="start_time" value="{{ now_date }}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" type="text">
+
+                    <label for="keywords__client_user_id">结束时间：</label>
+                     <input class="Wdate form-control" id="stop_time" name="stop_time" value="{{ now_date }}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" type="text">
+
+                <label class="col-sm-3 control-label" for="xuantian">时间查询：</label>
+                <div class="col-sm-8" style="width: auto">
+                    <select name="xuantian" id="xuantian" class="form-control">
+
+                        <option value="">不选择</option>
+                        <option value="1">今天</option>
+                        <option value="2">昨天</option>
+                        <option value="3">最近7天</option>
+                        <option value="4">最近30天</option>
+
+                    </select>
+                </div>
+            </div>
+
+
+                <div style="position: absolute; bottom:0; right: 20px;">
+                    <button type="button" class="btn btn-primary" id="search_button"><i class="icon fa-search" aria-hidden="true"></i>搜索</button>
+                </div>
+
+            </form>
+        </div>
+
+        <div class="panel" style="height: 100%;">
+            <div class="panel-body">
+
+                <div id="echarts_main" style="width: 80%;height:400px;"></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    $(function () {
+
+        var get_url = "?type=ajax_json&xuantian=1";
+        $.get(get_url, function (data) {
+
+            // 基于准备好的dom，初始化echarts实例
+            var myChart = echarts.init(document.getElementById('echarts_main'));
+
+            // 指定图表的配置项和数据
+            option = data.option;
+
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.clear();
+            myChart.setOption(option);
+
+        }, 'json');
+
+        {# 搜索按钮被点击 #}
+        $("#search_button").click(function () {
+            var search_data = $(".search_form").serialize();
+            var get_url = "?type=ajax_json&" + search_data;
+            $.get(get_url, function (data) {
+                // 基于准备好的dom，初始化echarts实例
+
+                var myChart = echarts.init(document.getElementById('echarts_main'));
+
+                // 指定图表的配置项和数据
+                option = data.option;
+
+                // 使用刚指定的配置项和数据显示图表。
+                myChart.clear();
+                myChart.setOption(option);
+
+        }, 'json');
+
+        {#table.ajax.url(get_url);#}
+        {#table.draw();#}
+
+    });
+
+
+
+
+    })
+
+
+
+
+    {##}
+</script>
