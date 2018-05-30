@@ -870,7 +870,7 @@ def keywords_top_set_oper(request, oper_type):
                     response.status = True
                     response.message = "修改成功 - 渠道操作"
                 else:
-                    robot_task_obj = models.WendaRobotTask.objects.get(id=obj[0].run_task.id)
+                    robot_task_obj = models.WendaRobotTask.objects.select_related('task').get(id=obj[0].run_task.id)
                     edit_pulick_task_obj = models.EditPublickTaskManagement.objects.get(run_task=robot_task_obj)
 
                     if not is_pause:  # is_pause = False 任务没有关闭,需要打回
@@ -881,15 +881,16 @@ def keywords_top_set_oper(request, oper_type):
                         if edit_pulick_task_obj.status < 3:
                             print("已经打回")
                         else:
-                            edit_pulick_task_obj.status = 2
-                            edit_pulick_task_obj.is_select_cover_back = True
+                            if robot_task_obj.task.status < 6:
+                                edit_pulick_task_obj.status = 2
+                                edit_pulick_task_obj.is_select_cover_back = True
 
-                            models.EditTaskLog.objects.create(
-                                edit_public_task_management=edit_pulick_task_obj,
-                                title=edit_pulick_task_obj.title,
-                                content=edit_pulick_task_obj.content,
-                                remark="查询覆盖无匹配答案"
-                            )
+                                models.EditTaskLog.objects.create(
+                                    edit_public_task_management=edit_pulick_task_obj,
+                                    title=edit_pulick_task_obj.title,
+                                    content=edit_pulick_task_obj.content,
+                                    remark="查询覆盖无匹配答案"
+                                )
                     else:  # 任务被关闭  is_pause = True
                         robot_task_obj.status = 6
                         robot_task_obj.next_date = datetime.datetime.now() + datetime.timedelta(minutes=10)
