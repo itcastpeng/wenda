@@ -13,11 +13,13 @@ import sys
 import os
 from webadmin.modules import SendMsg
 from webadmin.modules import WeChat
+
 # project_dir 是
 project_dir = os.path.dirname(os.getcwd())
 sys.path.append(project_dir)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'wenda.settings'
 import django
+
 django.setup()
 import requests
 import xlrd
@@ -28,14 +30,17 @@ import sys
 import datetime
 import os
 from django.db.models import Q, Count
+
 project_dir = os.path.dirname(os.getcwd())
 sys.path.append(project_dir)
 print(project_dir)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'wenda.settings'
 import django
+
 django.setup()
 from webadmin import models
 from webadmin.modules.WeChat import WeChatPublicSendMsg
+
 
 # 客户首次创建任务的时候,将客户提交的 excel 表格的数据取出来然后写入到新的 excel 表格中, 在第一列新增 问答地址链接
 @app.task
@@ -279,7 +284,8 @@ def RobotTaskToTask():
         wenda_robot_task_objs = models.WendaRobotTask.objects.filter(task=task_obj)
 
         # 如果分配给机器人的所有任务都已经完成或者创建时间距离现在5天
-        if (wenda_robot_task_objs.count() and wenda_robot_task_objs.filter(status=6).count() == wenda_robot_task_objs.count()) or task_obj.create_date < five_days_ago:
+        if (wenda_robot_task_objs.count() and wenda_robot_task_objs.filter(
+                status=6).count() == wenda_robot_task_objs.count()) or task_obj.create_date < five_days_ago:
             if task_obj.create_date < five_days_ago:
                 wenda_robot_task_objs.update(status=6)
                 models.EditPublickTaskManagement.objects.filter(task__task__task=task_obj).update(status=3)
@@ -713,7 +719,7 @@ def keywords_top_page_cover_excel(user_id=None):
             ws.cell(row=1, column=10, value="状态")
 
             url_publish_list = [i[0] for i in models.WendaRobotTask.objects.filter(task__release_user=user_obj,
-                                                                                   wenda_type=2, ).values_list(
+                wenda_type=2, ).values_list(
                 "wenda_url")]
             n = 2
             for obj in keywords_top_info_objs:
@@ -828,33 +834,37 @@ def tongji_kehu_shiyong():
 
 # 覆盖报表功能中生成客户覆盖报表
 @app.task
-def cover_reports_generate_excel(file_name, data_list,  debug=False):
+def cover_reports_generate_excel(file_name, data_list, debug):
     # 生成客户查看的覆盖报表
     # 生成客户查看的覆盖报表
     wb = Workbook()
     ws = wb.active
-
     ws.cell(row=1, column=1, value="客户名称")
     ws.cell(row=1, column=2, value="关键词")
     ws.cell(row=1, column=3, value="覆盖类型")
     ws.cell(row=1, column=4, value="链接")
     ws.cell(row=1, column=5, value="排名")
     ws.cell(row=1, column=6, value="创建时间")
-    if debug:
+    if debug == False:
         ws.cell(row=1, column=7, value="类型")
+        ws.cell(row=1, column=8, value="发布时间")
+        ws.cell(row=1, column=9, value="问答类型")
 
     for row, i in enumerate(data_list, start=2):
         try:
             ws.cell(row=row, column=1, value=i["username"])
             ws.cell(row=row, column=2, value=i["keywords"])
             ws.cell(row=row, column=3, value=i["page_type"])
-            if debug:
+            if debug == False:
                 ws.cell(row=row, column=4, value=i["link"])
                 ws.cell(row=row, column=7, value=i["is_zhedie"])
+                ws.cell(row=row, column=8, value=i["create_time"])
+                ws.cell(row=row, column=9, value=i["wenda_type"])
             else:
                 if i["link"]:
                     ws["D{row}".format(row=row)].hyperlink = i["link"]
                     ws["D{row}".format(row=row)].value = "点击打开知道问答页面"
+
 
             ws.cell(row=row, column=5, value=i["rank"])
             ws.cell(row=row, column=6, value=i["create_date"])
@@ -921,33 +931,41 @@ def userprofile_keywords_cover(debug=False):
         data_day_list = []
 
         for search_obj in search_objs:
-            print(search_obj.create_date)
-            url = search_obj.url
-            objs = models.WendaRobotTask.objects.filter(
-                wenda_url=url,
-                task__release_user=search_obj.keywords.client_user
-            )
-            create_time = ''
-            if objs:
-                print(url, search_obj.keywords.client_user.id)
-                robotaccountlog_objs = objs[0].robotaccountlog_set.all()
-                if robotaccountlog_objs:
-                    create_time = robotaccountlog_objs.last().create_date.strftime("%Y-%m-%d")
-            is_zhedie = "0"
-            if search_obj.is_zhedie:
-                is_zhedie = "1"
+            if search_obj:
+                print('search_obj - - - > ', search_obj.id)
+                url = search_obj.url
+                print('url_', url)
+                print('search _ obj ', search_obj.keywords.client_user)
+                objs = models.WendaRobotTask.objects.filter(
+                    wenda_url=url,
+                    task__release_user=search_obj.keywords.client_user
+                )
+                create_time = ''
+                print('objs - -- - =--==- > ', objs)
+                if objs:
+                    robotaccountlog_objs = objs[0].robotaccountlog_set.all()
+                    if robotaccountlog_objs:
+                        create_time = robotaccountlog_objs.last().create_date.strftime("%Y-%m-%d")
 
-            data_day_list.append({
-                "username": username,
-                "keywords": search_obj.keywords.keyword,
-                "page_type": search_obj.get_page_type_display(),
-                "rank": search_obj.rank,
-                "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
-                "link": search_obj.url,
-                "is_zhedie": is_zhedie,
-                'create_time':create_time
-            })
+                        print('create_time -- >', create_time)
+                    print('url - - - - -- -  - - - -> ', url)
+                    for obj in objs:
+                        wenda_type = obj.get_wenda_type_display()
 
+                        is_zhedie = "0"
+                        if search_obj.is_zhedie:
+                            is_zhedie = "1"
+                        data_day_list.append({
+                            "username": username,
+                            "keywords": search_obj.keywords.keyword,
+                            "page_type": search_obj.get_page_type_display(),
+                            "rank": search_obj.rank,
+                            "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
+                            "link": search_obj.url,
+                            "is_zhedie": is_zhedie,
+                            'create_time': create_time,
+                            'wenda_type': wenda_type
+                        })
         # 客户查看报表的名称
         file_name = "{username}_{date}.xlsx".format(
             username=username,
@@ -955,7 +973,7 @@ def userprofile_keywords_cover(debug=False):
         )
         file_path_name = os.path.join("statics", "upload_files", file_name)
 
-        cover_reports_generate_excel(file_path_name, data_day_list, debug)
+        cover_reports_generate_excel(file_path_name, data_day_list, debug=True)
 
         # 营销顾问查看报表的名称
         yingxiaoguwen_file_name = "yingxiaoguwen_{username}_{date}.xlsx".format(
@@ -964,9 +982,7 @@ def userprofile_keywords_cover(debug=False):
         )
         yingxiaoguwen_file_path_name = os.path.join("statics", "upload_files", yingxiaoguwen_file_name)
 
-        print(file_path_name)
-        print(data_day_list)
-        cover_reports_generate_excel(yingxiaoguwen_file_path_name, data_day_list, debug=True)
+        cover_reports_generate_excel(yingxiaoguwen_file_path_name, data_day_list, debug=False)
 
         url_num = search_objs.values('url').distinct().count()
 
@@ -1001,7 +1017,7 @@ def send_cover_info():
             create_date=now_date,
             client_user_id=user_id,
             is_send_wechat=False,
-            client_user__status=1    # 如果用户未启用，则不发送报表
+            client_user__status=1  # 如果用户未启用，则不发送报表
         )
 
         # 如果不存在,则表示还未查询完
@@ -1189,16 +1205,16 @@ def update_wendaku_bianjibianxie():
     data_temp = ret.json()
     json_data = data_temp['data']
     data_list = []
-    for k1,v1 in json_data.items():
+    for k1, v1 in json_data.items():
         # print('v--->',v1)
-        for k2,v2 in v1.items():
+        for k2, v2 in v1.items():
             # print('v1--v2-->',k2,v2)
-            objs = models.UserProfile.objects.filter(username=v2[0],is_delete=False)
+            objs = models.UserProfile.objects.filter(username=v2[0], is_delete=False)
             if objs:
                 obj = objs[0]
                 # print('obj_id-->',obj.id)
                 p = v2[1]
-                print('k2-->',k2)
+                print('k2-->', k2)
 
                 bianxiebaobiao_objs = models.BianXieBaoBiao.objects.filter(
                     xiangmu=1,
@@ -1206,7 +1222,7 @@ def update_wendaku_bianjibianxie():
                     create_date=k2,
                 )
                 if bianxiebaobiao_objs:
-                    print('修改数据---->',bianxiebaobiao_objs)
+                    print('修改数据---->', bianxiebaobiao_objs)
                     bianxiebaobiao_objs.update(
                         edit_count=p,
                     )
@@ -1220,14 +1236,15 @@ def update_wendaku_bianjibianxie():
                     )
 
             else:
-                print(v2[0],'不存在')
+                print(v2[0], '不存在')
 
 
 # 更新编辑编写新老问答数据
 @app.task
 def update_xinlaowenda_bianxie_cishu():
     now_date = datetime.datetime.now().strftime('%Y-%m-%d')
-    objs = models.EditPublickTaskManagement.objects.filter(create_date__gte=now_date).values('task__edit_user','task__edit_user__username', 'task__task__task__wenda_type', 'create_date').annotate(Count('id'))
+    objs = models.EditPublickTaskManagement.objects.filter(create_date__gte=now_date).values('task__edit_user',
+        'task__edit_user__username', 'task__task__task__wenda_type', 'create_date').annotate(Count('id'))
 
     data_dict = {
         'xin': {},
@@ -1243,7 +1260,7 @@ def update_xinlaowenda_bianxie_cishu():
         task__wenda_type = obj['task__task__task__wenda_type']
         # print('数据--->',username,user_id,task__wenda_type,create_date,id_count)
 
-        if task__wenda_type == 2: # 老问答
+        if task__wenda_type == 2:  # 老问答
             if user_id in data_dict['lao']:
                 if create_date in data_dict['lao'][user_id]:
                     data_dict['lao'][user_id][create_date] += id_count
@@ -1255,16 +1272,16 @@ def update_xinlaowenda_bianxie_cishu():
                     create_date: id_count
                 }
 
-        else:   # 新问答
+        else:  # 新问答
             if user_id in data_dict['xin']:
                 if create_date in data_dict['xin'][user_id]:
-                   data_dict['xin'][user_id][create_date] += id_count
+                    data_dict['xin'][user_id][create_date] += id_count
                 else:
-                   data_dict['xin'][user_id][create_date] = id_count
+                    data_dict['xin'][user_id][create_date] = id_count
             else:
                 data_dict['xin'][user_id] = {
-                   # 'name': username,
-                   create_date: id_count
+                    # 'name': username,
+                    create_date: id_count
                 }
 
     print('data_dict-->', data_dict)
@@ -1349,7 +1366,7 @@ def update_bianji_yangzhanghao_data():
         user_id = obj['oper_user_id']
         username = obj['oper_user__username']
         update_time = obj['update_date'].strftime('%Y-%m-%d')
-        print('数据-->',count,user_id,username,update_time)
+        print('数据-->', count, user_id, username, update_time)
 
         if not user_id:
             continue
@@ -1363,10 +1380,10 @@ def update_bianji_yangzhanghao_data():
         else:
             data_dict[user_id] = {
                 # 'name':username,
-                update_time:count
+                update_time: count
             }
 
-    print('data_dict--->',data_dict)
+    print('data_dict--->', data_dict)
 
     xiangmu = 2
     for k2, v2 in data_dict.items():
@@ -1594,7 +1611,8 @@ def weixin_meiri_fugai_tuisong():
 
     # 顾问
     def guwen_weixin():
-        q.add(Q(client_user__is_delete=False) & Q(client_user__status=1) & Q(create_date__gte=now_date) & (Q(client_user__guwen__isnull=False)), Q.AND)
+        q.add(Q(client_user__is_delete=False) & Q(client_user__status=1) & Q(create_date__gte=now_date) & (
+            Q(client_user__guwen__isnull=False)), Q.AND)
         objs = models.UserprofileKeywordsCover.objects.filter(q).order_by('create_date')
         data_dict = {}
         if objs:
@@ -1608,7 +1626,8 @@ def weixin_meiri_fugai_tuisong():
 
     # 销售
     def xiaoshou_weixin():
-        q.add(Q(client_user__is_delete=False) & Q(client_user__status=1) & Q(create_date=now_date) & (Q(client_user__xiaoshou__isnull=False)), Q.AND)
+        q.add(Q(client_user__is_delete=False) & Q(client_user__status=1) & Q(create_date=now_date) & (
+            Q(client_user__xiaoshou__isnull=False)), Q.AND)
         objs = models.UserprofileKeywordsCover.objects.select_related('client_user').filter(q).order_by('create_date')
         data_dict = {}
         if objs:
@@ -1620,7 +1639,6 @@ def weixin_meiri_fugai_tuisong():
                 print('guwen _ id ', xiaoshou_openid, xiaoshou_id)
                 gongyong(xiaoshou_openid, xiaoshou_id)
 
-
     print('顾问 - -- - 》 ')
     guwen_weixin()
     print('销售 - - -- 》 ')
@@ -1629,7 +1647,7 @@ def weixin_meiri_fugai_tuisong():
 
 # 下载关键词与关键词类型
 @app.task
-def guanjianci_xiazai(file_name,data_list):
+def guanjianci_xiazai(file_name, data_list):
     wb = Workbook()
     ws = wb.active
     print('进入下载 关键词 ')
