@@ -870,7 +870,7 @@ def keywords_top_set_oper(request, oper_type):
                     response.status = True
                     response.message = "修改成功 - 渠道操作"
                 else:
-                    robot_task_obj = models.WendaRobotTask.objects.get(id=obj[0].run_task.id)
+                    robot_task_obj = models.WendaRobotTask.objects.select_related('task').get(id=obj[0].run_task.id)
                     edit_pulick_task_obj = models.EditPublickTaskManagement.objects.get(run_task=robot_task_obj)
 
                     if not is_pause:  # is_pause = False 任务没有关闭,需要打回
@@ -881,15 +881,16 @@ def keywords_top_set_oper(request, oper_type):
                         if edit_pulick_task_obj.status < 3:
                             print("已经打回")
                         else:
-                            edit_pulick_task_obj.status = 2
-                            edit_pulick_task_obj.is_select_cover_back = True
+                            if robot_task_obj.task.status < 6:
+                                edit_pulick_task_obj.status = 2
+                                edit_pulick_task_obj.is_select_cover_back = True
 
-                            models.EditTaskLog.objects.create(
-                                edit_public_task_management=edit_pulick_task_obj,
-                                title=edit_pulick_task_obj.title,
-                                content=edit_pulick_task_obj.content,
-                                remark="查询覆盖无匹配答案"
-                            )
+                                models.EditTaskLog.objects.create(
+                                    edit_public_task_management=edit_pulick_task_obj,
+                                    title=edit_pulick_task_obj.title,
+                                    content=edit_pulick_task_obj.content,
+                                    remark="查询覆盖无匹配答案"
+                                )
                     else:  # 任务被关闭  is_pause = True
                         robot_task_obj.status = 6
                         robot_task_obj.next_date = datetime.datetime.now() + datetime.timedelta(minutes=10)
@@ -1318,11 +1319,10 @@ def jifeidaoqitixing(request, oper_type, p_id):
 def fugailiangtixing(request, oper_type, o_id):
     print('进入--->',o_id)
     response = pub.BaseResponse()
-    now_date = datetime.datetime.today().strftime('%Y-%m-%d')
     q = Q()
-    q.add(Q(client_user__is_delete=False) & Q(client_user__status=1) & Q(create_date__gte=now_date),Q.AND)
+    q.add(Q(client_user__is_delete=False) & Q(client_user__status=1) , Q.AND)
     q.add(Q(client_user__xiaoshou__isnull=False) | Q(client_user__guwen__isnull=False), Q.AND)
-    q.add(Q(client_user__xiaoshou_id=o_id) | Q(client_user__guwen_id=o_id),Q.AND)
+    q.add(Q(client_user_id=o_id), Q.AND)
     objs = models.UserprofileKeywordsCover.objects.select_related('client_user').filter(q).values(
         'create_date',
         'cover_num',
@@ -1330,16 +1330,16 @@ def fugailiangtixing(request, oper_type, o_id):
     ).annotate(Count('id'))
     data_list = []
     for obj in objs:
+        print('objs - - - - ',obj )
         client_name = obj['client_user__username']
         cover_num = obj['cover_num']
-        create_time = obj['create_date']
-        print(
-            client_name,cover_num,create_time
-        )
+        create_date = obj['create_date'].strftime('%Y-%m-%d')
         data_list.append({
-            'name':client_name,
-            'count':cover_num
+            'name': client_name,
+            'count': cover_num,
+            'create_date':create_date
         })
+    print('data_list ',data_list)
     if oper_type == 'json':
         response.code = 200
         response.data = data_list

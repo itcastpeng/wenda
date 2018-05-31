@@ -8,7 +8,7 @@ class Role(models.Model):
     access_rules = models.CharField(verbose_name="角色对应的权限", max_length=128, default="")
 
     create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
-    oper_user = models.ForeignKey("UserProfile", verbose_name="操作人", related_name="r_user")
+    oper_user = models.ForeignKey("UserProfile", verbose_name="操作人", related_name="r_user",null=True,blank=True)
 
     tag_id = models.SmallIntegerField(verbose_name="公众号标签id", null=True, blank=True)
 
@@ -114,7 +114,7 @@ class account_log(models.Model):
 
 # 余额明细
 class BalanceDetail(models.Model):
-    user = models.ForeignKey("UserProfile", verbose_name="被操作用户", related_name="m_user")
+    user = models.ForeignKey("UserProfile", verbose_name="被操作用户", related_name="m_user", null=True, blank=True)
     type_choices = (
         (1, "充值"),
         (2, "消费"),
@@ -747,6 +747,22 @@ class BianXieBaoBiao(models.Model):
     )
 
     xiangmu = models.SmallIntegerField(verbose_name='项目', choices=xiangmu_choices)
-    oper_user = models.ForeignKey(to='UserProfile', verbose_name="编辑")
+    oper_user = models.ForeignKey(to='UserProfile', verbose_name="编辑", null=True, blank=True)
     create_date = models.DateField(verbose_name="创建时间")
     edit_count = models.IntegerField(verbose_name='编写数量')
+
+
+# 营销顾问对接表
+class YingXiaoGuWen_DuiJie(models.Model):
+    market = models.ForeignKey(to='UserProfile',verbose_name='销售', null=True, blank=True)
+    kehu_username = models.ForeignKey(to='UserProfile',verbose_name='客户名称',related_name='guwenduijie_kehuming', null=True, blank=True)
+    bianji = models.ForeignKey(to='UserProfile',verbose_name='编辑',related_name='guwenduijie_bian', null=True, blank=True)
+    shiji_daozhang = models.IntegerField(verbose_name='实际到账钱数',null=True, blank=True)
+    jifeishijian_start = models.DateField(verbose_name='开始计费时间',null=True, blank=True)
+    jifeishijian_stop = models.DateField(verbose_name='停止计费时间',null=True, blank=True)
+    fugai_count = models.IntegerField(verbose_name='覆盖总数',null=True, blank=True)
+    xinwenda = models.BooleanField(verbose_name='是否操作新问答',default=False)
+    xuanchuanyaoqiu = models.TextField(verbose_name='宣传要求',null=True, blank=True)
+    shangwutong = models.TextField(verbose_name='商务通',null=True, blank=True)
+    wenda_geshu = models.IntegerField(verbose_name='新问答个数',null=True, blank=True)
+
