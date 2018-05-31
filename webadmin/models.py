@@ -756,7 +756,7 @@ class BianXieBaoBiao(models.Model):
 class YingXiaoGuWen_DuiJie(models.Model):
     market = models.ForeignKey(to='UserProfile',verbose_name='销售', null=True, blank=True)
     kehu_username = models.ForeignKey(to='UserProfile',verbose_name='客户名称',related_name='guwenduijie_kehuming', null=True, blank=True)
-    bianji = models.ForeignKey(to='UserProfile',verbose_name='编辑',related_name='guwenduijie_bianji', null=True, blank=True)
+    bianji = models.ForeignKey(to='UserProfile',verbose_name='编辑',related_name='guwenduijie_bian', null=True, blank=True)
     shiji_daozhang = models.IntegerField(verbose_name='实际到账钱数',null=True, blank=True)
     jifeishijian_start = models.DateField(verbose_name='开始计费时间',null=True, blank=True)
     jifeishijian_stop = models.DateField(verbose_name='停止计费时间',null=True, blank=True)

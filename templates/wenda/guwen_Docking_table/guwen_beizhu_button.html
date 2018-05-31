@@ -1,0 +1,74 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h3 class="modal-title">备注表单</h3>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal" id="modal_beizhu" onsubmit="return false">
+        {% csrf_token %}
+
+        {#        商务通#}
+         <div class="form-group">
+            <label class="col-md-2 control-label" for="shangwutong">商务通<span class="form-span-active">*</span></label>
+            <div class="col-md-6">
+                <input type="text" class="form-control input-md" name="shangwutong" autocomplete="off">
+            </div>
+        </div>
+{#        宣传要求#}
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="xuanchuanyaoqiu">宣传要求 <span class="form-span-active">*</span></label>
+            <div class="col-md-8">
+                <textarea name="xuanchuanyaoqiu" id="xuanchuanyaoqiu" class="form-control" rows="10" placeholder="请输入宣传要求！"></textarea>
+            </div>
+        </div>
+         {#        新问答#}
+         <div class="checkbox-custom checkbox-primary form-group " style="padding: 0 10px 10px 50px">
+            <input class="col-md-2" type="checkbox" id="panduan_xinwenda"  name="panduan_xinwenda">
+            <label for="panduan_xinwenda" >是否为新问答</label> <span style="color: red;">注:打钩代表为新问答</span>
+        </div>
+{#          如果有新问答写个数#}
+         <div class="form-group" id="xinwenda">
+            <label class="col-md-2 control-label" for="wendageshu">新问答个数</label>
+            <div class="col-md-4">
+                <input type="text" class="form-control input-md" name="wendageshu" autocomplete="off">
+            </div>
+        </div>
+
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" id="create_button">确定</button>
+</div>
+
+<script>
+      $(function(){
+            $("#wendageshu").hide();//隐藏
+            var true_wenda = $('#xinwenda');
+            if(true_wenda){
+            $("#wendageshu").show();//显示
+             }
+          });
+
+    $("#exampleFormModal .modal-dialog").css("width", "700px");
+    $('#inputRadiosChecked').on('change',function(){
+
+    });
+
+
+    $("#create_button").on('click', function () {
+        var data = $("#modal_beizhu").serialize();
+        var url = '{% url "guwen_duijie_biao" %}beizhuy_oper/{{ o_id }}/';
+        $.post(url, data, function (result) {
+            if(!result['status']){
+                toastr['error'](result['message']);
+            }else{
+                toastr['success'](result['message']);
+                $('.modal').modal("hide");
+                table.ajax.reload();
+            }
+            }, 'json')
+
+    })
+
+</script>
