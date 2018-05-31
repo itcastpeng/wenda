@@ -7,24 +7,11 @@
 <div class="modal-body">
     <form class="form-horizontal">
         {% csrf_token %}
-        {#用户#}
-        <div class="form-group">
-            <label class="col-md-2 control-label" for="yonghuming">用户 <span class="form-span-active">*</span></label>
-            <div class="col-md-6">
-                <select style="width: 300px;" class="form-control" data-plugin="select2" tabindex="-1" aria-hidden="true" id="m-yonghuming" name="yonghuming">
-                    <option value="">请选择</option>
-                    {% for obj in client_objs %}
-                        <option value="{{ obj.id }}">{{ obj.username }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
-{#        销售#}
          <div class="form-group">
            <label class="col-md-2 control-label" for="xiaoshou">销售 <span class="form-span-active">*</span></label>
             <div class="col-md-6">
                 <select style="width: 300px;" class="form-control" data-plugin="select2" tabindex="-1" aria-hidden="true" id="m-xiaoshou" name="xiaoshou">
-                    <option value="">请选择</option>
+                    <option value="">{{ xiaoshouming }}</option>
                     {% for obj in xiaoshous %}
                         <option value="{{ obj.id }}">{{ obj.username }}</option>
                     {% endfor %}
@@ -36,7 +23,7 @@
            <label class="col-md-2 control-label" for="bianji">编辑 <span class="form-span-active">*</span></label>
             <div class="col-md-6">
                 <select style="width: 300px;" class="form-control" data-plugin="select2" tabindex="-1" aria-hidden="true" id="bianji" name="bianji">
-                    <option value="">请选择</option>
+                    <option value="">{{ bianjiming }}</option>
                     {% for obj in bianjis %}
                         <option value="{{ obj.id }}">{{ obj.username }}</option>
                     {% endfor %}
@@ -47,28 +34,28 @@
           <div class="form-group">
             <label class="col-md-2 control-label" for="daozhang">到账 <span class="form-span-active">*</span></label>
             <div class="col-md-6">
-                <input type="text" class="form-control input-md" name="daozhang" autocomplete="off">
+                <input type="text" class="form-control input-md" name="daozhang" autocomplete="off" value="{{ daozhang }}">
             </div>
         </div>
 {#        覆盖量#}
           <div class="form-group">
             <label class="col-md-2 control-label" for="fugailiang">覆盖量 <span class="form-span-active">*</span></label>
             <div class="col-md-6">
-                <input type="text" class="form-control input-md" name="fugailiang" autocomplete="off">
+                <input type="text" class="form-control input-md" name="fugailiang" autocomplete="off" value="{{ fugai }}">
             </div>
         </div>
 {#        开始时间#}
          <div class="form-group" id="div_start_time">
             <label class="col-md-2 control-label" for="start_time">开始日期 </label>
                <div class="col-md-6">
-                   <input class="Wdate form-control" id="start_time" name="start_time" onchange="" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" type="text">
+                   <input class="Wdate form-control" id="start_time" name="start_time" onchange="" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" type="text" value="{{ jifeishijian_start }}">
              </div>
         </div>
 {#        停表时间#}
          <div class="form-group" id="div_stop_time">
             <label class="col-md-2 control-label" for="stop_time">开始日期 </label>
                <div class="col-md-6">
-                  <input class="Wdate form-control" id="stop_time" name="stop_time" onchange="" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" type="text">
+                  <input class="Wdate form-control" id="stop_time" name="stop_time" onchange="" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" type="text" value="{{ jifeishijian_stop }}">
              </div>
         </div>
 
@@ -76,7 +63,7 @@
 
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-primary" id="create_button">添加</button>
+    <button type="button" class="btn btn-primary" id="create_button">确认修改</button>
 </div>
 
 <script>
@@ -95,7 +82,7 @@
 
         var data = $(".form-horizontal").serialize();
 
-        var url = 'outer_create/0/';
+        var url = 'outer_update/0/';
         $.post(url, data, function (result) {
 
             $("#create_button").removeAttr("disabled");
