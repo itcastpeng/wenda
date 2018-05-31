@@ -444,17 +444,15 @@ def get_left_wenda_html(access_rules, access_rules_objs):
             </li>
         """.format(cover_reports=reverse("bianxiebaobiao"))
 
-        # 营销顾问对接表
-
     # 营销顾问对接表
     access_rules_obj = access_rules_objs.filter(name="营销顾问对接表", url_path=reverse("guwen_duijie_biao"))
     if access_rules_obj and access_rules_obj[0].id in access_rules:
         guwen_duijie_biao_html = """
                <li class="site-menu-item">
                    <a data-pjax="" href="{cover_reports}" target="_blank">
-                       <i class="icon fa-pie-chart" aria-hidden="true"></i>
+                       <i class="icon fa-random"></i>
                        <span class="site-menu-title margin-left-5">营销顾问对接表</span>
-                   </a>
+                   </a> 
                </li>
            """.format(cover_reports=reverse("guwen_duijie_biao"))
 

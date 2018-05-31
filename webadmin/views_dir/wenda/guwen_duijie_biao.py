@@ -62,17 +62,7 @@ def guwen_duijie(request):
         if 'client_user__status' not in request.GET:
             q.add(Q(**{'client_user__status': 1}), Q.AND)
 
-        # print('q -->', q)
 
-        # data_objs = models.KeywordsCover.objects.select_related(
-        #     "keywords__client_user",
-        #     "keywords"
-        # ).filter(**filter_dict).filter(q).order_by(order_column)
-
-        # print("2 -->", datetime.datetime.now())
-
-        print(order_column)
-        # 如果是销售角色，不是刘婷的账号，则将成都美尔贝隐藏起来
         data_objs = models.ClientCoveringData.objects.select_related(
             "client_user",
             "client_user__xiaoshou"
@@ -87,137 +77,65 @@ def guwen_duijie(request):
             "recordsTotal": data_objs.count(),
             "data": [],
         }
+        #
+        # oper = ""
+        # zhanshibianji = ''
+        # if role_id in [1, 4, 7]:
+        #     if obj.client_user.task_edit_show:  # True 表示当前任务为编辑状态, False 为不编辑状态
+        #         zhanshibianji += "<a href='task_edit_show/{client_user_id}/'>不展示</a>".format(client_user_id=obj.client_user_id)
+        #     else:
+        #         zhanshibianji += "<a href='task_edit_show/{client_user_id}/'>展示 </a>".format(client_user_id=obj.client_user_id)
 
-        status_choices = models.UserProfile.status_choices
-
-        # print("3 -->", datetime.datetime.now())
-        for index, obj in enumerate(data_objs[start: (start + length)], start=1):
-
-            # keywords_topset_obj = models.KeywordsTopSet.objects.filter(
-            #     client_user_id=obj["keywords__client_user_id"],
-            #     is_delete=False
-            # )
-            # keyword_count = keywords_topset_obj.count()   # 关键词总数
-            #
-            # now_date = datetime.datetime.now().strftime("%Y-%m-%d")
-            #
-            # # 当日覆盖数
-            # today_cover = models.KeywordsCover.objects.filter(
-            #     keywords__client_user_id=obj["keywords__client_user_id"],
-            #     create_date__gte=now_date
-            # ).count()
-            #
-            # # 总发布次数
-            # total_oper_num = models.RobotAccountLog.objects.filter(
-            #     wenda_robot_task__task__release_user_id=obj["keywords__client_user_id"],
-            #     wenda_robot_task__wenda_type=2
-            # ).count()
-            #
-            # q = Q(Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date))
-            # keyword_select_count = keywords_topset_obj.filter(q).count()    # 未查询的关键词数
-            #
-            # if keyword_select_count > 0:
-            #     keyword_count_str = "%s / %s" % (keyword_count, keyword_select_count)
-            #     select_status = "查询中"
+            # oper += " / "
+            # if obj.client_user.send_statement:  # True 表示当前任务发送报表, False 为不发送报表
+            #     oper += "<a href='send_statement/{client_user_id}/'>暂停发送报表</a>"
             # else:
-            #     keyword_count_str = keyword_count
-            #     select_status = "查询完成"
-
-            # oper = ""
-            # if role_id in [1, 4, 7]:
-            #     if obj["keywords__client_user__task_edit_show"]:  # True 表示当前任务为编辑状态, False 为不编辑状态
-            #         oper += "<a href='task_edit_show/{client_user_id}/'>不展示编辑内容</a>"
-            #     else:
-            #         oper += "<a href='task_edit_show/{client_user_id}/'>展示编辑内容</a>"
+            #     oper += "<a href='send_statement/{client_user_id}/'>开启发送报表</a>"
             #
-            #     oper += " / "
-            #     if obj["keywords__client_user__send_statement"]:  # True 表示当前任务发送报表, False 为不发送报表
-            #         oper += "<a href='send_statement/{client_user_id}/'>暂停发送报表</a>"
-            #     else:
-            #         oper += "<a href='send_statement/{client_user_id}/'>开启发送报表</a>"
+            # oper += " / <a href='chongcha/{client_user_id}/'>重查覆盖</a>"
             #
-            #     oper += " / <a href='chongcha/{client_user_id}/'>重查覆盖</a>"
-
-            keyword_count = obj.keywords_num
-            today_cover = obj.today_cover_num
-
-            if obj.keyword_no_select_count > 0:
-                keyword_count_str = "%s / %s" % (keyword_count, obj.keyword_no_select_count)
-                select_status = "查询中"
-            else:
-                keyword_count_str = keyword_count
-                select_status = "查询完成"
-            total_oper_num = obj.total_publish_num
-
-            oper = ""
-            zhanshibianji = ''
-            if role_id in [1, 4, 7]:
-                if obj.client_user.task_edit_show:  # True 表示当前任务为编辑状态, False 为不编辑状态
-                    zhanshibianji += "<a href='task_edit_show/{client_user_id}/'>不展示</a>".format(client_user_id=obj.client_user_id)
-                else:
-                    zhanshibianji += "<a href='task_edit_show/{client_user_id}/'>展示 </a>".format(client_user_id=obj.client_user_id)
-
-                # oper += " / "
-                # if obj.client_user.send_statement:  # True 表示当前任务发送报表, False 为不发送报表
-                #     oper += "<a href='send_statement/{client_user_id}/'>暂停发送报表</a>"
-                # else:
-                #     oper += "<a href='send_statement/{client_user_id}/'>开启发送报表</a>"
-                #
-                # oper += " / <a href='chongcha/{client_user_id}/'>重查覆盖</a>"
-                #
-                # oper += " / <a href='shanchulianjie/{client_user_id}/' data-toggle='modal' data-target='#exampleFormModal'>删除不计覆盖链接</a>"
-                oper += "<a href='quanbushezhi/{client_user_id}/' data-toggle='modal' data-target='#exampleFormModal'>设置</a>".format(client_user_id=obj.client_user_id)
+            # oper += " / <a href='shanchulianjie/{client_user_id}/' data-toggle='modal' data-target='#exampleFormModal'>删除不计覆盖链接</a>"
+            # oper += "<a href='quanbushezhi/{client_user_id}/' data-toggle='modal' data-target='#exampleFormModal'>设置</a>".format(client_user_id=obj.client_user_id)
 
             # oper = oper.format(client_user_id=obj.client_user_id)
             # zhanshibianji = zhanshibianji.format(client_user_id=obj.client_user_id)
             # xiugaijifeiriqi = " <a href='xiugaijifeiriqi/{client_user_id}/' data-toggle='modal' data-target='#exampleFormModal'>修改计费日期</a>".format(
             #     client_user_id=obj.client_user_id)
-            username = obj.client_user.username
-            jifei_start_date = ''
-            jifei_stop_date = ''
 
-            if role_id in [1,4,6,7]:
-                if obj.client_user.jifei_start_date:
-                    jifei_start_date = obj.client_user.jifei_start_date.strftime('%Y-%m-%d')
-                if obj.client_user.jifei_stop_date:
-                    jifei_stop_date = obj.client_user.jifei_stop_date.strftime('%Y-%m-%d')
+            # result_data[data].append(
+            #     {
+            #         "index": index,
+            #         "id": obj.client_user_id,
+            #         "username": username,
+            #         "xiaoshou_username": obj.client_user.xiaoshou.username,
+            #         "cover_total": obj.total_cover_num,
+            #         "select_status": select_status,
+            #         "keyword_count": keyword_count_str,
+            #         "oper": oper,
+            #         "today_cover": today_cover,
+            #         "total_oper_num": total_oper_num,
+            #         'zhanshibianji':zhanshibianji,
+            #         'xiugaijifeiriqistop': jifeishijian,
+            #         # "xiugaijifeiriqi": xiugaijifeiriqi,
+            #         # 'xiugaijifeiriqistart': jifei_start_date,
+            #     }
+            # )
 
-                    now_date = datetime.datetime.now()
-
-
-                    if obj.client_user.jifei_stop_date == datetime.date.today():
-                        username += "<span style='color: red'> (今天到期)</span>"
-
-                    elif obj.client_user.jifei_stop_date <datetime.date.today():
-                        username += "<span style='color: red'> (已到期)</span>"
-                    # 如果当前时间 大于等于 计费结束日期减去七天
-                    else:
-                        if now_date.strftime('%Y-%m-%d') >= (obj.client_user.jifei_stop_date - datetime.timedelta(days=7)).strftime('%Y-%m-%d'):
-                            # 用结束日期减去当前日期 剩余天数
-                            temp = obj.client_user.jifei_stop_date - datetime.date.today()
-                            username += "<span style='color: #ff9900'> (还有{}天到期)</span>".format(temp.days)
-
-
-            jifeishijian = jifei_start_date + '<br>' + jifei_stop_date
-            result_data["data"].append(
-                {
-                    "index": index,
-                    "id": obj.client_user_id,
-                    "username": username,
-                    "xiaoshou_username": obj.client_user.xiaoshou.username,
-                    "cover_total": obj.total_cover_num,
-                    "select_status": select_status,
-                    "keyword_count": keyword_count_str,
-                    "oper": oper,
-                    "today_cover": today_cover,
-                    "total_oper_num": total_oper_num,
-                    'zhanshibianji':zhanshibianji,
-                    'xiugaijifeiriqistop': jifeishijian,
-                    # "xiugaijifeiriqi": xiugaijifeiriqi,
-                    # 'xiugaijifeiriqistart': jifei_start_date,
-                }
-            )
-            # print("4 -->", datetime.datetime.now())
+        result_data = {}
+        data = []
+        result_data[data].append(
+            {
+                'xiaoshou_username': '销售名称',  # 销售名称
+                'kehu_username': '客户名称',  # 客户名称
+                'real_account': '实际到账',  # 实际到账
+                'fugai_count': '覆盖总数',  # 覆盖总数
+                'xiugaijifeiriqistart': '开始计费时间',  # 开始计费时间
+                'stop_time': '停表时间',  # 停表时间
+                'beizhu_remark': '备注',  # 备注
+                'xufei_renew': '续费',  # 续费
+                'bianjie_oper_user': '操作编辑',  # 操作编辑
+            }
+        )
         return HttpResponse(json.dumps(result_data))
 
     if role_id == 12:
