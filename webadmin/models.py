@@ -410,6 +410,7 @@ class GlobalSettings(models.Model):
     xie_wenda_money = models.SmallIntegerField(verbose_name="写问答价格", default=1)
     fa_wenda_money = models.SmallIntegerField(verbose_name="发问答价格", default=2)
 
+    fugaibaobiao_shengcheng_moshi =models.BooleanField(verbose_name='覆盖报表生成调试模式' ,default=True )
 
 # 需要查询的关键词列表
 class SearchKeywordsRank(models.Model):

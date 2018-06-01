@@ -950,53 +950,50 @@ def userprofile_keywords_cover(debug=False):
                         print('create_time -- >', create_time)
                     print('url - - - - -- -  - - - -> ', url)
 
-                    wenda_index, wenda_type = objs[0].wenda_type, objs[0].get_wenda_type_display()
                     is_zhedie = "0"
 
                     if search_obj.is_zhedie:
                         is_zhedie = "1"
-                    if wenda_index in [1, 10]:
-                        data_day_list.insert(0, {
-                            "username": username,
-                            "keywords": search_obj.keywords.keyword,
-                            "page_type": search_obj.get_page_type_display(),
-                            "rank": search_obj.rank,
-                            "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
-                            "link": search_obj.url,
-                            "is_zhedie": is_zhedie,
-                            'create_time': create_time,
-                            'wenda_type': wenda_type
-                        })
-                    else:
-                        data_day_list.append({
-                            "username": username,
-                            "keywords": search_obj.keywords.keyword,
-                            "page_type": search_obj.get_page_type_display(),
-                            "rank": search_obj.rank,
-                            "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
-                            "link": search_obj.url,
-                            "is_zhedie": is_zhedie,
-                            'create_time': create_time,
-                            'wenda_type': wenda_type
-                        })
 
-                    # for obj in objs:
-                    #     wenda_type = obj.get_wenda_type_display()
-                    # wenda_type = objs[0].get_wenda_type_display()
-                    # is_zhedie = "0"
-                    # if search_obj.is_zhedie:
-                    #     is_zhedie = "1"
-                    # data_day_list.append({
-                    #     "username": username,
-                    #     "keywords": search_obj.keywords.keyword,
-                    #     "page_type": search_obj.get_page_type_display(),
-                    #     "rank": search_obj.rank,
-                    #     "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
-                    #     "link": search_obj.url,
-                    #     "is_zhedie": is_zhedie,
-                    #     'create_time': create_time,
-                    #     'wenda_type': wenda_type
-                    # })
+                    wenda_index, wenda_type = objs[0].wenda_type, objs[0].get_wenda_type_display()
+
+                    data_day_list.append({
+                        "username": username,
+                        "keywords": search_obj.keywords.keyword,
+                        "page_type": search_obj.get_page_type_display(),
+                        "rank": search_obj.rank,
+                        "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
+                        "link": search_obj.url,
+                        "is_zhedie": is_zhedie,
+                        'create_time': create_time,
+                        'wenda_type': wenda_type
+                    })
+
+                    # if wenda_index in [1, 10]:
+                    #     data_day_list.insert(0, {
+                    #         "username": username,
+                    #         "keywords": search_obj.keywords.keyword,
+                    #         "page_type": search_obj.get_page_type_display(),
+                    #         "rank": search_obj.rank,
+                    #         "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
+                    #         "link": search_obj.url,
+                    #         "is_zhedie": is_zhedie,
+                    #         'create_time': create_time,
+                    #         'wenda_type': wenda_type
+                    #     })
+                    # else:
+                    #     data_day_list.append({
+                    #         "username": username,
+                    #         "keywords": search_obj.keywords.keyword,
+                    #         "page_type": search_obj.get_page_type_display(),
+                    #         "rank": search_obj.rank,
+                    #         "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
+                    #         "link": search_obj.url,
+                    #         "is_zhedie": is_zhedie,
+                    #         'create_time': create_time,
+                    #         'wenda_type': wenda_type
+                    #     })
+
         # 客户查看报表的名称
         file_name = "{username}_{date}.xlsx".format(
             username=username,
@@ -1029,6 +1026,11 @@ def userprofile_keywords_cover(debug=False):
 # 每天提醒客户报表已经查完
 @app.task
 def send_cover_info():
+    # 生成报表功能
+    # 判断是否为调试模式 如果为调试模式不推送微信通知
+    objs = models.GlobalSettings.objects.all()
+    if objs[0].fugaibaobiao_shengcheng_moshi:
+        return
     client_data = models.KeywordsCover.objects.filter(
         keywords__client_user__openid__isnull=False,  # 关注公众号
         keywords__client_user__send_statement=True,  # 发送报表
