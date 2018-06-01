@@ -928,8 +928,8 @@ def userprofile_keywords_cover(debug=False):
         if not search_objs:
             continue
 
-        data_day_list = []
 
+        data_day_list = []
         for search_obj in search_objs:
             if search_obj:
                 print('search_obj - - - > ', search_obj.id)
@@ -952,7 +952,7 @@ def userprofile_keywords_cover(debug=False):
 
                     wenda_index, wenda_type = objs[0].wenda_type, objs[0].get_wenda_type_display()
                     is_zhedie = "0"
-                    data_day_list = []
+
                     if search_obj.is_zhedie:
                         is_zhedie = "1"
                     if wenda_index in [1, 10]:
