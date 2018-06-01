@@ -76,7 +76,7 @@
 
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-primary" id="create_button">添加</button>
+    <button type="button" class="btn btn-primary" id="create_button">确认添加</button>
 </div>
 
 <script>
@@ -87,7 +87,6 @@
     $("#m-client_user_id").select2({
         dropdownParent:$("#exampleFormModal")
     });
-{#    $.fn.modal.Constructor.prototype.enforceFocus = function () { };#}
 
     $("#create_button").on('click', function () {
 
@@ -95,7 +94,7 @@
 
         var data = $(".form-horizontal").serialize();
 
-        var url = 'outer_create/0/';
+        var url = 'outer_create/{{ o_id }}/';
         $.post(url, data, function (result) {
 
             $("#create_button").removeAttr("disabled");

@@ -12,26 +12,26 @@
          <div class="form-group">
             <label class="col-md-2 control-label" for="shangwutong">商务通<span class="form-span-active">*</span></label>
             <div class="col-md-6">
-                <input type="text" class="form-control input-md" name="shangwutong" autocomplete="off">
+                <input type="text" class="form-control input-md" name="shangwutong" autocomplete="off" value="{{ obj.shangwutong }}">
             </div>
         </div>
 {#        宣传要求#}
         <div class="form-group">
             <label class="col-md-2 control-label" for="xuanchuanyaoqiu">宣传要求 <span class="form-span-active">*</span></label>
             <div class="col-md-8">
-                <textarea name="xuanchuanyaoqiu" id="xuanchuanyaoqiu" class="form-control" rows="10" placeholder="请输入宣传要求！"></textarea>
+                <textarea name="xuanchuanyaoqiu" id="xuanchuanyaoqiu" class="form-control" rows="10" placeholder="请输入宣传要求！" >{{ obj.xuanchuan }}</textarea>
             </div>
         </div>
          {#        新问答#}
          <div class="checkbox-custom checkbox-primary form-group " style="padding: 0 10px 10px 50px">
-            <input class="col-md-2" type="checkbox" id="panduan_xinwenda"  name="panduan_xinwenda">
+            <input class="col-md-2" type="checkbox" id="panduan_xinwenda"  name="panduan_xinwenda" {% if obj.panduan_xinwenda %}checked{% endif %}>
             <label for="panduan_xinwenda" >是否为新问答</label> <span style="color: red;">注:打钩代表为新问答</span>
         </div>
 {#          如果有新问答写个数#}
          <div class="form-group" id="xinwenda">
             <label class="col-md-2 control-label" for="wendageshu">新问答个数</label>
             <div class="col-md-4">
-                <input type="text" class="form-control input-md" name="wendageshu" autocomplete="off">
+                <input type="text" class="form-control input-md" name="wendageshu" autocomplete="off" value="{{ obj.wendageshu  }}">
             </div>
         </div>
 
