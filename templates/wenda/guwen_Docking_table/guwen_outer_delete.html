@@ -2,68 +2,19 @@
     <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
         <span aria-hidden="true">×</span>
     </button>
-    <h4 class="modal-title">添加用户</h4>
+    <h4 class="modal-title">删除用户</h4>
 </div>
 <div class="modal-body">
     <form class="form-horizontal">
         {% csrf_token %}
          <div class="form-group">
-           <label class="col-md-2 control-label" for="xiaoshou">销售 <span class="form-span-active">*</span></label>
-            <div class="col-md-6">
-                <select style="width: 300px;" class="form-control" data-plugin="select2" tabindex="-1" aria-hidden="true" id="m-xiaoshou" name="xiaoshou">
-                    <option value="">{{ xiaoshouming }}</option>
-                    {% for obj in xiaoshous %}
-                        <option value="{{ obj.id }}">{{ obj.username }}</option>
-                    {% endfor %}
-                </select>
-            </div>
+           <h3 style="text-align: center; color: red ">确认要删除{{ username }}用户吗？</h3>
         </div>
-{#        编辑#}
-            <div class="form-group">
-           <label class="col-md-2 control-label" for="bianji">编辑 <span class="form-span-active">*</span></label>
-            <div class="col-md-6">
-                <select style="width: 300px;" class="form-control" data-plugin="select2" tabindex="-1" aria-hidden="true" id="bianji" name="bianji">
-                    <option value="">{{ bianjiming }}</option>
-                    {% for obj in bianjis %}
-                        <option value="{{ obj.id }}">{{ obj.username }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
-{#        到账#}
-          <div class="form-group">
-            <label class="col-md-2 control-label" for="daozhang">到账 <span class="form-span-active">*</span></label>
-            <div class="col-md-6">
-                <input type="text" class="form-control input-md" name="daozhang" autocomplete="off" value="{{ daozhang }}">
-            </div>
-        </div>
-{#        覆盖量#}
-          <div class="form-group">
-            <label class="col-md-2 control-label" for="fugailiang">覆盖量 <span class="form-span-active">*</span></label>
-            <div class="col-md-6">
-                <input type="text" class="form-control input-md" name="fugailiang" autocomplete="off" value="{{ fugai }}">
-            </div>
-        </div>
-{#        开始时间#}
-         <div class="form-group" id="div_start_time">
-            <label class="col-md-2 control-label" for="start_time">开始日期 </label>
-               <div class="col-md-6">
-                   <input class="Wdate form-control" id="start_time" name="start_time" onchange="" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" type="text" value="{{ jifeishijian_start }}">
-             </div>
-        </div>
-{#        停表时间#}
-         <div class="form-group" id="div_stop_time">
-            <label class="col-md-2 control-label" for="stop_time">开始日期 </label>
-               <div class="col-md-6">
-                  <input class="Wdate form-control" id="stop_time" name="stop_time" onchange="" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" type="text" value="{{ jifeishijian_stop }}">
-             </div>
-        </div>
-
     </form>
 
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-primary" id="create_button">确认修改</button>
+    <button type="button" class="btn btn-primary" id="delete_button">确认删除</button>
 </div>
 
 <script>
@@ -76,16 +27,16 @@
     });
 {#    $.fn.modal.Constructor.prototype.enforceFocus = function () { };#}
 
-    $("#create_button").on('click', function () {
+    $("#delete_button").on('click', function () {
 
         $("#create_button").attr("disabled", "disabled");
 
         var data = $(".form-horizontal").serialize();
 
-        var url = 'outer_update/0/';
+        var url = 'outer_delete/{{ o_id  }}/';
         $.post(url, data, function (result) {
 
-            $("#create_button").removeAttr("disabled");
+            $("#delete_button").removeAttr("disabled");
 
             if(!result['status']){
                 toastr['error'](result['message']);

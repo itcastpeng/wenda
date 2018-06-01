@@ -2,7 +2,7 @@
     <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
         <span aria-hidden="true">×</span>
     </button>
-    <h4 class="modal-title">添加用户</h4>
+    <h4 class="modal-title">修改用户</h4>
 </div>
 <div class="modal-body">
     <form class="form-horizontal">
@@ -11,8 +11,8 @@
          <div class="form-group">
            <label class="col-md-2 control-label" for="xiaoshou">销售 <span class="form-span-active">*</span></label>
             <div class="col-md-6">
-                <select style="width: 300px;" class="form-control" data-plugin="select2" tabindex="-1" aria-hidden="true" id="m-xiaoshou" name="xiaoshou">
-                    <option value="">{{ xiaoshouming }}</option>
+                <select style="width: 300px;" class="form-control" data-plugin="select2" tabindex="-1" aria-hidden="true" id="xiaoshou" name="xiaoshou">
+                    <option value="{{ xiaoshou_id }}">{{ xiaoshouming }}</option>
                     {% for obj in xiaoshous %}
                         <option value="{{ obj.id }}">{{ obj.username }}</option>
                     {% endfor %}
@@ -24,7 +24,7 @@
            <label class="col-md-2 control-label" for="bianji">编辑 <span class="form-span-active">*</span></label>
             <div class="col-md-6">
                 <select style="width: 300px;" class="form-control" data-plugin="select2" tabindex="-1" aria-hidden="true" id="bianji" name="bianji">
-                    <option value="">{{ bianjiming }}</option>
+                    <option value="{{ bianji_id }}">{{ bianjiming }}</option>
                     {% for obj in bianjis %}
                         <option value="{{ obj.id }}">{{ obj.username }}</option>
                     {% endfor %}
@@ -83,7 +83,7 @@
 
         var data = $(".form-horizontal").serialize();
 
-        var url = 'outer_update/0/';
+        var url = 'outer_update/{{ o_id }}/';
         $.post(url, data, function (result) {
 
             $("#create_button").removeAttr("disabled");
