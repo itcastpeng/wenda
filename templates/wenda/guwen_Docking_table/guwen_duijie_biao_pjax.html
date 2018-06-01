@@ -105,16 +105,12 @@
                         <th>开始计费时间</th>
                         <th>停表时间</th>
                         <th>备注/修改</th>
-                        <th>续费</th>
+                        <th class="last_th">续费</th>
                     </tr>
-
                     </thead>
-
                     <tbody>
-
                     </tbody>
                 </table>
-
             </div>
         </div>
     </div>
@@ -160,10 +156,29 @@
         "ajax": "?type=ajax_json", // ajax 取数据
         "bFilter": false,   // 去掉搜索框
         "destroy": true,
-
-
+      "columns": [
+        {"data": "index"},
+        {
+            "data": "id",
+            "visible": false
+        },
+        {"data": "username"},
+        {"data": "xiaoshou_username"},
+        {"data": "keyword_count"},
+        {"data": "select_status"},
+        {"data": "zhanshibianji"},
+        {"data": "today_cover"},
+        {"data": "cover_total"},
+        {"data": "total_oper_num"},
+        {'data': 'xiugaijifeiriqistop'},
+        {"data": "oper"},
+        {
+            "class": 'details-control',
+            "orderable": false,
+            "data": null,
+            "defaultContent": ' 展开详细数据'
+        },]
     });
-
 
     /* 格式化详情功能 - 根据需要修改 */
     function format(d) {

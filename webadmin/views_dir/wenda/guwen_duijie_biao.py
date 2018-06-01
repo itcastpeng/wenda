@@ -76,12 +76,11 @@ def guwen_duijie(request):
                 user_id=user_id)
             oper += "----<a href='outer_update/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>修改</a>".format(user_id=user_id)
             oper += "----<a href='outer_delete/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>删除</a>".format(user_id=user_id)
-            oper += "----<a href='outer_xiangqing/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>详情数据</a>".format(user_id=user_id)
 
-
+            # xiangqing = "<a href='outer_xiangqing/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>展开续费详情</a>".format(user_id=user_id)
 
             result_data["data"].append(
-                [index,user_id, kehu_name, xiaoshou, bianji, daozhang, fugai,kaishi_jifei,tingbiao, oper ,1])
+                [index,user_id, kehu_name, xiaoshou, bianji, daozhang, fugai,kaishi_jifei,tingbiao, oper ])
 
         return HttpResponse(json.dumps(result_data))
     if "_pjax" in request.GET:
@@ -253,7 +252,12 @@ def guwen_duijie_oper(request, oper_type, o_id):
             return render(request,'wenda/guwen_Docking_table/guwen_outer_delete.html',locals())
 
         elif oper_type == 'outer_xiangqing':
-            pass
+            result_data = """
+                           <table class="table table-bordered text-nowrap padding-left-50 margin-bottom-0" >
+                               <tr><td>编号</td><td>日期</td><td>覆盖数</td><td>下载报表</td></tr>
+                               {tr_html}
+                           </table>
+                           """
 
 
 
