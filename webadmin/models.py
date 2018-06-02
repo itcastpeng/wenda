@@ -776,3 +776,8 @@ class YingXiaoGuWen_NeiBiao(models.Model):
     jifeishijian_stop = models.DateField(verbose_name='停止计费时间', null=True, blank=True)
     xinwenda = models.BooleanField(verbose_name='是否操作新问答', default=False)
     guishu = models.ForeignKey(to='YingXiaoGuWen_DuiJie',verbose_name='外键ID',null=True, blank=True)
+
+
+
+
+

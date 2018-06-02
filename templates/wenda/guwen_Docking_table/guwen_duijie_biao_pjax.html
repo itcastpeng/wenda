@@ -48,7 +48,7 @@
                                 aria-hidden="true" id="client_user_id" name="client_user_id">
                             <option value="">全部</option>
                             {% for i in client_data %}
-                                <option value="{{ i.client_user_id }}">{{ i.client_user__username }}</option>
+                                <option value="{{ i.id }}">{{ i.username }}</option>
                             {% endfor %}
                         </select>
 
@@ -57,7 +57,7 @@
                                 aria-hidden="true" id="client_user__xiaoshou_id" name="client_user__xiaoshou_id">
                             <option value="">全部</option>
                             {% for i in xiaoshou_data %}
-                                <option value="{{ i.client_user__xiaoshou_id }}">{{ i.client_user__xiaoshou__username }}</option>
+                                <option value="{{ i.xiaoshou_id }}">{{ i.xiaoshou__username }}</option>
                             {% endfor %}
                         </select>
 
@@ -88,9 +88,7 @@
                                 class="btn btn-info pull-right margin-right-5" >
                             <i  aria-hidden="true"></i> 添加
                         </button>
-
                 </div>
-
                 <table class="table table-bordered table-hover dataTable table-striped width-full text-nowrap"
                        id="dataTable" data-scroll-x="True">
                     <thead>

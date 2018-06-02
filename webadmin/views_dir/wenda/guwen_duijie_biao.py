@@ -23,12 +23,16 @@ from webadmin.forms import  guwen_duijie_biao
 # 顾问对接
 @pub.is_login
 def guwen_duijie(request):
-    role_names = models.Role.objects.values_list("id", "name")
+    # role_names = models.Role.objects.values_list("id", "name")
     status_choices = models.UserProfile.status_choices
+    client_data = models.UserProfile.objects.filter(is_delete=False, role_id=5).values('username', 'id')
+    xiaoshou_data = models.UserProfile.objects.filter(is_delete=False,role_id=12).values('xiaoshou__username','xiaoshou_id')
+    print(client_data)
+    print(xiaoshou_data)
     if "type" in request.GET and request.GET["type"] == "ajax_json":
         length = int(request.GET.get("length"))
         start = int(request.GET.get("start"))
-        print('length ---- start',start ,length)
+        # print('length ---- start',start ,length)
         # 排序
         column_list = [ "id", "market__xiaoshou", "bianji", "kehu_username__username", "shiji_daozhang", "fugai_count",
                        "jifeishijian_start", "jifeishijian_stop"]
@@ -51,11 +55,12 @@ def guwen_duijie(request):
                 else:
                     q.add(Q(**{field + "__contains": request.GET[field]}), Q.AND)
 
+
+
         user_profile_objs = models.YingXiaoGuWen_DuiJie.objects.select_related("market").filter(kehu_username__is_delete=False).filter(
             q).order_by(order_column)
 
-        result_data = {
-        'data':[]}
+        result_data = {'data':[]}
         for index, obj in enumerate(user_profile_objs[start: (start + length)], start=1):
             bianji = obj.bianji.username
             xiaoshou = obj.market.username
@@ -73,7 +78,6 @@ def guwen_duijie(request):
             oper += "----<a href='outer_update/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>修改</a>".format(user_id=user_id)
             oper += "----<a href='outer_delete/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>删除</a>".format(user_id=user_id)
             oper += "----<a href = 'inner_create/{user_id}/'data-toggle='modal' data-target='#exampleFormModal'> 添加 </a>".format(user_id=user_id)
-            # xiangqing = "<a href='outer_xiangqing/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>展开续费详情</a>".format(user_id=user_id)
 
             result_data['data'].append({
                 'oper':oper,
@@ -99,6 +103,7 @@ def guwen_duijie_oper(request, oper_type, o_id):
     response = pub.BaseResponse()
     print('user',o_id)
     if request.method == "POST":
+
         # 外层添加
         if oper_type == "outer_create":
             yonghuming_id = request.POST.get('yonghuming')
@@ -111,7 +116,6 @@ def guwen_duijie_oper(request, oper_type, o_id):
             print('request--- -- - -> ',request.POST)
             forms_obj = guwen_duijie_biao.OuterAddForm(request.POST)
             if forms_obj.is_valid():
-                data_temp = {}
                 print('--',yonghuming_id,xiaoshou_id,bianji_id,daozhang,fugailiang,start_time,stop_time)
                 objs =  models.YingXiaoGuWen_DuiJie.objects.filter(kehu_username_id=yonghuming_id)
                 if objs:
@@ -302,14 +306,19 @@ def guwen_duijie_oper(request, oper_type, o_id):
 
         # 备注按钮
         elif oper_type == 'beizhu_botton':
-            objs = models.YingXiaoGuWen_DuiJie.objects.filter(id=o_id)
-            for obj in objs:
-                obj = {
-                'shangwutong' : obj.shangwutong,
-                'xuanchuan' : obj.xuanchuanyaoqiu,
-                'wendageshu' : obj.wenda_geshu,
-                'panduan_xinwenda' : obj.xinwenda
-                }
+            objs = models.YingXiaoGuWen_DuiJie.objects.filter(id=o_id).values('shangwutong','fugai_count','xuanchuanyaoqiu','wenda_geshu','xinwenda')
+            shangwutong = objs[0]['shangwutong']
+            fugailiang = objs[0]['fugai_count']
+            xinwenda = objs[0]['xinwenda']
+            wenda_geshu = objs[0]['wenda_geshu']
+            xuanchuanyaoqiu = objs[0]['xuanchuanyaoqiu']
+            if wenda_geshu is None:
+                wenda_geshu = ''
+            if shangwutong is None:
+                shangwutong = ''
+            if xuanchuanyaoqiu is None:
+                xuanchuanyaoqiu = ''
+            print('---------->',shangwutong,fugailiang,xuanchuanyaoqiu,wenda_geshu,xinwenda)
             return render(request, 'wenda/guwen_Docking_table/guwen_duijie_outer/guwen_beizhu_button.html', locals())
 
         # 外层修改
