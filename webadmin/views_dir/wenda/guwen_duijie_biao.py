@@ -23,16 +23,25 @@ from webadmin.forms import  guwen_duijie_biao
 # 顾问对接
 @pub.is_login
 def guwen_duijie(request):
-    # role_names = models.Role.objects.values_list("id", "name")
     status_choices = models.UserProfile.status_choices
     client_data = models.UserProfile.objects.filter(is_delete=False, role_id=5).values('username', 'id')
-    xiaoshou_data = models.UserProfile.objects.filter(is_delete=False,role_id=12).values('xiaoshou__username','xiaoshou_id')
-    print(client_data)
-    print(xiaoshou_data)
+    xiaoshou_data = models.UserProfile.objects.filter(is_delete=False,role_id=12).values('username','id')
+    bianji_data =  models.UserProfile.objects.filter(is_delete=False,role_id=6).values('username','id')
+
     if "type" in request.GET and request.GET["type"] == "ajax_json":
         length = int(request.GET.get("length"))
         start = int(request.GET.get("start"))
         # print('length ---- start',start ,length)
+        client_user = request.GET.get('client_user')
+        bianji_user = request.GET.get('bianji_user')
+        xiaoshou_user = request.GET.get('xiaoshou_user')
+        print('=======================================> ',
+            client_user ,
+            # 'xiaoshou:',
+            xiaoshou_user,
+            # 'guwen',
+            bianji_user)
+
         # 排序
         column_list = [ "id", "market__xiaoshou", "bianji", "kehu_username__username", "shiji_daozhang", "fugai_count",
                        "jifeishijian_start", "jifeishijian_stop"]
@@ -55,10 +64,19 @@ def guwen_duijie(request):
                 else:
                     q.add(Q(**{field + "__contains": request.GET[field]}), Q.AND)
 
+        user_profile_objs = ''
+        if client_user or bianji_user or xiaoshou_user:
+            if client_user:
+                print('client_- > ',client_user)
+                user_profile_objs = models.YingXiaoGuWen_DuiJie.objects.filter(kehu_username_id=client_user)
+            elif bianji_user:
+                user_profile_objs = models.YingXiaoGuWen_DuiJie.objects.filter(bianji_id=bianji_user)
+            else:
+                user_profile_objs = models.YingXiaoGuWen_DuiJie.objects.filter(marketid=xiaoshou_user)
 
-
-        user_profile_objs = models.YingXiaoGuWen_DuiJie.objects.select_related("market").filter(kehu_username__is_delete=False).filter(
-            q).order_by(order_column)
+        else:
+            user_profile_objs = models.YingXiaoGuWen_DuiJie.objects.select_related("market").filter(kehu_username__is_delete=False).filter(
+                q).order_by(order_column)
 
         result_data = {'data':[]}
         for index, obj in enumerate(user_profile_objs[start: (start + length)], start=1):
