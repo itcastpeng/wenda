@@ -759,6 +759,8 @@ class YingXiaoGuWen_DuiJie(models.Model):
     kehu_username = models.ForeignKey(to='UserProfile',verbose_name='客户名称',related_name='guwenduijie_kehuming', null=True, blank=True)
     bianji = models.ForeignKey(to='UserProfile',verbose_name='编辑',related_name='guwenduijie_bian', null=True, blank=True)
     shiji_daozhang = models.IntegerField(verbose_name='实际到账钱数',null=True, blank=True)
+
+    daokuan_time = models.DateField(verbose_name='到款时间',null=True, blank=True)
     jifeishijian_start = models.DateField(verbose_name='开始计费时间',null=True, blank=True)
     jifeishijian_stop = models.DateField(verbose_name='停止计费时间',null=True, blank=True)
     fugai_count = models.IntegerField(verbose_name='覆盖总数',null=True, blank=True)
@@ -779,8 +781,8 @@ class YingXiaoGuWen_NeiBiao(models.Model):
 
 
 class GetKeywordsJiePing(models.Model):
-    pass
-
+    picture_path = models.TextField(verbose_name='图片路径',null=True,blank=True)
+    models.ForeignKey(to='GuanJianCiFifty',verbose_name='属于哪个关键词')
 
 class GuanJianCiFifty(models.Model):
     guanjianci = models.TextField(verbose_name='五十个关键词',null=True, blank=True)

@@ -152,7 +152,11 @@ def edit_content_management_oper(request, oper_type, o_id):
         # 任务分配
         if oper_type == "task_allotment":
             print(request.POST)
-
+            panduan_map = request.POST.get('panduan_map')
+            if panduan_map:
+                obj = models.EditContentManagement.objects.filter(id=o_id)
+                obj[0].task.add_map = True
+                obj[0].save()
             task_obj = models.EditContentManagement.objects.get(id=o_id)
 
             flag = True
@@ -294,6 +298,7 @@ def edit_content_management_oper(request, oper_type, o_id):
         if oper_type == "task_allotment":
             user_objs = models.UserProfile.objects.filter(is_delete=False, role_id=13).values('id', 'username')
             task_obj = models.EditContentManagement.objects.get(id=o_id)
+            map_status = task_obj.task.add_map
             return render(request, 'wenda/edit_content_management/edit_content_management_modal_task_allotment.html', locals())
 
         # 任务分配详情
