@@ -37,7 +37,7 @@ class GlobalSettingsForm(Form):
     fugaibaobiao_shengcheng_moshi = fields.BooleanField(
         required=False,
         error_messages={
-            "required": "第五项类型错误！",
+            "required": "第五项调试模式类型错误！",
             # "invalid": "第五项格式错误",
         },
     )
