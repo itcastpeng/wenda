@@ -957,42 +957,42 @@ def userprofile_keywords_cover(debug=False):
 
                     wenda_index, wenda_type = objs[0].wenda_type, objs[0].get_wenda_type_display()
 
-                    data_day_list.append({
-                        "username": username,
-                        "keywords": search_obj.keywords.keyword,
-                        "page_type": search_obj.get_page_type_display(),
-                        "rank": search_obj.rank,
-                        "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
-                        "link": search_obj.url,
-                        "is_zhedie": is_zhedie,
-                        'create_time': create_time,
-                        'wenda_type': wenda_type
-                    })
+                    # data_day_list.append({
+                    #     "username": username,
+                    #     "keywords": search_obj.keywords.keyword,
+                    #     "page_type": search_obj.get_page_type_display(),
+                    #     "rank": search_obj.rank,
+                    #     "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
+                    #     "link": search_obj.url,
+                    #     "is_zhedie": is_zhedie,
+                    #     'create_time': create_time,
+                    #     'wenda_type': wenda_type
+                    # })
 
-                    # if wenda_index in [1, 10]:
-                    #     data_day_list.insert(0, {
-                    #         "username": username,
-                    #         "keywords": search_obj.keywords.keyword,
-                    #         "page_type": search_obj.get_page_type_display(),
-                    #         "rank": search_obj.rank,
-                    #         "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
-                    #         "link": search_obj.url,
-                    #         "is_zhedie": is_zhedie,
-                    #         'create_time': create_time,
-                    #         'wenda_type': wenda_type
-                    #     })
-                    # else:
-                    #     data_day_list.append({
-                    #         "username": username,
-                    #         "keywords": search_obj.keywords.keyword,
-                    #         "page_type": search_obj.get_page_type_display(),
-                    #         "rank": search_obj.rank,
-                    #         "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
-                    #         "link": search_obj.url,
-                    #         "is_zhedie": is_zhedie,
-                    #         'create_time': create_time,
-                    #         'wenda_type': wenda_type
-                    #     })
+                    if wenda_index in [1, 10]:
+                        data_day_list.insert(0, {
+                            "username": username,
+                            "keywords": search_obj.keywords.keyword,
+                            "page_type": search_obj.get_page_type_display(),
+                            "rank": search_obj.rank,
+                            "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
+                            "link": search_obj.url,
+                            "is_zhedie": is_zhedie,
+                            'create_time': create_time,
+                            'wenda_type': wenda_type
+                        })
+                    else:
+                        data_day_list.append({
+                            "username": username,
+                            "keywords": search_obj.keywords.keyword,
+                            "page_type": search_obj.get_page_type_display(),
+                            "rank": search_obj.rank,
+                            "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
+                            "link": search_obj.url,
+                            "is_zhedie": is_zhedie,
+                            'create_time': create_time,
+                            'wenda_type': wenda_type
+                        })
 
         # 客户查看报表的名称
         file_name = "{username}_{date}.xlsx".format(

@@ -10,7 +10,7 @@ class OuterAddForm(forms.Form):
     yonghuming = forms.IntegerField(
             required=True,
              error_messages={
-            'required': "答案不能为空"
+            'required': "用户名不能为空"
         }
     )
 
