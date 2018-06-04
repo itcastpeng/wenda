@@ -28,6 +28,8 @@ def global_settings(request):
 
             form_obj = GlobalSettingsForm(request.POST)
             if form_obj.is_valid():
+
+
                 response.status = True
                 response.message = "保存成功"
 

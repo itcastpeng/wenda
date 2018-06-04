@@ -37,6 +37,12 @@
                             <input type="text" class="form-control" name="fa_wenda_money" id="fa_wenda_money" placeholder="发布问答收益多少个问答币" autocomplete="off" value="{{ global_settings_obj.fa_wenda_money }}">
                         </div>
                     </div>
+                     <div class="checkbox-custom checkbox-primary">
+                   <input type="checkbox" id="fugaibaobiao_shengcheng_moshi" {% if obj.send_statement %}checked{% endif %} name="fugaibaobiao_shengcheng_moshi">
+                    <label for="fugaibaobiao_shengcheng_moshi"  style="margin-right: 20px">是否开启调试模式</label> <span>注:不开启代表发送报表</span>
+
+
+                    </div>
 
                     <div class="form-group">
                         <div class="col-sm-9 col-sm-offset-5">
