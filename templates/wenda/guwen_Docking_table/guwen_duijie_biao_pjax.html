@@ -43,21 +43,29 @@
         <div class="panel" style="padding: 10px; height: auto">
             <form class="form-horizontal search_form">
                 <div>
-                        <label for="client_user_id">用户名称：</label>
+                        <label for="client_user">用户名称：</label>
                         <select class="form-control select2-hidden-accessible" data-plugin="select2" tabindex="-1"
-                                aria-hidden="true" id="client_user_id" name="client_user_id">
+                                aria-hidden="true" id="client_user" name="client_user">
                             <option value="">全部</option>
                             {% for i in client_data %}
                                 <option value="{{ i.id }}">{{ i.username }}</option>
                             {% endfor %}
                         </select>
 
-                        <label for="client_user__xiaoshou_id">销售名称：</label>
+                        <label for="xiaoshou_user">销售名称：</label>
                         <select class="form-control select2-hidden-accessible" data-plugin="select2" tabindex="-1"
-                                aria-hidden="true" id="client_user__xiaoshou_id" name="client_user__xiaoshou_id">
+                                aria-hidden="true" id="xiaoshou_user" name="xiaoshou_user">
                             <option value="">全部</option>
                             {% for i in xiaoshou_data %}
-                                <option value="{{ i.xiaoshou_id }}">{{ i.xiaoshou__username }}</option>
+                                <option value="{{ i.id }}">{{ i.username }}</option>
+                            {% endfor %}
+                        </select>
+                        <label for="bianji_user">编辑名称：</label>
+                        <select class="form-control select2-hidden-accessible" data-plugin="select2" tabindex="-1"
+                                aria-hidden="true" id="bianji_user" name="bianji_user">
+                            <option value="">全部</option>
+                            {% for i in bianji_data %}
+                                <option value="{{ i.id }}">{{ i.username }}</option>
                             {% endfor %}
                         </select>
 
