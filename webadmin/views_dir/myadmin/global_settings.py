@@ -29,13 +29,12 @@ def global_settings(request):
             form_obj = GlobalSettingsForm(request.POST)
             if form_obj.is_valid():
 
-                obj_status = form_obj.cleaned_data['fugaibaobiao_shengcheng_moshi']
-                print('obj ------------>',obj_status)
                 response.status = True
                 response.message = "保存成功"
 
                 models.GlobalSettings.objects.update(**form_obj.cleaned_data)
-
+                obj = models.GlobalSettings.objects.values('fugaibaobiao_shengcheng_moshi')
+                obj_status = obj[0]['fugaibaobiao_shengcheng_moshi']
             else:
                 response.status = False
                 for i in ["new_wenda_money", "old_wenda_money", "xie_wenda_money", "fa_wenda_money"]:

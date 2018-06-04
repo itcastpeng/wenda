@@ -1056,23 +1056,25 @@ def check_zhidao_url(request):
         url = request.POST.get("url")
         client_user_id = request.POST.get("client_user_id")
         is_pause = int(request.POST.get("is_pause"))
+        print('---------> ',url, client_user_id, is_pause)
         tongji_keywords_objs = models.TongjiKeywords.objects.filter(
             task__release_user_id=client_user_id,
             url=url,
             # is_pause=False,         # 未暂停, 已发布,答案被删除,问答关闭,则会将该字段修改为True
         )
-
+        print('tongji_keywords_objs=====> ',tongji_keywords_objs)
         # 如果统计表中存在,则表示操作过
         if tongji_keywords_objs:
             if is_pause:
                 tongji_keywords_objs.update(is_pause=True)
             #     models.EditPublickTaskManagement.objects.filter(run_task_id=obj[0].run_task_id).update(status=3)
             #     models.WendaRobotTask.objects.filter(id=obj[0].run_task_id).update(status=6)
-
+            print('tongji_keywords_objs---> ',tongji_keywords_objs[0])
             response.status = True
             response.data = {
                 "content": [i[0] for i in tongji_keywords_objs.values_list('content')]
             }
+            print('response----> ',response.data)
 
         else:
             """
