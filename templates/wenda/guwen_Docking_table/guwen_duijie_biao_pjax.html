@@ -48,7 +48,7 @@
                                 aria-hidden="true" id="client_user_id" name="client_user_id">
                             <option value="">全部</option>
                             {% for i in client_data %}
-                                <option value="{{ i.client_user_id }}">{{ i.client_user__username }}</option>
+                                <option value="{{ i.id }}">{{ i.username }}</option>
                             {% endfor %}
                         </select>
 
@@ -57,7 +57,7 @@
                                 aria-hidden="true" id="client_user__xiaoshou_id" name="client_user__xiaoshou_id">
                             <option value="">全部</option>
                             {% for i in xiaoshou_data %}
-                                <option value="{{ i.client_user__xiaoshou_id }}">{{ i.client_user__xiaoshou__username }}</option>
+                                <option value="{{ i.xiaoshou_id }}">{{ i.xiaoshou__username }}</option>
                             {% endfor %}
                         </select>
 
@@ -88,9 +88,7 @@
                                 class="btn btn-info pull-right margin-right-5" >
                             <i  aria-hidden="true"></i> 添加
                         </button>
-
                 </div>
-
                 <table class="table table-bordered table-hover dataTable table-striped width-full text-nowrap"
                        id="dataTable" data-scroll-x="True">
                     <thead>
@@ -105,7 +103,7 @@
                         <th>开始计费时间</th>
                         <th>停表时间</th>
                         <th>备注/修改</th>
-                        <th class="last_th">续费</th>
+                        <th>续费</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -156,38 +154,39 @@
         "ajax": "?type=ajax_json", // ajax 取数据
         "bFilter": false,   // 去掉搜索框
         "destroy": true,
-      "columns": [
-        {"data": "index"},
-        {
-            "data": "id",
-            "visible": false
-        },
-        {"data": "username"},
-        {"data": "xiaoshou_username"},
-        {"data": "keyword_count"},
-        {"data": "select_status"},
-        {"data": "zhanshibianji"},
-        {"data": "today_cover"},
-        {"data": "cover_total"},
-        {"data": "total_oper_num"},
-        {'data': 'xiugaijifeiriqistop'},
-        {"data": "oper"},
-        {
-            "class": 'details-control',
-            "orderable": false,
-            "data": null,
-            "defaultContent": ' 展开详细数据'
-        },]
+        {#"aaSorting": [[5, "desc"]],#}
+        "columns": [
+            {"data": "index"},
+            {
+                "data": "user_id",
+                "visible": false
+             },
+            {"data": "kehu_name"},
+            {"data": "xiaoshou"},
+            {"data": "bianji"},
+            {"data": "daozhang"},
+            {"data": "fugai_count"},
+            {"data": "kaishi_jifei"},
+            {'data': 'tingbiao'},
+            {"data": "oper"},
+            {
+                "class": 'details-control',
+                "orderable": false,
+                "data": null,
+                "defaultContent": ' 展开详细数据'
+             },
+
+        ],
+
     });
+
 
     /* 格式化详情功能 - 根据需要修改 */
     function format(d) {
         // `d` 是该行的原始数据对象
         //cellpadding="5"
-
-        var url = "show_click_info/" + d.id + '/';
-
-
+        var url = "outer_xiangqing/" + d.user_id + '/';
+        {#var url = "outer_xiangqing/" + 6 + '/';#}
         $.ajaxSetup({
             async: false
         });
@@ -207,7 +206,7 @@
             tr.removeClass('shown');
         }
         else {
-            // 展开本行
+            // 展开本行3
             row.child(format(row.data())).show();
             tr.addClass('shown');
         }

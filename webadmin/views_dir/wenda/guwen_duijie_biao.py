@@ -23,12 +23,16 @@ from webadmin.forms import  guwen_duijie_biao
 # 顾问对接
 @pub.is_login
 def guwen_duijie(request):
-    role_names = models.Role.objects.values_list("id", "name")
+    # role_names = models.Role.objects.values_list("id", "name")
     status_choices = models.UserProfile.status_choices
+    client_data = models.UserProfile.objects.filter(is_delete=False, role_id=5).values('username', 'id')
+    xiaoshou_data = models.UserProfile.objects.filter(is_delete=False,role_id=12).values('xiaoshou__username','xiaoshou_id')
+    print(client_data)
+    print(xiaoshou_data)
     if "type" in request.GET and request.GET["type"] == "ajax_json":
         length = int(request.GET.get("length"))
         start = int(request.GET.get("start"))
-
+        # print('length ---- start',start ,length)
         # 排序
         column_list = [ "id", "market__xiaoshou", "bianji", "kehu_username__username", "shiji_daozhang", "fugai_count",
                        "jifeishijian_start", "jifeishijian_stop"]
@@ -51,21 +55,18 @@ def guwen_duijie(request):
                 else:
                     q.add(Q(**{field + "__contains": request.GET[field]}), Q.AND)
 
+
+
         user_profile_objs = models.YingXiaoGuWen_DuiJie.objects.select_related("market").filter(kehu_username__is_delete=False).filter(
             q).order_by(order_column)
 
-
-        result_data = {
-            "recordsTotal": user_profile_objs.count(),
-            "data": []
-        }
-
+        result_data = {'data':[]}
         for index, obj in enumerate(user_profile_objs[start: (start + length)], start=1):
             bianji = obj.bianji.username
             xiaoshou = obj.market.username
             daozhang = obj.shiji_daozhang
             kehu_name = obj.kehu_username.username
-            fugai = obj.fugai_count
+            fugai_count = obj.fugai_count
             user_id = obj.id
             kaishi_jifei = obj.jifeishijian_start.strftime('%Y-%m-%d')
             tingbiao = obj.jifeishijian_stop.strftime('%Y-%m-%d')
@@ -76,12 +77,20 @@ def guwen_duijie(request):
                 user_id=user_id)
             oper += "----<a href='outer_update/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>修改</a>".format(user_id=user_id)
             oper += "----<a href='outer_delete/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>删除</a>".format(user_id=user_id)
+            oper += "----<a href = 'inner_create/{user_id}/'data-toggle='modal' data-target='#exampleFormModal'> 添加 </a>".format(user_id=user_id)
 
-            # xiangqing = "<a href='outer_xiangqing/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>展开续费详情</a>".format(user_id=user_id)
-
-            result_data["data"].append(
-                [index,user_id, kehu_name, xiaoshou, bianji, daozhang, fugai,kaishi_jifei,tingbiao, oper ])
-
+            result_data['data'].append({
+                'oper':oper,
+                'tingbiao':tingbiao,
+                'kaishi_jifei':kaishi_jifei,
+                'daozhang':daozhang,
+                'bianji':bianji,
+                'xiaoshou':xiaoshou,
+                'kehu_name':kehu_name,
+                'user_id':user_id,
+                'index':index,
+                'fugai_count':fugai_count
+            })
         return HttpResponse(json.dumps(result_data))
     if "_pjax" in request.GET:
         return render(request, 'wenda/guwen_Docking_table/guwen_duijie_biao_pjax.html', locals())
@@ -94,6 +103,7 @@ def guwen_duijie_oper(request, oper_type, o_id):
     response = pub.BaseResponse()
     print('user',o_id)
     if request.method == "POST":
+
         # 外层添加
         if oper_type == "outer_create":
             yonghuming_id = request.POST.get('yonghuming')
@@ -106,13 +116,13 @@ def guwen_duijie_oper(request, oper_type, o_id):
             print('request--- -- - -> ',request.POST)
             forms_obj = guwen_duijie_biao.OuterAddForm(request.POST)
             if forms_obj.is_valid():
-                data_temp = {}
                 print('--',yonghuming_id,xiaoshou_id,bianji_id,daozhang,fugailiang,start_time,stop_time)
                 objs =  models.YingXiaoGuWen_DuiJie.objects.filter(kehu_username_id=yonghuming_id)
                 if objs:
                     response.status = False
                     response.message = '添加失败,该用户已存在'
                 else:
+
                     models.YingXiaoGuWen_DuiJie.objects.create(
                         market_id=xiaoshou_id,              # 销售
                         kehu_username_id=yonghuming_id,       # 客户名
@@ -124,7 +134,6 @@ def guwen_duijie_oper(request, oper_type, o_id):
                     )
                     response.status = True
                     response.message = "添加成功"
-
             else:
                 print(forms_obj.errors)
                 response.status = False
@@ -198,7 +207,92 @@ def guwen_duijie_oper(request, oper_type, o_id):
                 response.status = False
                 response.message = '删除失败'
 
+        # 内层添加
+        elif oper_type == 'inner_create':
+            print('内层添加')
+            obj = models.YingXiaoGuWen_DuiJie.objects.get(id=o_id)
+            print('obj --- > ',obj )
+            daozhang = request.POST.get('daozhang')
+            fugailiang = request.POST.get('fugailiang')
+            start_time = request.POST.get('start_time')
+            stop_time = request.POST.get('stop_time')
+            panduan_xinwenda = request.POST.get('panduan_xinwenda')
+            if panduan_xinwenda :
+                panduan_xinwenda = True
+            else:
+                panduan_xinwenda = False
+            data_temp = {}
+            forms_obj = guwen_duijie_biao.InnerCreateForm(request.POST)
+            if forms_obj.is_valid():
+                data_temp = {
+                    "shiji_daozhang":daozhang,
+                    "fugai_count":fugailiang,
+                    "jifeishijian_start":start_time,
+                    "jifeishijian_stop":stop_time,
+                    "xinwenda":panduan_xinwenda,
+                    "guishu":obj
+                }
+                models.YingXiaoGuWen_NeiBiao.objects.create(**data_temp)
+                response.status = True
+                response.message = '添加成功'
+            else:
+                response.status = False
+                response.message = 'form验证失败'
 
+        # 内层修改
+        elif oper_type == 'inner_update':
+            obj = models.YingXiaoGuWen_NeiBiao.objects.get(id=o_id)
+            if obj:
+                daozhang = request.POST.get('daozhang')
+                fugailiang = request.POST.get('fugailiang')
+                start_time = request.POST.get('start_time')
+                stop_time = request.POST.get('stop_time')
+                panduan_xinwenda = request.POST.get('panduan_xinwenda')
+                if panduan_xinwenda:
+                    panduan_xinwenda = True
+                else:
+                    panduan_xinwenda = False
+                print(panduan_xinwenda)
+                data_temp = {
+                'daozhang' : daozhang,
+                'fugailiang' : fugailiang ,
+                'start_time' : start_time ,
+                'stop_time' : stop_time,
+                'panduan_xinwenda' : panduan_xinwenda ,
+                }
+                print('到这了=======')
+                forms_obj = guwen_duijie_biao.InnerCreateForm(data_temp)
+                if forms_obj.is_valid():
+                    print('验证成功')
+                    cleant = forms_obj.cleaned_data
+                    obj.shiji_daozhang = cleant['daozhang']
+                    obj.jifeishijian_start = cleant['start_time']
+                    obj.jifeishijian_stop = cleant['stop_time']
+                    obj.fugai_count =  cleant['fugailiang']
+                    obj.xinwenda =  cleant['panduan_xinwenda']
+                    obj.save()
+                    print('obj - -- > ',obj.xinwenda)
+                    response.status = True
+                    response.message = '修改成功'
+                else:
+                    response.status = False
+                    response.message = 'form验证失败'
+            else:
+                response.status = False
+                response.message = '修改失败'
+
+        # 内层删除
+        elif oper_type == 'inner_delete':
+            print('内层删除')
+            obj = models.YingXiaoGuWen_NeiBiao.objects.get(id=o_id)
+            if obj:
+                obj.delete()
+
+                response.status = True
+                response.message = '删除成功'
+            else:
+                response.status = False
+                response.message = '删除失败'
 
         return JsonResponse(response.__dict__)
 
@@ -208,19 +302,24 @@ def guwen_duijie_oper(request, oper_type, o_id):
             client_objs = models.UserProfile.objects.filter(is_delete=False, role_id=5)
             xiaoshous = models.UserProfile.objects.filter(role_id=12)
             bianjis = models.UserProfile.objects.filter(role_id=6)
-            return render(request, 'wenda/guwen_Docking_table/guwen_outer_create.html', locals())
+            return render(request, 'wenda/guwen_Docking_table/guwen_duijie_outer/guwen_outer_create.html', locals())
 
         # 备注按钮
         elif oper_type == 'beizhu_botton':
-            objs = models.YingXiaoGuWen_DuiJie.objects.filter(id=o_id)
-            for obj in objs:
-                obj = {
-                'shangwutong' : obj.shangwutong,
-                'xuanchuan' : obj.xuanchuanyaoqiu,
-                'wendageshu' : obj.wenda_geshu,
-                'panduan_xinwenda' : obj.xinwenda
-                }
-            return render(request, 'wenda/guwen_Docking_table/guwen_beizhu_button.html', locals())
+            objs = models.YingXiaoGuWen_DuiJie.objects.filter(id=o_id).values('shangwutong','fugai_count','xuanchuanyaoqiu','wenda_geshu','xinwenda')
+            shangwutong = objs[0]['shangwutong']
+            fugailiang = objs[0]['fugai_count']
+            xinwenda = objs[0]['xinwenda']
+            wenda_geshu = objs[0]['wenda_geshu']
+            xuanchuanyaoqiu = objs[0]['xuanchuanyaoqiu']
+            if wenda_geshu is None:
+                wenda_geshu = ''
+            if shangwutong is None:
+                shangwutong = ''
+            if xuanchuanyaoqiu is None:
+                xuanchuanyaoqiu = ''
+            print('---------->',shangwutong,fugailiang,xuanchuanyaoqiu,wenda_geshu,xinwenda)
+            return render(request, 'wenda/guwen_Docking_table/guwen_duijie_outer/guwen_beizhu_button.html', locals())
 
         # 外层修改
         elif oper_type == 'outer_update':
@@ -242,23 +341,75 @@ def guwen_duijie_oper(request, oper_type, o_id):
                 xiaoshous = models.UserProfile.objects.filter(role_id=12)
                 print('xiaoshous = = = > ',xiaoshous[0])
                 bianjis = models.UserProfile.objects.filter(role_id=6)
-            return render(request,'wenda/guwen_Docking_table/guwen_outer_update.html',locals())
+            return render(request, 'wenda/guwen_Docking_table/guwen_duijie_outer/guwen_outer_update.html',locals())
 
         # 外层删除
         elif oper_type == 'outer_delete':
             obj = models.YingXiaoGuWen_DuiJie.objects.filter(id=o_id)
             username = obj[0].kehu_username.username
             print('o_id = ==  == => 1',o_id)
-            return render(request,'wenda/guwen_Docking_table/guwen_outer_delete.html',locals())
+            return render(request, 'wenda/guwen_Docking_table/guwen_duijie_outer/guwen_outer_delete.html',locals())
 
+        # 点开详情
         elif oper_type == 'outer_xiangqing':
+            objs = models.YingXiaoGuWen_NeiBiao.objects.filter(guishu=o_id)
+            tr_html = ''
             result_data = """
-                           <table class="table table-bordered text-nowrap padding-left-50 margin-bottom-0" >
-                               <tr><td>编号</td><td>日期</td><td>覆盖数</td><td>下载报表</td></tr>
-                               {tr_html}
-                           </table>
-                           """
+                             <table class="table table-bordered text-nowrap padding-left-50 margin-bottom-0" >
+                                 <tr><td>编号</td><td style="display:none;">ID</td><td>实际到账</td><td>覆盖总数</td><td>计费时间</td><td>停表时间</td><td>是否操作新问答</td><td>操作</td></tr>
+                                 {tr_html}
+                             </table>
+                         """
+            for index,obj in enumerate(objs):
+                inner_id = obj.id
+                jifeistart = obj.jifeishijian_start
+                tingbiao = obj.jifeishijian_stop
+                fugai = obj.fugai_count
+                daozhang = obj.shiji_daozhang
+                panduan_xinwenda = obj.xinwenda
+                if panduan_xinwenda == True:
+                    panduan_xinwenda = '是'
+                else:
+                    panduan_xinwenda = '否'
+                tr_html += """
+                           <tr>
+                           <td>{index}</td>
+                           <td>{inner_id}</td>
+                           <td>{daozhang}</td>
+                           <td>{fugai}</td>
+                           <td>{jifeistart}</td>
+                           <td>{tingbiao}</td>
+                           <td>{panduan_xinwenda}</td>
+                           <td>
+                           <a href="inner_update/{o_id}/"  data-toggle='modal' data-target='#exampleFormModal'>修改</a>
+                           ----<a href="inner_delete/{o_id}/"  data-toggle='modal' data-target='#exampleFormModal'>删除</a></td>
+                           </tr>                                   
+                            """.format(index=index,inner_id=inner_id,fugai=fugai,daozhang=daozhang,
+                            jifeistart=jifeistart,tingbiao=tingbiao,panduan_xinwenda=panduan_xinwenda,o_id=obj.id)
 
+
+            result_data = result_data.format(tr_html=tr_html)
+            return HttpResponse(result_data)
+
+        # 内层添加
+        elif oper_type == 'inner_create':
+            return render(request,'wenda/guwen_Docking_table/guwen_duijie_inner/guwen_duijie_inner_create.html',locals())
+
+        # 内层修改
+        elif oper_type == 'inner_update':
+            obj = models.YingXiaoGuWen_NeiBiao.objects.get(id=o_id)
+            daozhang = obj.shiji_daozhang
+            fugai = obj.fugai_count
+            jifei_start = obj.jifeishijian_start.strftime('%Y-%m-%d')
+            jifei_stop = obj.jifeishijian_stop.strftime('%Y-%m-%d')
+            panduan_xinwenda = obj.xinwenda
+            return render(request, 'wenda/guwen_Docking_table/guwen_duijie_inner/guwen_inner_update.html', locals())
+
+        # 内层删除
+        elif oper_type == 'inner_delete':
+            obj = models.YingXiaoGuWen_NeiBiao.objects.get(id=o_id)
+            username = obj.guishu.kehu_username
+            return render(request, 'wenda/guwen_Docking_table/guwen_duijie_inner/guwen_inner_delete.html', locals())
 
 
 

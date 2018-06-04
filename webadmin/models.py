@@ -753,7 +753,7 @@ class BianXieBaoBiao(models.Model):
     edit_count = models.IntegerField(verbose_name='编写数量')
 
 
-# 营销顾问对接表
+# 营销顾问对接表 -- 外表
 class YingXiaoGuWen_DuiJie(models.Model):
     market = models.ForeignKey(to='UserProfile',verbose_name='销售', null=True, blank=True)
     kehu_username = models.ForeignKey(to='UserProfile',verbose_name='客户名称',related_name='guwenduijie_kehuming', null=True, blank=True)
@@ -766,4 +766,18 @@ class YingXiaoGuWen_DuiJie(models.Model):
     xuanchuanyaoqiu = models.TextField(verbose_name='宣传要求',null=True, blank=True)
     shangwutong = models.TextField(verbose_name='商务通',null=True, blank=True)
     wenda_geshu = models.IntegerField(verbose_name='新问答个数',null=True, blank=True)
+
+
+# 营销顾问对接表--内表
+class YingXiaoGuWen_NeiBiao(models.Model):
+    shiji_daozhang = models.IntegerField(verbose_name='实际到账钱数',null=True, blank=True)
+    fugai_count = models.IntegerField(verbose_name='覆盖总数', null=True, blank=True)
+    jifeishijian_start = models.DateField(verbose_name='开始计费时间', null=True, blank=True)
+    jifeishijian_stop = models.DateField(verbose_name='停止计费时间', null=True, blank=True)
+    xinwenda = models.BooleanField(verbose_name='是否操作新问答', default=False)
+    guishu = models.ForeignKey(to='YingXiaoGuWen_DuiJie',verbose_name='外键ID',null=True, blank=True)
+
+
+
+
 
