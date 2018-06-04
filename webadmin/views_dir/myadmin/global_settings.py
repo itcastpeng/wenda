@@ -33,8 +33,6 @@ def global_settings(request):
                 response.message = "保存成功"
 
                 models.GlobalSettings.objects.update(**form_obj.cleaned_data)
-                obj = models.GlobalSettings.objects.values('fugaibaobiao_shengcheng_moshi')
-                obj_status = obj[0]['fugaibaobiao_shengcheng_moshi']
             else:
                 response.status = False
                 for i in ["new_wenda_money", "old_wenda_money", "xie_wenda_money", "fa_wenda_money"]:
@@ -46,7 +44,8 @@ def global_settings(request):
     else:
 
         global_settings_obj = models.GlobalSettings.objects.all()[0]
-
+        obj = models.GlobalSettings.objects.values('fugaibaobiao_shengcheng_moshi')
+        obj_status = obj[0]['fugaibaobiao_shengcheng_moshi']
         if "_pjax" in request.GET:
             return render(request, 'myadmin/global_settings/global_settings_pjax.html', locals())
         return render(request, 'myadmin/global_settings/global_settings.html', locals())
