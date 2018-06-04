@@ -318,8 +318,8 @@ def guwen_duijie_oper(request, oper_type, o_id):
         # 外层添加
         if oper_type == "outer_create":
             client_objs = models.UserProfile.objects.filter(is_delete=False, role_id=5)
-            xiaoshous = models.UserProfile.objects.filter(role_id=12)
-            bianjis = models.UserProfile.objects.filter(role_id=6)
+            xiaoshous = models.UserProfile.objects.filter(is_delete=False,role_id=12)
+            bianjis = models.UserProfile.objects.filter(is_delete=False,role_id=6)
             return render(request, 'wenda/guwen_Docking_table/guwen_duijie_outer/guwen_outer_create.html', locals())
 
         # 备注按钮
@@ -392,12 +392,12 @@ def guwen_duijie_oper(request, oper_type, o_id):
                 tr_html += """
                            <tr>
                            <td>{index}</td>
-                           <td>{inner_id}</td>
                            <td>{daozhang}</td>
                            <td>{fugai}</td>
                            <td>{jifeistart}</td>
                            <td>{tingbiao}</td>
                            <td>{panduan_xinwenda}</td>
+                           <td style="display:none">{inner_id}</td>
                            <td>
                            <a href="inner_update/{o_id}/"  data-toggle='modal' data-target='#exampleFormModal'>修改</a>
                            ----<a href="inner_delete/{o_id}/"  data-toggle='modal' data-target='#exampleFormModal'>删除</a></td>
