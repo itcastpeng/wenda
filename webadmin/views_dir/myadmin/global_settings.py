@@ -28,6 +28,9 @@ def global_settings(request):
 
             form_obj = GlobalSettingsForm(request.POST)
             if form_obj.is_valid():
+
+                obj_status = form_obj.cleaned_data['fugaibaobiao_shengcheng_moshi']
+                print('obj ------------>',obj_status)
                 response.status = True
                 response.message = "保存成功"
 
