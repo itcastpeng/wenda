@@ -42,6 +42,16 @@
 </div>
 
 <script>
+        function init() {
+           $panduan = $('#xinwenda');
+            if($('#panduan_xinwenda').attr('checked')){
+                $panduan.show()
+            }else {
+                $panduan.hide()
+
+            }
+        };
+            init();
         $('#panduan_xinwenda').on({'click':function(){
             $panduan = $('#xinwenda');
             $panduan.toggle(300);

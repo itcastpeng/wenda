@@ -55,6 +55,12 @@ class OuterAddForm(forms.Form):
             "required": "结束不能为空！",
         }
     )
+    daokuan_time = forms.DateField(
+        required=True,
+        error_messages={
+            "required": "到款不能为空！",
+        }
+    )
 
 
 class OuterUpdateForm(forms.Form):
