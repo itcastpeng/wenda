@@ -25,8 +25,13 @@
                     </div>
 
                 </div>
+
                 {% endfor %}
             </div>
+        </div>
+       <div class="checkbox-custom checkbox-primary form-group " style="padding: 0 10px 10px 50px" id="panduan_map">
+            <input class="col-md-2" type="checkbox" id="panduan_map"  name="panduan_map" {% if map_status %}checked{% endif %}>
+            <label for="panduan_map" >是否加地图</label> <span style="color: red;">注:打钩代表加地图</span>
         </div>
     </form>
 

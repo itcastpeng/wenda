@@ -65,7 +65,6 @@ def guwen_duijie(request):
                     q.add(Q(**{field + "__contains": request.GET[field]}), Q.AND)
 
         user_profile_objs = ''
-        print('11111111111111111111111111111111111111111111')
         if client_user or bianji_user or xiaoshou_user:
             if client_user:
                 print('client_- > ',client_user)
@@ -80,9 +79,7 @@ def guwen_duijie(request):
                 q).order_by(order_column)
 
         result_data = {'data':[]}
-        print('user_profile_objs===> ',user_profile_objs)
         for index, obj in enumerate(user_profile_objs[start: (start + length)], start=1):
-            print('-------> ',obj.daokuan_time)
             bianji = obj.bianji.username
             xiaoshou = obj.market.username
             daozhang = obj.shiji_daozhang
@@ -91,8 +88,6 @@ def guwen_duijie(request):
             user_id = obj.id
             kaishi_jifei = obj.jifeishijian_start.strftime('%Y-%m-%d')
             tingbiao = obj.jifeishijian_stop.strftime('%Y-%m-%d')
-            daokuan_time = obj.daokuan_time.strftime('%Y-%m-%d')
-            # daokuan_time = obj.daokuan_time
 
             # print('asdhjksankljf ',bianji , xiaoshou, daozhang, kehu_name, fugai,kaishi_jifei,tingbiao)
             oper = ''
@@ -112,10 +107,8 @@ def guwen_duijie(request):
                 'kehu_name':kehu_name,
                 'user_id':user_id,
                 'index':index,
-                'daokuan_time':daokuan_time,
                 'fugai_count':fugai_count
             })
-        print('result_data  ------ >',result_data['data'])
         return HttpResponse(json.dumps(result_data))
     if "_pjax" in request.GET:
         return render(request, 'wenda/guwen_Docking_table/guwen_duijie_biao_pjax.html', locals())
@@ -138,7 +131,6 @@ def guwen_duijie_oper(request, oper_type, o_id):
             fugailiang = request.POST.get('fugailiang')
             start_time = request.POST.get('start_time')
             stop_time = request.POST.get('stop_time')
-            daokuan_time = request.POST.get('daokuan_time')
             print('request--- -- - -> ',request.POST)
             forms_obj = guwen_duijie_biao.OuterAddForm(request.POST)
             if forms_obj.is_valid():
@@ -156,8 +148,7 @@ def guwen_duijie_oper(request, oper_type, o_id):
                         fugai_count=fugailiang,         # 覆盖总数
                         jifeishijian_start=start_time,  # 计费开始
                         jifeishijian_stop=stop_time,    # 结束计费
-                        bianji_id=bianji_id,            # 编辑
-                        daokuan_time=daokuan_time       # 到款日期
+                        bianji_id=bianji_id             # 编辑
                     )
                     response.status = True
                     response.message = "添加成功"
@@ -201,7 +192,6 @@ def guwen_duijie_oper(request, oper_type, o_id):
             fugailiang = request.POST.get('fugailiang')
             start_time = request.POST.get('start_time')
             stop_time = request.POST.get('stop_time')
-            daokuan_time = request.POST.get('daokuan_time')
             forms_obj = guwen_duijie_biao.OuterUpdateForm(request.POST)
             print('=================',  xiaoshou, bianji, daozhang, fugailiang, start_time, stop_time)
             if forms_obj.is_valid():
@@ -214,8 +204,7 @@ def guwen_duijie_oper(request, oper_type, o_id):
                     fugai_count=fugailiang,          # 覆盖总数
                     jifeishijian_start=start_time,   # 计费开始
                     jifeishijian_stop=stop_time,     # 结束计费
-                    bianji_id=bianji,                # 编辑
-                    daokuan_time=daokuan_time        # 到款日期
+                    bianji_id=bianji              # 编辑
                     )
                     # obj.save()
                     print('obj- - - > ',obj[0].shiji_daozhang)
@@ -366,7 +355,6 @@ def guwen_duijie_oper(request, oper_type, o_id):
                 xuanchuan = obj[0].xuanchuanyaoqiu
                 wendageshu = obj[0].wenda_geshu
                 panduan_xinwenda = obj[0].xinwenda
-                daokuan_time = obj[0].daokuan_time
                 print('role_id = = > ',bianji_id , xiaoshou_id)
                 xiaoshous = models.UserProfile.objects.filter(role_id=12)
                 print('xiaoshous = = = > ',xiaoshous[0])
