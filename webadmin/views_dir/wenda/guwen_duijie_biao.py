@@ -91,7 +91,10 @@ def guwen_duijie(request):
             user_id = obj.id
             kaishi_jifei = obj.jifeishijian_start.strftime('%Y-%m-%d')
             tingbiao = obj.jifeishijian_stop.strftime('%Y-%m-%d')
-            daokuan_time = obj.daokuan_time.strftime('%Y-%m-%d')
+            if obj.daokuan_time:
+                daokuan_time = obj.daokuan_time.strftime('%Y-%m-%d')
+            else:
+                daokuan_time = None
             # daokuan_time = obj.daokuan_time
 
             # print('asdhjksankljf ',bianji , xiaoshou, daozhang, kehu_name, fugai,kaishi_jifei,tingbiao)
@@ -138,7 +141,10 @@ def guwen_duijie_oper(request, oper_type, o_id):
             fugailiang = request.POST.get('fugailiang')
             start_time = request.POST.get('start_time')
             stop_time = request.POST.get('stop_time')
-            daokuan_time = request.POST.get('daokuan_time')
+            if request.POST.get('daokuan_time'):
+                daokuan_time = request.POST.get('daokuan_time')
+            else:
+                daokuan_time = None
             print('request--- -- - -> ',request.POST)
             forms_obj = guwen_duijie_biao.OuterAddForm(request.POST)
             if forms_obj.is_valid():
@@ -289,7 +295,7 @@ def guwen_duijie_oper(request, oper_type, o_id):
                 'stop_time' : stop_time,
                 'panduan_xinwenda' : panduan_xinwenda ,
                 }
-                print('到这了=======')
+                # print('到这了=======')
                 forms_obj = guwen_duijie_biao.InnerCreateForm(data_temp)
                 if forms_obj.is_valid():
                     print('验证成功')
@@ -300,7 +306,7 @@ def guwen_duijie_oper(request, oper_type, o_id):
                     obj.fugai_count =  cleant['fugailiang']
                     obj.xinwenda =  cleant['panduan_xinwenda']
                     obj.save()
-                    print('obj - -- > ',obj.xinwenda)
+                    # print('obj - -- > ',obj.xinwenda)
                     response.status = True
                     response.message = '修改成功'
                 else:
