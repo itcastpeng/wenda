@@ -1,4 +1,4 @@
-<title>营销顾问对接表</title>
+<title>关键词截屏</title>
 
 <style>
 
@@ -48,11 +48,12 @@
                                 aria-hidden="true" id="client_user" name="client_user">
                             <option value="">全部</option>
                             {% for i in client_data %}
-                                <option value="{{ i.id }}">{{ i.username }}</option>
+{#                                <option value="{{ i.id }}">{{ i.username }}</option>#}
+                                <option value="22">紫琪尔</option>
                             {% endfor %}
                         </select>
 
-                        <label for="xiaoshou_user">销售名称：</label>
+                        <label for="xiaoshou_user">词名称：</label>
                         <select class="form-control select2-hidden-accessible" data-plugin="select2" tabindex="-1"
                                 aria-hidden="true" id="xiaoshou_user" name="xiaoshou_user">
                             <option value="">全部</option>
@@ -60,15 +61,6 @@
                                 <option value="{{ i.id }}">{{ i.username }}</option>
                             {% endfor %}
                         </select>
-                        <label for="bianji_user">编辑名称：</label>
-                        <select class="form-control select2-hidden-accessible" data-plugin="select2" tabindex="-1"
-                                aria-hidden="true" id="bianji_user" name="bianji_user">
-                            <option value="">全部</option>
-                            {% for i in bianji_data %}
-                                <option value="{{ i.id }}">{{ i.username }}</option>
-                            {% endfor %}
-                        </select>
-
                 </div>
 
                 <div style="position: absolute; bottom:0; right: 20px;">
@@ -83,18 +75,17 @@
         <div class="panel" style="height: 100%;">
             <div class="panel-body">
                 <div class="col-md-12 form-group" style="margin-bottom: 10px">
-{#                        <button type="button" href="download/0/" data-toggle="modal" data-target="#exampleFormModal"#}
-{#                                class="btn btn-info pull-left margin-right-5">#}
-{#                            <i class="icon fa-download" aria-hidden="true"></i> 添加#}
-{#                        </button>#}
-
-{#                        <button type="button" href="outer_update/0/" data-toggle="modal" data-target="#exampleFormModal"#}
+{#                        <button type="button" href="delete_guanjianci/0/" data-toggle="modal" data-target="#exampleFormModal"#}
 {#                                class="btn btn-info pull-right margin-right-5" >#}
-{#                            <i  aria-hidden="true"></i> 修改#}
+{#                            <i  aria-hidden="true"></i> 删除词#}
 {#                        </button>#}
-                        <button type="button" href="outer_create/0/" data-toggle="modal" data-target="#exampleFormModal"
+{#                        <button type="button" href="update_guanjianci/0/" data-toggle="modal" data-target="#exampleFormModal"#}
+{#                                class="btn btn-info pull-right margin-right-5" >#}
+{#                            <i  aria-hidden="true"></i> 修改词#}
+{#                        </button>#}
+                        <button type="button" href="create_guanjianci/0/" data-toggle="modal" data-target="#exampleFormModal"
                                 class="btn btn-info pull-right margin-right-5" >
-                            <i  aria-hidden="true"></i> 添加
+                            <i  aria-hidden="true"></i> 添加关键词
                         </button>
                 </div>
                 <table class="table table-bordered table-hover dataTable table-striped width-full text-nowrap"
@@ -104,15 +95,8 @@
                         <th>编号</th>
                         <th>客户ID</th>
                         <th>客户名称</th>
-                        <th>销售</th>
-                        <th>操作编辑</th>
-                        <th>实际到账</th>
-                        <th>覆盖总数</th>
-                        <th>到款时间</th>
-                        <th>开始计费时间</th>
-                        <th>停表时间</th>
-                        <th>备注/修改</th>
-                        <th>续费</th>
+                        <th>关键词</th>
+                        <th>操作</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -152,10 +136,10 @@
                 "sNext": "下页",
                 "sLast": "末页"
             },
-            "oAria": {
-                "sSortAscending": ": 以升序排列此列",
-                "sSortDescending": ": 以降序排列此列"
-            }
+            {#"oAria": {#}
+            {#    "sSortAscending": ": 以升序排列此列",#}
+            {#    "sSortDescending": ": 以降序排列此列"#}
+            {# } #}
         },
         "pageLength": 100,
         "processing": true,
@@ -171,20 +155,8 @@
                 "visible": false
              },
             {"data": "kehu_name"},
-            {"data": "xiaoshou"},
-            {"data": "bianji"},
-            {"data": "daozhang"},
-            {"data": "fugai_count"},
-            {"data": "daokuan_time"},
-            {"data": "kaishi_jifei"},
-            {'data': 'tingbiao'},
+            {"data": "guanjianci"},
             {"data": "oper"},
-            {
-                "class": 'details-control',
-                "orderable": false,
-                "data": null,
-                "defaultContent": ' 展开详细数据'
-             },
 
         ],
 
