@@ -22,7 +22,7 @@ from webadmin.views_dir.myadmin import account, user_management, role_management
 from webadmin.views_dir.wenda import task_list, personal_center, financial_center, message, wenda_robot, api, \
     wait_clearing, my_task, set_keywords, rank_data, edit_content_management, my_task_edit, edit_error_content,\
     sensitive_word_library, big_data, edit_content_detail, client_day_covering_num, keywords_top_set, cover_reports, \
-    show_wenda_cover_num, zhidaohuida, case_library ,bianxiebaobiao,according_geturl,guwen_duijie_biao
+    show_wenda_cover_num, zhidaohuida, case_library ,bianxiebaobiao,according_geturl,guwen_duijie_biao,fifty_guanjianci_jieping
 
 from webadmin.views_dir.wechat import wechat
 
@@ -178,6 +178,10 @@ urlpatterns = [
     # 营销顾问对接表
     url(r'^guwen_duijie_biao/(?P<oper_type>\w+)/(?P<o_id>\d+)/', guwen_duijie_biao.guwen_duijie_oper),
     url(r'^guwen_duijie_biao/', guwen_duijie_biao.guwen_duijie, name="guwen_duijie_biao"),
+
+    # 关键词截屏
+    url(r'^guanjianci_jieping/(?P<oper_type>\w+)/(?P<o_id>\d+)/', fifty_guanjianci_jieping.guanjianci_jieping_oper),
+    url(r'^guanjianci_jieping/', fifty_guanjianci_jieping.guanjianci_jieping, name="guanjianci_jieping"),
 
     # #################### 后台管理 ####################
     # 用户管理
