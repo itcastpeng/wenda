@@ -80,6 +80,9 @@ urlpatterns = [
 
     # 查询每日覆盖量
     url(r'^api/fugailiangtixing/(?P<oper_type>\w+)/(?P<o_id>\d+)',api.fugailiangtixing),
+
+    # 新问答完成不会打回到编辑
+    url(r'api/xinwenda_wancheng_budahui', api.xinwenda_wancheng_budahui),
     # #################### 问答 ####################
 
     # 问答机器人

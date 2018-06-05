@@ -1348,3 +1348,29 @@ def fugailiangtixing(request, oper_type, o_id):
         return JsonResponse(response.__dict__)
     else:
         return render(request, 'test.html', locals())
+
+
+# 新问答完成的不打回到编辑
+def xinwenda_wancheng_budahui():
+    print('进入 ====================== 进入')
+    objs = models.EditPublickTaskManagement.objects.filter(status=2)
+    for obj in objs:
+        print('obj ----- > ',obj.run_task.task.name )
+        obj_statu = obj.run_task.task.status
+        if obj_statu > 6 :
+            obj.status = 3
+            obj.run_task.status = 6
+            obj.save()
+
+
+
+
+
+
+
+
+
+
+
+
+

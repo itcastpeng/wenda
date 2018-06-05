@@ -30,7 +30,6 @@ import sys
 import datetime
 import os
 from django.db.models import Q, Count
-
 project_dir = os.path.dirname(os.getcwd())
 sys.path.append(project_dir)
 print(project_dir)
@@ -40,6 +39,7 @@ import django
 django.setup()
 from webadmin import models
 from webadmin.modules.WeChat import WeChatPublicSendMsg
+from webadmin.views_dir.wenda import api
 
 
 # 客户首次创建任务的时候,将客户提交的 excel 表格的数据取出来然后写入到新的 excel 表格中, 在第一列新增 问答地址链接
@@ -1758,3 +1758,9 @@ def dangjitixing():
         }
         print('---------========================')
         webchat_obj.sendTempMsg(post_data)
+
+
+# 新问答完成的不打回到编辑
+@app.task
+def xinwenda_wancheng_budahui():
+    requests.get('http://wenda.zhugeyingxiao.com/api/xinwenda_wancheng_budahui')
