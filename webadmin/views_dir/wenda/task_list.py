@@ -285,6 +285,9 @@ def task_list(request):
 
             if obj.status not in [1, 10, 11] and role_id == 7:  # 新发布、已完结和撤销状态的任务不显示
                 oper += """
+                        <a class="btn btn-round btn-sm bg-info" aria-hidden="true" href="update_fabu_shuliang/{obj_id}/" data-toggle="modal" data-target="#exampleFormModal"><i class="icon fa-search" aria-hidden="true"></i>修改发布</a>
+                 """.format(obj_id=obj.id)
+                oper += """
                     <a class="btn btn-round btn-sm bg-danger" aria-hidden="true" href="revocation/{obj_id}/" data-toggle="modal" data-target="#exampleFormModal"><i class="icon wb-trash" aria-hidden="true"></i>撤销</a>
                 """.format(obj_id=obj.id)
 
@@ -646,6 +649,20 @@ def task_list_oper(request, oper_type, o_id):
                         response.message = form_obj.errors[i]
                         break
 
+        # 修改发布数量
+        elif oper_type == "update_fabu_shuliang":
+            num = request.POST.get('num')
+            name = request.POST.get('name')
+            if num.isdigit() :
+                obj = models.Task.objects.get(id=o_id)
+                if obj:
+                    obj.num=num
+                    obj.save()
+                    response.status = True
+                    response.message = '修改成功'
+            else:
+                response.status = False
+                response.message = '请输入数字'
         return JsonResponse(response.__dict__)
 
     else:
@@ -836,6 +853,13 @@ def task_list_oper(request, oper_type, o_id):
             user_client_data = models.UserProfile.objects.filter(role_id=5, is_delete=False).values('id', 'username')
             return render(request, "wenda/task_list/task_list_modal_create.html", locals())
 
+        # 修改发布数量
+        elif oper_type =="update_fabu_shuliang":
+            objs = models.Task.objects.filter(id=o_id).values('num','name','id')
+            num = objs[0]['num']
+            o_id = o_id
+            name = objs[0]['name']
+            return render(request,'wenda/my_task/my_task_model_update_fabu_shuliang.html',locals())
 
 # 对客户扣费记录明细
 def kouFei(task_obj):
