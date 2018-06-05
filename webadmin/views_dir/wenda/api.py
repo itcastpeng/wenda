@@ -881,7 +881,7 @@ def keywords_top_set_oper(request, oper_type):
                         if edit_pulick_task_obj.status < 3:
                             print("已经打回")
                         else:
-                            if robot_task_obj.task.status < 6:
+                            if robot_task_obj.task.status < 7:
                                 edit_pulick_task_obj.status = 2
                                 edit_pulick_task_obj.is_select_cover_back = True
 
@@ -1348,3 +1348,29 @@ def fugailiangtixing(request, oper_type, o_id):
         return JsonResponse(response.__dict__)
     else:
         return render(request, 'test.html', locals())
+
+
+# 新问答完成的不打回到编辑
+def xinwenda_wancheng_budahui(request):
+    print('进入 ====================== 进入')
+    objs = models.EditPublickTaskManagement.objects.filter(status=2)
+    for obj in objs:
+        print('obj ----- > ',obj.run_task.task.name )
+        obj_statu = obj.run_task.task.status
+        if obj_statu > 6 :
+            obj.status = 3
+            obj.run_task.status = 6
+            obj.save()
+    return HttpResponse('======')
+
+
+
+
+
+
+
+
+
+
+
+

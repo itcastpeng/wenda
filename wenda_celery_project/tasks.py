@@ -30,7 +30,6 @@ import sys
 import datetime
 import os
 from django.db.models import Q, Count
-
 project_dir = os.path.dirname(os.getcwd())
 sys.path.append(project_dir)
 print(project_dir)
@@ -1758,3 +1757,9 @@ def dangjitixing():
         }
         print('---------========================')
         webchat_obj.sendTempMsg(post_data)
+
+
+# 新问答完成的不打回到编辑
+@app.task
+def xinwenda_wancheng_budahui():
+    requests.get('http://wenda.zhugeyingxiao.com/api/xinwenda_wancheng_budahui')

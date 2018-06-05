@@ -141,7 +141,17 @@ app.conf.beat_schedule = {
         'task': 'wenda_celery_project.tasks.dangjitixing',
         'schedule': crontab('*/10', '23-12', '*', '*', '*'),
     },
-}
+
+    # 新问答完成的不打回到编辑
+     'xinwenda_wancheng_budahui': {
+            'task': 'wenda_celery_project.tasks.xinwenda_wancheng_budahui',
+            'schedule': crontab('*/5', '*', '*', '*', '*'),
+        },
+    }
+
+
+
+
 
 # Optional configuration, see the application user guide.
 app.conf.update(
