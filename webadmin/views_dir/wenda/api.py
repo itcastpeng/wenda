@@ -881,7 +881,7 @@ def keywords_top_set_oper(request, oper_type):
                         if edit_pulick_task_obj.status < 3:
                             print("已经打回")
                         else:
-                            if robot_task_obj.task.status < 6:
+                            if robot_task_obj.task.status < 7:
                                 edit_pulick_task_obj.status = 2
                                 edit_pulick_task_obj.is_select_cover_back = True
 
