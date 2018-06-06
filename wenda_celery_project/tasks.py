@@ -1703,9 +1703,9 @@ def weixin_meiri_fugai_tuisong():
                     gongyong(xiaoshou_openid, yonghu_id, username)
 
     print('顾问 - -- - 》 ')
-    # guwen_weixin()
-    print('销售 - - -- 》 ')
-    xiaoshou_weixin()
+    guwen_weixin()
+    # print('销售 - - -- 》 ')
+    # xiaoshou_weixin()
 
 
 # 下载关键词与关键词类型
