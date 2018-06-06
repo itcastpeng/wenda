@@ -560,14 +560,15 @@ def check_wenda_link(request):
 
             if obj.status == '2':
                 wenda_objs = obj.task.wendarobottask_set.filter(wenda_url=obj.url)
-                print('wenda_objs -  -> ', wenda_objs)
-                wenda_obj = wenda_objs[0]
-                models.TongjiKeywords.objects.create(
-                    title=wenda_obj.title,
-                    content=wenda_obj.content,
-                    url=wenda_obj.wenda_url,
-                    task_id=obj.task.id
-                )
+                if wenda_objs:
+                    print('wenda_objs -  -> ', wenda_objs)
+                    wenda_obj = wenda_objs[0]
+                    models.TongjiKeywords.objects.create(
+                        title=wenda_obj.title,
+                        content=wenda_obj.content,
+                        url=wenda_obj.wenda_url,
+                        task_id=obj.task.id
+                    )
 
             response.status = True
             response.message = "提交成功"
@@ -1041,6 +1042,7 @@ def keywords_cover(request):
 # 检查知道url 是我们自己操作的(覆盖模式)
 @csrf_exempt
 def check_zhidao_url(request):
+    print('进入判断--------------')
     response = pub.BaseResponse()
 
     """
@@ -1053,6 +1055,7 @@ def check_zhidao_url(request):
             }
     """
     if request.method == "POST":
+        print('request_POST===> ',request.POST)
         url = request.POST.get("url")
         client_user_id = request.POST.get("client_user_id")
         is_pause = int(request.POST.get("is_pause"))
@@ -1069,12 +1072,12 @@ def check_zhidao_url(request):
                 tongji_keywords_objs.update(is_pause=True)
             #     models.EditPublickTaskManagement.objects.filter(run_task_id=obj[0].run_task_id).update(status=3)
             #     models.WendaRobotTask.objects.filter(id=obj[0].run_task_id).update(status=6)
-            print('tongji_keywords_objs---> ',tongji_keywords_objs[0])
+            # print('tongji_keywords_objs---> ',tongji_keywords_objs[0])
             response.status = True
             response.data = {
                 "content": [i[0] for i in tongji_keywords_objs.values_list('content')]
             }
-            print('response----> ',response.data)
+            # print('response----> ',response.data)
 
         else:
             """

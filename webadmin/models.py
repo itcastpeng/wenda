@@ -782,7 +782,7 @@ class YingXiaoGuWen_NeiBiao(models.Model):
 
 class GetKeywordsJiePing(models.Model):
     picture_path = models.TextField(verbose_name='图片路径',null=True,blank=True)
-    models.ForeignKey(to='GuanJianCiFifty',verbose_name='属于哪个关键词')
+    guanjianci = models.ForeignKey(to='GuanJianCiFifty',verbose_name='属于哪个关键词')
 
 class GuanJianCiFifty(models.Model):
     guanjianci = models.TextField(verbose_name='五十个关键词',null=True, blank=True)

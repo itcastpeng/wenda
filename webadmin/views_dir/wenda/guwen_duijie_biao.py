@@ -336,7 +336,7 @@ def guwen_duijie_oper(request, oper_type, o_id):
         if oper_type == "outer_create":
             client_objs = models.UserProfile.objects.filter(is_delete=False, role_id=5)
             xiaoshous = models.UserProfile.objects.filter(is_delete=False,role_id=12)
-            bianjis = models.UserProfile.objects.filter(is_delete=False,role_id=6)
+            bianjis = models.UserProfile.objects.filter(is_delete=False,role_id=13)
             return render(request, 'wenda/guwen_Docking_table/guwen_duijie_outer/guwen_outer_create.html', locals())
 
         # 备注按钮

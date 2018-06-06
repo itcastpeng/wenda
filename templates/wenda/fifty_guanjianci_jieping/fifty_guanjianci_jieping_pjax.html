@@ -48,20 +48,22 @@
                                 aria-hidden="true" id="client_user" name="client_user">
                             <option value="">全部</option>
                             {% for i in client_data %}
-{#                                <option value="{{ i.id }}">{{ i.username }}</option>#}
-                                <option value="22">紫琪尔</option>
+                                <option value="{{ i.id }}">{{ i.username }}</option>
+{#                                <option value="22">紫琪尔</option>#}
                             {% endfor %}
                         </select>
 
-                        <label for="xiaoshou_user">词名称：</label>
-                        <select class="form-control select2-hidden-accessible" data-plugin="select2" tabindex="-1"
-                                aria-hidden="true" id="xiaoshou_user" name="xiaoshou_user">
-                            <option value="">全部</option>
-                            {% for i in xiaoshou_data %}
-                                <option value="{{ i.id }}">{{ i.username }}</option>
-                            {% endfor %}
-                        </select>
+{#                        <label for="cimingcheng">词名称：</label>#}
+{#                        <select class="form-control select2-hidden-accessible col-md-2" data-plugin="select2" tabindex="-1"#}
+{#                                aria-hidden="true" id="cimingcheng" name="cimingcheng" >#}
+{#                            <option value="">全部</option>#}
+{#                            {% for obj in result %}#}
+{#                                <option value="{{ obj.id }}">{{ obj.guanjianci }}</option>#}
+{#                            {% endfor %}#}
+{#                        </select>#}
+
                 </div>
+
 
                 <div style="position: absolute; bottom:0; right: 20px;">
                     <button type="button" class="btn btn-primary" id="search_button"><i class="icon fa-search"
@@ -83,6 +85,8 @@
 {#                                class="btn btn-info pull-right margin-right-5" >#}
 {#                            <i  aria-hidden="true"></i> 修改词#}
 {#                        </button>#}
+
+
                         <button type="button" href="create_guanjianci/0/" data-toggle="modal" data-target="#exampleFormModal"
                                 class="btn btn-info pull-right margin-right-5" >
                             <i  aria-hidden="true"></i> 添加关键词
@@ -120,7 +124,7 @@
         language: {
             "sProcessing": "处理中...",
             "sLengthMenu": "每页显示 _MENU_ 条",
-            "sZeroRecords": "没有匹配结果",
+            "sZeroRecords": "请选择用户",
             "sInfo": "第 _START_ 至 _END_ 项，共 _TOTAL_ 项",
             "sInfoEmpty": "第 0 至 0 项，共 0 项",
             "sInfoFiltered": "",
@@ -163,37 +167,6 @@
     });
 
 
-    /* 格式化详情功能 - 根据需要修改 */
-    function format(d) {
-        // `d` 是该行的原始数据对象
-        //cellpadding="5"
-        var url = "outer_xiangqing/" + d.user_id + '/';
-        {#var url = "outer_xiangqing/" + 6 + '/';#}
-        $.ajaxSetup({
-            async: false
-        });
-        $.get(url, function (data) {
-            result = data;
-        });
-        return result;
-     }
-
-    // 展开关闭详情时的事件监听
-    $('#dataTable tbody').on('click', 'td.details-control', function () {
-        var tr = $(this).closest('tr');
-        var row = table.row(tr);
-        if (row.child.isShown()) {
-            // 本行已展开
-            row.child.hide();
-            tr.removeClass('shown');
-        }
-        else {
-            // 展开本行3
-            row.child(format(row.data())).show();
-            tr.addClass('shown');
-        }
-    });
-
 
     {# 搜索按钮被点击 #}
     $("#search_button").click(function () {
@@ -202,7 +175,6 @@
 
         table.ajax.url(get_url);
         table.draw();
-
     });
 
     {# 搜框中的input标签 回车键被触发 #}
