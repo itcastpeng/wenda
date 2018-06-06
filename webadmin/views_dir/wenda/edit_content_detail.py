@@ -113,7 +113,8 @@ def edit_content_detail(request):
 
             oper = ""
             if role_id != 14:   # 商务通渠道角色不显示下面功能
-                if obj.status == 2 and obj.task.status != 5 and role_id == 13:
+                if obj.status == 2:
+                # if obj.status == 2 and obj.task.status != 5 and role_id == 13:
                     oper += """
                         <a class="btn btn-round btn-sm bg-warning margin-bottom-5" href="/edit_error_content/{tid}/" target="_blank"><i class="icon fa-pencil" aria-hidden="true"></i>修改</a>
                     """.format(tid=obj.id)
