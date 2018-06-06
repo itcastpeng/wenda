@@ -29,6 +29,7 @@ def edit_error_content(request, o_id):
     content_update_id_list = [20]
 
     if request.method == "POST":
+
         response = pub.BaseResponse()
 
         content = request.POST.get("content")
@@ -93,8 +94,8 @@ def edit_error_content(request, o_id):
                         content=obj.content,
                         edit_public_task_management_id=o_id
                     )
-
-
+                    panduan_addmap = obj.task.task.task.add_map
+                    # panduan_addmap = True
                     wenda_robot_task_obj = models.WendaRobotTask.objects.get(id=obj.run_task.id)
                     if wenda_robot_task_obj.status in content_update_id_list:   # 回复异常
                         wenda_robot_task_obj.content = content
@@ -127,6 +128,6 @@ def edit_error_content(request, o_id):
         if wenda_robot_task_obj.task.release_user.map_search_keywords and wenda_robot_task_obj.task.release_user.map_match_keywords:
             map_flag = True
         else:
-            map_flag = False
+            map_flag = True
 
         return render(request, 'wenda/edit_error_content/edit_error_content.html', locals())

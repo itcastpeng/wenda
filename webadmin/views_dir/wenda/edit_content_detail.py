@@ -27,6 +27,7 @@ from wenda_celery_project import tasks
 # 编辑内容详情
 @pub.is_login
 def edit_content_detail(request):
+    print('进入任务内容 ====================================== ')
     user_id = request.session.get('user_id')
     role_id = request.session.get('role_id')
     print("role_id -->", role_id)
@@ -85,6 +86,7 @@ def edit_content_detail(request):
                 # q.add(Q(Q(**{"task__task__client_user__task_edit_show": True}) | Q(**{"task__task__task__wenda_type__in": [1, 10]})), Q.AND)
 
         # objs = models.EditPublickTaskManagement.objects.select_related('task__task__client_user').filter(**filter_dict).filter(q).order_by(order_column)
+        # objs = models.EditPublickTaskManagement.objects.select_related('task__task__client_user', 'task__task__task','task__edit_user').filter(**filter_dict).filter(q).order_by(order_column)
         objs = models.EditPublickTaskManagement.objects.select_related('task__task__client_user', 'task__task__task','task__edit_user').filter(**filter_dict).filter(q).order_by(order_column)
         print('filter_dict -->', filter_dict)
         print('q -->', q, objs.count(), user_id)

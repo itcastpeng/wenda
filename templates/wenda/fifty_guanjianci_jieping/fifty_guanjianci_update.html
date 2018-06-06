@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body><div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">修改关键词</h4>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal modal-form">
+        {% csrf_token %}
+        {# 修改关键词 #}
+          <div class="form-group">
+            <label class="col-md-2 control-label" for="guanjianci">关键词<span class="form-span-active"></span></label>
+            <div class="col-md-8">
+                <input type="text" class="form-control input-md" id="guanjianci" name="guanjianci" autocomplete="off" value="{{ guanjianci_name }}">
+            </div>
+        </div>
+
+
+    </form>
+</div>>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" id="create_button">确认修改</button>
+</div>
+
+<script>
+
+    {# 调整模态对话框的大小 #}
+    $("#exampleFormModal .modal-dialog").css("width", "700px");
+
+    $(".modal-form select").select2({
+        dropdownParent:$("#exampleFormModal")
+    });
+
+    $("#create_button").on('click', function () {
+
+        $("#create_button").attr("disabled", "disabled");
+
+        var data = $(".form-horizontal").serialize();
+
+        var url = 'update_guanjianci/{{ o_id }}/';
+        $.post(url, data, function (result) {
+
+            $("#create_button").removeAttr("disabled");
+
+            if(!result['status']){
+                toastr['error'](result['message']);
+            }else{
+                toastr['success'](result['message']);
+                $('.modal').modal("hide");
+                table.ajax.reload();
+            }
+        }, 'json')
+
+    })
+
+</script>
+
+
+</body>
+</html>

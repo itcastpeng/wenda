@@ -33,11 +33,15 @@
 
             <div class="form-group">
                 <div class="checkbox">
-                    <label for="addMap" class="col-sm-3 control-label font-size-40">添加地图: </label>
+{#                    <label for="addMap" class="col-sm-3 control-label font-size-40">添加地图: </label>#}
+                    <label class="col-sm-3 control-label font-size-40">添加地图: </label>
                     <div class="col-sm-8">
                         {% if map_flag %}
 {#                        {% if True %}#}
-                        <input type="checkbox"  id="addMap" style="display: block; margin-left: 0; zoom: 300%">
+{#                        <input type="checkbox" id="addMap" checked disabled="" style="display: block; margin-left: 0; zoom: 300% ">#}
+                        <input type="checkbox" id="addMap" {% if panduan_addmap %}checked{% endif %} disabled="" style="display: block; margin-left: 0; zoom: 300% ">
+{#                        <input type="checkbox" class="form-control" id="addMap" {% if panduan_addmap %}checked{% endif %} disabled="" style="display: block; margin-left: 0; zoom: 300% ">#}
+{#                        <input type="checkbox"  id="addMap" style="display: block; margin-left: 0; zoom: 300%">#}
                         {% else %}
                         <p style="color: red">未填写地图搜索词和地图匹配词</p>
                         {% endif %}
