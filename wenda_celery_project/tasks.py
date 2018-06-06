@@ -1645,7 +1645,6 @@ def robot_release_num():
 @app.task
 def weixin_meiri_fugai_tuisong():
     # 调用发送微信公众号模块
-    # wechat_date = './wechat_data.json'
     webchat_obj = WeChatPublicSendMsg()
     now_date = datetime.datetime.today().strftime('%Y-%m-%d')
     q = Q()
@@ -1663,6 +1662,7 @@ def weixin_meiri_fugai_tuisong():
             'cover_num',
             'client_user__username',
         ).annotate(Count('id'))
+        print('objs - - -> ', objs)
         data_list = []
         for obj in objs:
             client_name = obj['client_user__username']
@@ -1671,9 +1671,10 @@ def weixin_meiri_fugai_tuisong():
                 'name': client_name,
                 'count': cover_num
             })
+        print('data_list - -- -- > ', data_list)
         return data_list
 
-    # 公用发送链接
+    # # 公用发送链接
     def gongyong(openid, gongyong_id, username):
         post_data = {
             "touser": "o7Xw_0fq6LrmCjBbxAzDZHTbtQ3g",
@@ -1681,7 +1682,7 @@ def weixin_meiri_fugai_tuisong():
             "template_id": "ksNf6WiqO5JEqd3bY6SUqJvWeL2-kEDqukQC4VeYVvw",
             # "url": "http://wenda.zhugeyingxiao.com/api/fugailiangtixing/null/{gongyong_id}".format(
             #     gongyong_id=gongyong_id),
-            "url": "http://127.0.0.1:8005/api/fugailiangtixing/null/{gongyong_id}".format(gongyong_id=gongyong_id),
+            "url": "http://127.0.0.1:8006/api/fugailiangtixing/null/{gongyong_id}".format(gongyong_id=gongyong_id),
             "data": {
                 "first": {
                     "value": "诸葛霸屏王查询覆盖通知！",
@@ -1712,15 +1713,16 @@ def weixin_meiri_fugai_tuisong():
         # q.add(Q(client_user__is_delete=False) & Q(client_user__status=1) & (Q(client_user__guwen__isnull=False)), Q.AND)
         objs = models.UserprofileKeywordsCover.objects.filter(q).order_by('create_date')
         if objs:
-            print('oibjs - - -', objs)
+            yonghu_id = objs[0].client_user.id
+            data_list = gongyong_panduan(yonghu_id)
+            data_temp = {}
             for obj in objs:
                 guwen_openid = obj.client_user.guwen.openid
                 username = obj.client_user.username
-                yonghu_id = obj.client_user.id
-                objs = gongyong_panduan(yonghu_id)
-                print('obj s s s s s -----> ', objs)
-                if objs:
-                    gongyong(guwen_openid, yonghu_id, username)
+                data_temp['openid'] = guwen_openid
+                data_temp['username'] = username
+            if data_list:
+                gongyong(data_temp['openid'], yonghu_id, data_temp['username'])
 
     # 销售
     def xiaoshou_weixin():
@@ -1728,15 +1730,16 @@ def weixin_meiri_fugai_tuisong():
             Q(client_user__xiaoshou__isnull=False)), Q.AND)
         objs = models.UserprofileKeywordsCover.objects.select_related('client_user').filter(q).order_by('create_date')
         if objs:
-            print('objs - - -> ', objs)
+            yonghu_id = objs[0].client_user.id
+            data_list = gongyong_panduan(yonghu_id)
+            data_temp = {}
             for obj in objs:
                 xiaoshou_openid = obj.client_user.xiaoshou.openid
                 username = obj.client_user.username
-                yonghu_id = obj.client_user.id
-                objs = gongyong_panduan(yonghu_id)
-                print('obj s s s s s -----> ', objs)
-                if objs:
-                    gongyong(xiaoshou_openid, yonghu_id, username)
+                data_temp['openid'] = xiaoshou_openid
+                data_temp['username'] = username
+            if data_list:
+                gongyong(data_temp['openid'], yonghu_id, data_temp['username'])
 
     print('顾问 - -- - 》 ')
     guwen_weixin()
