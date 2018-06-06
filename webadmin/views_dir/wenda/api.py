@@ -1252,7 +1252,7 @@ def qudao_shangwutong_cunhuo(request):
     return JsonResponse(response.__dict__)
 
 
-# 查询用户到期信息
+# 查询用户到期信息微信推送
 @csrf_exempt
 def jifeidaoqitixing(request, oper_type, p_id):
     # print('oper_type ----',oper_type)

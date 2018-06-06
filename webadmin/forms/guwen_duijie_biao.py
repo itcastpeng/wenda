@@ -21,7 +21,7 @@ class OuterAddForm(forms.Form):
         }
     )
 
-    bianji = forms.IntegerField(
+    bianji_user = forms.IntegerField(
         required=False,
         error_messages={
             "required": "编辑类型错误！",
@@ -43,27 +43,33 @@ class OuterAddForm(forms.Form):
     )
 
     start_time = forms.DateField(
-        required=True,
+        required=False,
         error_messages={
             "required": "开始时间不能为空！",
         }
     )
 
     stop_time = forms.DateField(
-        required=True,
+        required=False,
         error_messages={
             "required": "结束不能为空！",
         }
     )
-    # daokuan_time = forms.DateField(
-    #     required=True,
-    #     error_messages={
-    #         "required": "到款不能为空！",
-    #     }
-    # )
+    daokuan_time = forms.DateField(
+        required=False,
+        error_messages={
+            "required": "到款类型错误！",
+        }
+    )
 
 
 class OuterUpdateForm(forms.Form):
+    xiaoshou = forms.IntegerField(
+        required=True,
+        error_messages={
+            "required": "类型错误！",
+        }
+    )
     daozhang = forms.IntegerField(
         required=False,
         error_messages={
@@ -72,11 +78,36 @@ class OuterUpdateForm(forms.Form):
     )
 
     fugailiang =forms.IntegerField(
+        required=True,
+        error_messages={
+            "required": "覆盖不能为空！",
+        }
+    )
+    bianji = forms.IntegerField(
         required=False,
         error_messages={
             "required": "类型错误！",
         }
     )
+    daokuan_time = forms.DateField(
+        required=False,
+        error_messages={
+            "required": "类型错误！",
+        }
+    )
+    start_time = forms.DateField(
+        required=False,
+        error_messages={
+            "required": "类型错误！",
+        }
+    )
+    stop_time = forms.DateField(
+        required=False,
+        error_messages={
+            "required": "类型错误！",
+        }
+    )
+
 # 内层判断添加
 class InnerCreateForm(forms.Form):
     daozhang = forms.IntegerField(
