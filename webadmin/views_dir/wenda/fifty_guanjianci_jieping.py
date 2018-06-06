@@ -12,7 +12,6 @@ import json
 from webadmin.forms.form_cover_update_jifei import jifeiupdateForm
 from django.db.models import F
 from django.db.models import Q ,Count
-
 from webadmin.forms import  guwen_duijie_biao
 
 # 关键词截屏
@@ -20,26 +19,26 @@ from webadmin.forms import  guwen_duijie_biao
 def guanjianci_jieping(request):
     status_choices = models.UserProfile.status_choices
     client_data = models.UserProfile.objects.filter(is_delete=False, role_id=5).values('username', 'id')
+    print('client_data --- -- -<>',client_data)
 
     if "type" in request.GET and request.GET["type"] == "ajax_json":
         client_user = request.GET.get('client_user')
         # print('client_user ---------- >',client_user)
         result_data={'data':[]}
         objs = models.GuanJianCiFifty.objects.filter(yonghu_user=client_user)
-        # print('objs - - - -- 》 ',objs )
         for index,obj in enumerate(objs):
             oper = ''
-            oper += "<a href='update_guanjianci/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>修改</a>".format(user_id=obj.id)
+            oper += "<a href='guanjianci_jieping/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>查看截屏</a>".format(user_id=obj.id)
+            oper += "----<a href='update_guanjianci/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>修改</a>".format(user_id=obj.id)
             oper += "----<a href='delete_guanjianci/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>删除</a>".format(user_id=obj.id)
             result_data['data'].append({
                 'oper':oper,
                 'kehu_name':obj.yonghu_user.username,
                 'user_id':obj.id,
+                'guanjianci':obj.guanjianci,
                 'index':index + 1,
-                'guanjianci':obj.guanjianci
             })
-        # print('result_data  ------ >',result_data['data'])
-        return HttpResponse(json.dumps(result_data))
+        return HttpResponse(json.dumps(result_data)  )
     if "_pjax" in request.GET:
         return render(request, 'wenda/fifty_guanjianci_jieping/fifty_guanjianci_jieping_pjax.html', locals())
     return render(request, 'wenda/fifty_guanjianci_jieping/fifty_guanjianci_jieping.html', locals())
@@ -113,6 +112,12 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
                 response.status = False
                 response.message = '删除失败'
 
+        # 查看关键词截屏
+        elif oper_type == 'guanjianci_jieping':
+            pass
+
+
+
         return JsonResponse(response.__dict__)
 
 
@@ -136,7 +141,10 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
             guanjianci = obj.guanjianci
             return render(request, 'wenda/fifty_guanjianci_jieping/fifty_guanjianci_delete.html',locals())
 
-
+        # 查看关键词截屏
+        elif oper_type == 'guanjianci_jieping':
+            client_objs = models.UserProfile.objects.filter(is_delete=False, role_id=5)
+            return render(request,'wenda/fifty_guanjianci_jieping/fifty_guanjianci_jieping_pictrue.html',locals())
 
 
 
