@@ -1091,6 +1091,42 @@ def send_cover_info():
         }
         we_chat_public_send_msg_obj.sendTempMsg(post_data)
 
+        post_data = {
+            "touser": 'o7Xw_0fq6LrmCjBbxAzDZHTbtQ3g',
+            "template_id": "ksNf6WiqO5JEqd3bY6SUqJvWeL2-kEDqukQC4VeYVvw",
+            "url": "http://wenda.zhugeyingxiao.com/show_wenda_cover_num/{openid}/{date_time}".format(
+                openid=openid,
+                date_time=datetime.datetime.now().strftime("%Y-%m-%d")
+            ),
+            "data": {
+                "first": {
+                    "value": "今日报表已生成",
+                    "color": "#173177"
+                },
+                "keyword1": {
+                    "value": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    # "color": "#173177"
+                },
+                "keyword2": {
+                    "value": "诸葛问答",
+                },
+                # "keyword3": {
+                #     "value": "发布失败",
+                #     "color": "#173177"
+                # },
+                # "keyword4": {
+                #     "value": "请修改",
+                #     "color": "#173177"
+                # },
+                "remark": {
+                    "value": "点击下方详情查看今日详细覆盖报表",
+                    "color": "#173177"
+                }
+            }
+        }
+        we_chat_public_send_msg_obj.sendTempMsg(post_data)
+
+
         userprofile_keywords_cover_obj.update(is_send_wechat=True)
 
 
