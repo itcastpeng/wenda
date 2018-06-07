@@ -26,7 +26,7 @@ def guwen_duijie(request):
     status_choices = models.UserProfile.status_choices
     client_data = models.UserProfile.objects.filter(is_delete=False, role_id=5).values('username', 'id')
     xiaoshou_data = models.UserProfile.objects.filter(is_delete=False,role_id=12).values('username','id')
-    bianji_data =  models.UserProfile.objects.filter(is_delete=False,role_id=6).values('username','id')
+    bianji_data =  models.UserProfile.objects.filter(is_delete=False,role_id=13).values('username','id')
 
     if "type" in request.GET and request.GET["type"] == "ajax_json":
         length = int(request.GET.get("length"))
