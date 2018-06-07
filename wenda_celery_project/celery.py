@@ -121,7 +121,7 @@ app.conf.beat_schedule = {
         'schedule': crontab('*/10', '*', '*', '*', '*'),
     },
     # 微信推送到期用户
-    'weixindaoqiyonghutuisong': {
+    'weixin_daoqi_yonghu_tuisong': {
         'task': 'wenda_celery_project.tasks.weixin_daoqi_yonghu_tuisong',
         'schedule': crontab('0', '1', '*', '*', '*'),   # 每天早上9点发送微信通知
 

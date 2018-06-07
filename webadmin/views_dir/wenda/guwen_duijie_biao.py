@@ -94,7 +94,8 @@ def guwen_duijie(request):
                 tingbiao = None
             if obj.jifeishijian_start:
                 kaishi_jifei = obj.jifeishijian_start.strftime('%Y-%m-%d')
-            else:kaishi_jifei = None
+            else:
+                kaishi_jifei = None
             bianji= ''
             try:
                 if obj.bianji.username:
@@ -389,7 +390,7 @@ def guwen_duijie_oper(request, oper_type, o_id):
                 # print('role_id = = > ',bianji_id , xiaoshou_id)
                 xiaoshous = models.UserProfile.objects.filter(role_id=12)
                 # print('xiaoshous = = = > ',xiaoshous[0])
-                bianjis = models.UserProfile.objects.filter(role_id=6)
+                bianjis = models.UserProfile.objects.filter(role_id=13)
             return render(request, 'wenda/guwen_Docking_table/guwen_duijie_outer/guwen_outer_update.html',locals())
 
         # 外层删除
