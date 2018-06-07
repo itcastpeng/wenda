@@ -1640,7 +1640,7 @@ def robot_release_num():
                     robot_count=count
                 )
 
-
+"""
 # 微信推送每日覆盖量
 @app.task
 def weixin_meiri_fugai_tuisong():
@@ -1745,7 +1745,7 @@ def weixin_meiri_fugai_tuisong():
     guwen_weixin()
     # print('销售 - - -- 》 ')
     # xiaoshou_weixin()
-
+"""
 
 # 下载关键词与关键词类型
 @app.task

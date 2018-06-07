@@ -44,11 +44,12 @@
     $("#exampleFormModal .modal-dialog").css("width", "800px");
 
     $("#create_button").on('click', function () {
-
+     $("#create_button").attr("disabled", "disabled");
         var data = $("#formOper").serialize();
 
         var url = 'task_allotment/{{ o_id }}/';
         $.post(url, data, function (result) {
+        $("#create_button").removeAttr("disabled");
             if(!result['status']){
                 toastr['error'](result['message']);
             }else{

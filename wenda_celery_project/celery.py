@@ -121,7 +121,7 @@ app.conf.beat_schedule = {
         'schedule': crontab('*/10', '*', '*', '*', '*'),
     },
     # 微信推送到期用户
-    'weixindaoqiyonghutuisong': {
+    'weixin_daoqi_yonghu_tuisong': {
         'task': 'wenda_celery_project.tasks.weixin_daoqi_yonghu_tuisong',
         'schedule': crontab('0', '1', '*', '*', '*'),   # 每天早上9点发送微信通知
 
@@ -131,11 +131,13 @@ app.conf.beat_schedule = {
         'task': 'wenda_celery_project.tasks.robot_release_num',
         'schedule': crontab('*/10', '*', '*', '*', '*'),
     },
+    """
     # 查询每日覆盖量微信推送
     'fugailiangtixing': {
         'task': 'wenda_celery_project.tasks.fugailiangtixing',
         'schedule': crontab('*', '1', '*', '*', '*'),
     },
+    """
     # 宕机微信推送提醒
     'dangjitixing': {
         'task': 'wenda_celery_project.tasks.dangjitixing',
