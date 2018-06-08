@@ -123,7 +123,7 @@ def edit_error_content(request, o_id):
         obj = models.EditPublickTaskManagement.objects.get(id=o_id)
         wenda_robot_task_obj = models.WendaRobotTask.objects.get(id=obj.run_task.id)
         panduan_addmap = obj.task.task.task.add_map
-        bianji_shifou_dianji_add_map = models.GlobalSettings.objects.values('bianji_shifou_dianji_add_map')
+        bianji_shifou_dianji_add_map = models.GlobalSettings.objects.values('bianji_shifou_dianji_add_map')[0]['bianji_shifou_dianji_add_map']
         print('bianji_shifou_dianji_add_map - - > ',bianji_shifou_dianji_add_map)
         if wenda_robot_task_obj.task.release_user.map_search_keywords and wenda_robot_task_obj.task.release_user.map_match_keywords:
             map_flag = True
