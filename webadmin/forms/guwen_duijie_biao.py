@@ -21,7 +21,7 @@ class OuterAddForm(forms.Form):
         }
     )
 
-    bianji_user = forms.IntegerField(
+    bianji = forms.IntegerField(
         required=False,
         error_messages={
             "required": "编辑类型错误！",

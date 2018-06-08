@@ -144,7 +144,6 @@ def guwen_duijie_oper(request, oper_type, o_id):
     response = pub.BaseResponse()
     print('user',o_id)
     if request.method == "POST":
-
         # 外层添加
         if oper_type == "outer_create":
             yonghuming_id = request.POST.get('yonghuming')
@@ -165,7 +164,7 @@ def guwen_duijie_oper(request, oper_type, o_id):
                         fugai_count=forms_obj.cleaned_data['fugailiang'],               # 覆盖总数
                         jifeishijian_start=forms_obj.cleaned_data['start_time'],  # 计费开始
                         jifeishijian_stop=forms_obj.cleaned_data['stop_time'],    # 结束计费
-                        bianji_id=forms_obj.cleaned_data['bianji_user'],            # 编辑
+                        bianji_id=forms_obj.cleaned_data['bianji'],            # 编辑
                         daokuan_time=forms_obj.cleaned_data['daokuan_time']       # 到款日期
                     )
                     response.status = True

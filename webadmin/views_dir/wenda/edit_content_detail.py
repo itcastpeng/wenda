@@ -139,7 +139,7 @@ def edit_content_detail(request):
 
             result_data["data"].append(
                 [
-                    index, client_username,obj.task.edit_user.username, obj.get_status_display(), title, obj.content,
+                    index, client_username,obj.task.edit_user.username, obj.get_status_display(),obj.task.task.task.get_wenda_type_display(), title, obj.content,
                     obj.submit_num, update_date, oper
                 ]
             )

@@ -152,12 +152,17 @@ def edit_content_management_oper(request, oper_type, o_id):
         # 任务分配
         if oper_type == "task_allotment":
             print(request.POST)
+
+            task_obj = models.EditContentManagement.objects.get(id=o_id)
+
             panduan_map = request.POST.get('panduan_map')
             if panduan_map:
-                obj = models.EditContentManagement.objects.filter(id=o_id)
-                obj[0].task.add_map = True
-                obj[0].save()
-            task_obj = models.EditContentManagement.objects.get(id=o_id)
+                # obj = models.EditContentManagement.objects.filter(id=o_id)
+                # obj[0].task.add_map = True
+                # obj[0].save()
+                obj = models.Task.objects.get(id=task_obj.task_id)
+                obj.add_map = True
+                obj.save()
 
             flag = True
             task_allotment_data = {}
