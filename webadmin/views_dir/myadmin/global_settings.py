@@ -44,8 +44,10 @@ def global_settings(request):
     else:
 
         global_settings_obj = models.GlobalSettings.objects.all()[0]
-        obj = models.GlobalSettings.objects.values('fugaibaobiao_shengcheng_moshi')
+        obj = models.GlobalSettings.objects.values('fugaibaobiao_shengcheng_moshi','bianji_shifou_dianji_add_map')
         obj_status = obj[0]['fugaibaobiao_shengcheng_moshi']
+        print('obj - -- >',obj[0])
+        bianji_shifou_dianji_add_map = obj[0]['bianji_shifou_dianji_add_map']
         if "_pjax" in request.GET:
             return render(request, 'myadmin/global_settings/global_settings_pjax.html', locals())
         return render(request, 'myadmin/global_settings/global_settings.html', locals())
