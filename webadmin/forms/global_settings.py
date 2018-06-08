@@ -41,3 +41,10 @@ class GlobalSettingsForm(Form):
             # "invalid": "第五项格式错误",
         },
     )
+    bianji_shifou_dianji_add_map = fields.BooleanField(
+        required=False,
+        error_messages={
+            "required": "第六项添加地图类型错误！",
+            # "invalid": "第六项格式错误",
+        },
+    )
