@@ -30,7 +30,7 @@
                     <textarea {% if wenda_robot_task_obj.status in title_update_id_list %}disabled{% endif %} class="form-control font-size-40" rows="3" id="content">{{ obj.content }}</textarea>
                 </div>
             </div>
-
+            {% if bianji_shifou_dianji_add_map %}
             <div class="form-group">
                 <div class="checkbox">
 {#                    <label for="addMap" class="col-sm-3 control-label font-size-40">添加地图: </label>#}
@@ -40,7 +40,7 @@
 {#                        {% if True %}#}
 {#                        <input type="checkbox" id="addMap" checked disabled="" style="display: block; margin-left: 0; zoom: 300% ">#}
 {#                            不让编辑点击添加地图#}
-                        <input type="checkbox" id="addMap" {% if panduan_addmap %}checked{% endif %} {% if bianji_shifou_dianji_add_map %}disabled=""{% endif %} style="display: block; margin-left: 0; zoom: 300% ">
+                        <input type="checkbox" id="addMap" {% if panduan_addmap %}checked{% endif %}  style="display: block; margin-left: 0; zoom: 300% ">
 {#                            编辑可点击添加地图#}
 {#                        <input type="checkbox" id="addMap" {% if panduan_addmap %}checked{% endif %}  style="display: block; margin-left: 0; zoom: 300% ">#}
 {#                        <input type="checkbox" class="form-control" id="addMap" {% if panduan_addmap %}checked{% endif %} disabled="" style="display: block; margin-left: 0; zoom: 300% ">#}
@@ -52,6 +52,7 @@
                 </div>
 
             </div>
+                {% endif %}
 
             <button type="button" onclick="update();" class="btn btn-success font-size-40" style="float: right; right: 20px; margin-right: 50px;margin-top: 30px;">修改</button>
 
