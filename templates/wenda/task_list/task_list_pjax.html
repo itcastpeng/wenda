@@ -40,7 +40,6 @@
     tbody td .btn{
         margin-bottom: 5px;
     }
-
 </style>
 
 {% csrf_token %}
@@ -129,11 +128,11 @@
                 {% endif %}
 
 {#                <table class="table table-bordered table-hover dataTable table-striped width-full text-nowrap" id="dataTable">#}
-                <table class="table table-bordered table-hover table-striped" id="dataTable">
+                <table class="table table-bordered table-hover table-striped " id="dataTable"  style="overflow-x: scroll;">
                     <thead>
                         <tr>
                             <th>编号</th>
-                            <th style="width: 10%">任务名称</th>
+                            <th>任务名称</th>
                             <th>发布平台</th>
                             <th>问答类型</th>
                             <th>发布数量</th>
@@ -145,8 +144,8 @@
                             <th>创建时间</th>
                             <th>更新时间</th>
                             <th>完成时间</th>
-                            <th style="width: 60px">备注</th>
-                            <th style="width: 60px">操作</th>
+                            <th>备注</th>
+                            <th>操作</th>
                         </tr>
                     </thead>
 {#                    <tbody>#}
