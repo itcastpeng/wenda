@@ -291,12 +291,18 @@ def task_list(request):
                     <a class="btn btn-round btn-sm bg-danger" aria-hidden="true" href="revocation/{obj_id}/" data-toggle="modal" data-target="#exampleFormModal"><i class="icon wb-trash" aria-hidden="true"></i>撤销</a>
                 """.format(obj_id=obj.id)
 
-            if 6 > obj.status > 1:
-                remark = obj.remark
-            else:
-                remark = obj.publish_remark
+            remark = """
+             <a class=" aria-hidden="true" href="beizhu_botton/{obj_id}/" data-toggle="modal" data-target="#exampleFormModal">备注</a>
+            """.format(obj_id=obj.id)
+            # if 6 > obj.status > 1:
+            #     remark = obj.remark
+            # else:
+            #     remark = obj.publish_remark
 
-            obj_data = [index, obj.name, release_platform, wenda_type, obj.num, status, task_demand_excel, task_result_excel,publish_task_result_excel, baobiao, create_date, update_date, complete_date, remark, oper]
+            obj_data = [
+                index, obj.name, release_platform, wenda_type, obj.num, status, task_demand_excel, task_result_excel,
+                publish_task_result_excel, baobiao, create_date, update_date, complete_date, oper ,remark
+            ]
 
             result_data["data"].append(obj_data)
 
@@ -665,6 +671,25 @@ def task_list_oper(request, oper_type, o_id):
             else:
                 response.status = False
                 response.message = '请输入数字'
+
+        # 备注按钮
+        elif oper_type == 'beizhu_botton':
+            xuanchuanyaoqiu = request.POST.get('xuanchuanyaoqiu')
+            if xuanchuanyaoqiu:
+                print(xuanchuanyaoqiu)
+                obj = models.Task.objects.filter(id=o_id)
+                if obj:
+                    obj.update(
+                        remark = xuanchuanyaoqiu
+                    )
+                    response.status = True
+                    response.message='修改成功'
+                else:
+                    obj.create(
+                        remark = xuanchuanyaoqiu
+                    )
+                    response.status = True
+                    response.message = '创建成功'
         return JsonResponse(response.__dict__)
 
     else:
@@ -862,6 +887,12 @@ def task_list_oper(request, oper_type, o_id):
             o_id = o_id
             name = objs[0]['name']
             return render(request,'wenda/my_task/my_task_model_update_fabu_shuliang.html',locals())
+
+        # 备注按钮
+        elif oper_type == 'beizhu_botton':
+            objs = models.Task.objects.filter(id=o_id)
+            remark = objs[0].remark
+            return render(request, 'wenda/my_task/my_task_modal_beizhu.html', locals())
 
 # 对客户扣费记录明细
 def kouFei(task_obj):
