@@ -657,7 +657,8 @@ def task_list_oper(request, oper_type, o_id):
                 obj = models.Task.objects.get(id=o_id)
                 if obj:
                     obj.num=num
-                    obj.editcontentmanagement_set.edittaskmanagement_set.number = num
+                    models.EditTaskManagement.objects.select_related('task','task').filter(task__task_id=obj.id).update(number=num)
+                    # obj.editcontentmanagement_set.edittaskmanagement_set.number = num
                     obj.save()
                     response.status = True
                     response.message = '修改成功'
