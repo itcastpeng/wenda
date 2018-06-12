@@ -65,7 +65,7 @@ class OuterAddForm(forms.Form):
 
 class OuterUpdateForm(forms.Form):
     xiaoshou = forms.IntegerField(
-        required=False,
+        required=True,
         error_messages={
             "required": "类型错误！",
         }
@@ -78,7 +78,7 @@ class OuterUpdateForm(forms.Form):
     )
 
     fugailiang =forms.IntegerField(
-        required=False,
+        required=True,
         error_messages={
             "required": "覆盖不能为空！",
         }

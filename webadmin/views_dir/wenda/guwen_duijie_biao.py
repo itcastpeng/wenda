@@ -65,7 +65,7 @@ def guwen_duijie(request):
                     q.add(Q(**{field + "__contains": request.GET[field]}), Q.AND)
 
         user_profile_objs = ''
-
+        print('11111111111111111111111111111111111111111111')
         if client_user or bianji_user or xiaoshou_user:
             if client_user:
                 print('client_- > ',client_user)
@@ -76,56 +76,62 @@ def guwen_duijie(request):
                 user_profile_objs = models.YingXiaoGuWen_DuiJie.objects.filter(marketid=xiaoshou_user)
 
         else:
-            user_profile_objs = models.YingXiaoGuWen_DuiJie.objects.select_related("market",'bianji').filter(kehu_username__is_delete=False).filter(
+            user_profile_objs = models.YingXiaoGuWen_DuiJie.objects.select_related("market").filter(kehu_username__is_delete=False).filter(
                 q).order_by(order_column)
 
         result_data = {'data':[]}
+        print('user_profile_objs===> ',user_profile_objs)
         for index, obj in enumerate(user_profile_objs[start: (start + length)], start=1):
-            q.add(Q(id=obj.bianji_id) | Q(id=obj.market_id),Q.AND)
-            bianji_obj = models.UserProfile.objects.filter(id=obj.bianji_id)
-            # xiaoshou_obj = models.UserProfile.objects.filter(id=obj.market_id)
-            bianji = None
-            xiaoshou = None
-            if bianji_obj:
-                bianji = bianji_obj[0].username
-            user_id = obj.id
+            print('-------> ',obj.daokuan_time)
+            xiaoshou = obj.market.username
             daozhang = obj.shiji_daozhang
-            bianji  = bianji
-            if obj.market:
-                xiaoshou = obj.market
             kehu_name = obj.kehu_username.username
-            index = index
-            tingbiao = None
-            kaishi_jifei = None
-            daokuan_time = None
+            fugai_count = obj.fugai_count
+            user_id = obj.id
             if obj.jifeishijian_stop:
                 tingbiao = obj.jifeishijian_stop.strftime('%Y-%m-%d')
+            else:
+                tingbiao = None
             if obj.jifeishijian_start:
                 kaishi_jifei = obj.jifeishijian_start.strftime('%Y-%m-%d')
-            if  obj.daokuan_time:
+            else:
+                kaishi_jifei = None
+            bianji= ''
+            try:
+                if obj.bianji.username:
+                    bianji =obj.bianji.username
+                else:
+                    bianji = None
+            except Exception as e:
+                print('')
+            if obj.daokuan_time:
                 daokuan_time = obj.daokuan_time.strftime('%Y-%m-%d')
-            fugai_count = obj.fugai_count
-            # print('xiaoshou --- - >',xiaoshou)
-            # print('-------> ',user_id,tingbiao,kaishi_jifei,daozhang,kehu_name,user_id,index,daokuan_time,fugai_count,xiaoshou)
+            else:
+                daokuan_time = None
+            # daokuan_time = obj.daokuan_time
+
+            # print('asdhjksankljf ',bianji , xiaoshou, daozhang, kehu_name, fugai,kaishi_jifei,tingbiao)
             oper = ''
             oper += "<a href='beizhu_botton/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>备注</a>".format(
                 user_id=user_id)
             oper += "----<a href='outer_update/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>修改</a>".format(user_id=user_id)
             oper += "----<a href='outer_delete/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>删除</a>".format(user_id=user_id)
             oper += "----<a href = 'inner_create/{user_id}/'data-toggle='modal' data-target='#exampleFormModal'> 添加 </a>".format(user_id=user_id)
+
             result_data['data'].append({
                 'oper':oper,
                 'tingbiao':tingbiao,
                 'kaishi_jifei':kaishi_jifei,
                 'daozhang':daozhang,
                 'bianji':bianji,
-                'xiaoshou':str(xiaoshou),
+                'xiaoshou':xiaoshou,
                 'kehu_name':kehu_name,
                 'user_id':user_id,
                 'index':index,
                 'daokuan_time':daokuan_time,
                 'fugai_count':fugai_count
             })
+        print('result_data  ------ >',result_data['data'])
         return HttpResponse(json.dumps(result_data))
     if "_pjax" in request.GET:
         return render(request, 'wenda/guwen_Docking_table/guwen_duijie_biao_pjax.html', locals())
@@ -197,7 +203,7 @@ def guwen_duijie_oper(request, oper_type, o_id):
 
         # 外层修改
         elif oper_type == 'outer_update':
-            print('request ',request.POST)
+
             forms_obj = guwen_duijie_biao.OuterUpdateForm(request.POST)
             # print('=================',  xiaoshou, bianji, daozhang, fugailiang, start_time, stop_time)
             if forms_obj.is_valid():
@@ -347,29 +353,42 @@ def guwen_duijie_oper(request, oper_type, o_id):
 
         # 外层修改
         elif oper_type == 'outer_update':
-            print('进入外层修改',o_id)
             obj = models.YingXiaoGuWen_DuiJie.objects.filter(id=o_id)
-
+            if obj[0].bianji_id:
+                bianji_id = obj[0].bianji_id
+            else:
+                bianji_id = ''
+            if obj[0].jifeishijian_start:
+                jifeishijian_start = obj[0].jifeishijian_start.strftime('%Y-%m-%d')
+            else:
+                jifeishijian_start = ''
+            if obj[0].jifeishijian_stop:
+                jifeishijian_stop = obj[0].jifeishijian_stop.strftime('%Y-%m-%d')
+            else:
+                jifeishijian_stop = ''
+            if obj[0].daokuan_time:
+                daokuan_time = obj[0].daokuan_time.strftime('%Y-%m-%d')
+            else:
+                daokuan_time = ''
+            try:
+                if  obj[0].bianji.username:
+                    bianjiming = obj[0].bianji.username
+                else:
+                    bianjiming = ''
+            except Exception as e:
+                print('')
             if obj:
                 xiaoshou_id = obj[0].market_id
                 xiaoshouming = obj[0].market
-                bianji_id = None
-                bianji_name = None
-                if obj[0].bianji:
-                    bianji_id = obj[0].bianji.id
-                    bianji_name = obj[0].bianji.username
+                shangwutong = obj[0].shangwutong
                 daozhang = obj[0].shiji_daozhang
                 fugai = obj[0].fugai_count
-                kaishi_time = None
-                jieshu_time = None
-                daokuan_time = None
-                if obj[0].jifeishijian_start:
-                    kaishi_time = obj[0].jifeishijian_start.strftime('%Y-%m-%d')
-                if obj[0].jifeishijian_stop:
-                    jieshu_time = obj[0].jifeishijian_stop.strftime('%Y-%m-%d')
-                if obj[0].daokuan_time:
-                    daokuan_time = obj[0].daokuan_time.strftime('%Y-%m-%d')
+                xuanchuan = obj[0].xuanchuanyaoqiu
+                wendageshu = obj[0].wenda_geshu
+                panduan_xinwenda = obj[0].xinwenda
+                # print('role_id = = > ',bianji_id , xiaoshou_id)
                 xiaoshous = models.UserProfile.objects.filter(role_id=12)
+                # print('xiaoshous = = = > ',xiaoshous[0])
                 bianjis = models.UserProfile.objects.filter(role_id=13)
             return render(request, 'wenda/guwen_Docking_table/guwen_duijie_outer/guwen_outer_update.html',locals())
 
