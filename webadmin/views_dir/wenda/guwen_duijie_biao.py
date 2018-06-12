@@ -84,8 +84,8 @@ def guwen_duijie(request):
             q.add(Q(id=obj.bianji_id) | Q(id=obj.market_id),Q.AND)
             bianji_obj = models.UserProfile.objects.filter(id=obj.bianji_id)
             # xiaoshou_obj = models.UserProfile.objects.filter(id=obj.market_id)
-            bianji = None
-            xiaoshou = None
+            bianji = ''
+            xiaoshou = ''
             if bianji_obj:
                 bianji = bianji_obj[0].username
             user_id = obj.id
@@ -95,9 +95,9 @@ def guwen_duijie(request):
                 xiaoshou = obj.market
             kehu_name = obj.kehu_username.username
             index = index
-            tingbiao = None
-            kaishi_jifei = None
-            daokuan_time = None
+            tingbiao = ''
+            kaishi_jifei = ''
+            daokuan_time = ''
             if obj.jifeishijian_stop:
                 tingbiao = obj.jifeishijian_stop.strftime('%Y-%m-%d')
             if obj.jifeishijian_start:
@@ -222,11 +222,11 @@ def guwen_duijie_oper(request, oper_type, o_id):
                     bianji_id=forms_obj.cleaned_data['bianji_outer_update'],     # 编辑
                     )
                     if forms_obj.cleaned_data['daokuan_riqi']:
-                       obj.update(jifeishijian_start=forms_obj.cleaned_data['daokuan_riqi'])    # 到款日期
+                       obj.update(daokuan_time=forms_obj.cleaned_data['daokuan_riqi'])    # 到款日期
                     if forms_obj.cleaned_data['stop_datatime']:
                         obj.update(jifeishijian_stop=forms_obj.cleaned_data['stop_datatime'])   # 结束计费
                     if  forms_obj.cleaned_data['start_datatime']:
-                        obj.update(daokuan_time=forms_obj.cleaned_data['start_datatime'])       # 计费开始
+                        obj.update(jifeishijian_start=forms_obj.cleaned_data['start_datatime'])       # 计费开始
                 response.status = True
                 response.message = '修改成功'
             else:
