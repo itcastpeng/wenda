@@ -64,7 +64,13 @@ class OuterAddForm(forms.Form):
 
 
 class OuterUpdateForm(forms.Form):
-    xiaoshou = forms.IntegerField(
+    xiaoshou_outer_update = forms.IntegerField(
+        required=False,
+        error_messages={
+            "required": "类型错误！",
+        }
+    )
+    bianji_outer_update = forms.IntegerField(
         required=False,
         error_messages={
             "required": "类型错误！",
@@ -80,33 +86,28 @@ class OuterUpdateForm(forms.Form):
     fugailiang =forms.IntegerField(
         required=False,
         error_messages={
-            "required": "覆盖不能为空！",
+            "required": "类型错误！",
         }
     )
-    bianji = forms.IntegerField(
+    daokuan_riqi = forms.DateField(
         required=False,
         error_messages={
             "required": "类型错误！",
         }
     )
-    daokuan_time = forms.DateField(
+    start_datatime = forms.DateField(
         required=False,
         error_messages={
             "required": "类型错误！",
         }
     )
-    start_time = forms.DateField(
+    stop_datatime = forms.DateField(
         required=False,
         error_messages={
             "required": "类型错误！",
         }
     )
-    stop_time = forms.DateField(
-        required=False,
-        error_messages={
-            "required": "类型错误！",
-        }
-    )
+
 
 # 内层判断添加
 class InnerCreateForm(forms.Form):

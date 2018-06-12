@@ -197,26 +197,40 @@ def guwen_duijie_oper(request, oper_type, o_id):
 
         # 外层修改
         elif oper_type == 'outer_update':
-            print('request ',request.POST)
+            # daokuan_time =''
+            # start_time =''
+            # stop_time =''
+            # if request.POST.get('daokuan_riqi'):
+            #     daokuan_time = request.POST.get('daokuan_riqi')
+            #     print('=============>',daokuan_time)
+            # if request.POST.get('start_time'):
+            #     start_time = request.POST.get('start_time')
+            #     print('=============>',start_time)
+            # if request.POST.get('stop_time'):
+            #     stop_time = request.POST.get('stop_time')
+            #     print('=============>',stop_time)
+            print('request-----> ',request.POST)
             forms_obj = guwen_duijie_biao.OuterUpdateForm(request.POST)
-            # print('=================',  xiaoshou, bianji, daozhang, fugailiang, start_time, stop_time)
             if forms_obj.is_valid():
-                print('验证通过')
-                obj = models.YingXiaoGuWen_DuiJie.objects.filter(id=o_id)
                 print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
+                obj = models.YingXiaoGuWen_DuiJie.objects.filter(id=o_id)
                 if obj:
                     obj.update(
-                    market_id=forms_obj.cleaned_data['xiaoshou'],           # 销售
-                    shiji_daozhang=forms_obj.cleaned_data['daozhang'],         # 实际到账
-                    fugai_count=forms_obj.cleaned_data['fugailiang'],          # 覆盖总数
-                    jifeishijian_start=forms_obj.cleaned_data['start_time'],   # 计费开始
-                    jifeishijian_stop=forms_obj.cleaned_data['stop_time'],     # 结束计费
-                    bianji_id=forms_obj.cleaned_data['bianji'],                # 编辑
-                    daokuan_time=forms_obj.cleaned_data['daokuan_time']        # 到款日期
+                    market_id=forms_obj.cleaned_data['xiaoshou_outer_update'],   # 销售
+                    shiji_daozhang=forms_obj.cleaned_data['daozhang'],           # 实际到账
+                    fugai_count=forms_obj.cleaned_data['fugailiang'],            # 覆盖总数
+                    bianji_id=forms_obj.cleaned_data['bianji_outer_update'],     # 编辑
                     )
+                    if forms_obj.cleaned_data['daokuan_riqi']:
+                       obj.update(jifeishijian_start=forms_obj.cleaned_data['daokuan_riqi'])    # 到款日期
+                    if forms_obj.cleaned_data['stop_datatime']:
+                        obj.update(jifeishijian_stop=forms_obj.cleaned_data['stop_datatime'])   # 结束计费
+                    if  forms_obj.cleaned_data['start_datatime']:
+                        obj.update(daokuan_time=forms_obj.cleaned_data['start_datatime'])       # 计费开始
                 response.status = True
                 response.message = '修改成功'
             else:
+                print('cuowu --',forms_obj.errors)
                 response.status = False
                 response.message = 'form验证失败'
 
@@ -347,22 +361,31 @@ def guwen_duijie_oper(request, oper_type, o_id):
 
         # 外层修改
         elif oper_type == 'outer_update':
-            print('进入外层修改',o_id)
             obj = models.YingXiaoGuWen_DuiJie.objects.filter(id=o_id)
-
             if obj:
-                xiaoshou_id = obj[0].market_id
-                xiaoshouming = obj[0].market
-                bianji_id = None
-                bianji_name = None
+                print('obj[0].market_id -- > ',obj[0].market_id)
+                print('obj[0].market_id -- > ',obj[0].market)
+
+                xiaoshou_id = ''
+                xiaoshouming = ''
+                if obj[0].market_id:
+                    xiaoshou_id = int(obj[0].market_id)
+                if obj[0].market:
+                    xiaoshouming = obj[0].market
+                bianji_id = ''
+                bianji_name = ''
                 if obj[0].bianji:
-                    bianji_id = obj[0].bianji.id
+                    bianji_id = int(obj[0].bianji.id)
                     bianji_name = obj[0].bianji.username
-                daozhang = obj[0].shiji_daozhang
-                fugai = obj[0].fugai_count
-                kaishi_time = None
-                jieshu_time = None
-                daokuan_time = None
+                daozhang = ''
+                if obj[0].shiji_daozhang:
+                    daozhang = obj[0].shiji_daozhang
+                fugai = ''
+                if obj[0].fugai_count:
+                    fugai = obj[0].fugai_count
+                kaishi_time = ''
+                jieshu_time = ''
+                daokuan_time = ''
                 if obj[0].jifeishijian_start:
                     kaishi_time = obj[0].jifeishijian_start.strftime('%Y-%m-%d')
                 if obj[0].jifeishijian_stop:
