@@ -1357,7 +1357,7 @@ def fugailiangtixing(request, oper_type, o_id):
 # 新问答完成的不打回到编辑
 def xinwenda_wancheng_budahui(request):
     print('进入 ====================== 进入')
-    objs = models.EditPublickTaskManagement.objects.filter(status=2)
+    objs = models.EditPublickTaskManagement.objects.filter(status=2).exclude(run_task__wenda_type=2)
     for obj in objs:
         print('obj ----- > ',obj.run_task.task.name )
         obj_statu = obj.run_task.task.status

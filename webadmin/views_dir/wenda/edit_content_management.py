@@ -119,7 +119,11 @@ def edit_content_management(request):
                     <i class="icon fa-search" aria-hidden="true"></i> 查看编写问题答案
                     </a>
                 """.format(obj_id=obj.id)
-
+            remark =  """
+                   <a  href="task_shuoming/{obj_id}/" data-toggle="modal" data-target="#exampleFormModal">
+                    任务说明
+                    </a>
+                """.format(obj_id=obj.id)
             # oper += """
             #     <a class="btn btn-round btn-sm bg-primary" aria-hidden="true" href="update/{obj_id}/" data-toggle="modal" data-target="#exampleFormModal"><i class="icon fa-pencil-square-o"></i>修改</a>
             #     <a class="btn btn-round btn-sm bg-danger" aria-hidden="true" href="delete/{obj_id}/" data-toggle="modal" data-target="#exampleFormModal"><i class="fa fa-trash-o fa-fw"></i>删除</a>
@@ -128,7 +132,7 @@ def edit_content_management(request):
             result_data["data"].append(
                 [
                     index, obj.client_user.username, obj.number, obj.get_status_display(), reference_file_path,
-                    obj.remark, obj.create_user.username, create_date, complete_date, oper
+                     obj.create_user.username, create_date, complete_date, oper,remark
                 ]
             )
 
@@ -295,6 +299,13 @@ def edit_content_management_oper(request, oper_type, o_id):
 
             response.status = True
 
+        # 任务说明
+        elif oper_type == 'task_shuoming':
+            renwushuoming = request.POST.get('renwushuoming')
+            print('renwushuoming -0 -- - -> ',renwushuoming)
+            response.status = True
+            response.message = '修改成功'
+            obj = models.EditContentManagement.objects.filter(id=o_id).update(remark=renwushuoming)
         return JsonResponse(response.__dict__)
 
     else:
@@ -321,3 +332,9 @@ def edit_content_management_oper(request, oper_type, o_id):
             objs = models.EditPublickTaskManagement.objects.select_related('task__edit_user').filter(task__task_id=o_id)
             return render(request, 'wenda/edit_content_management/edit_content_management_modal_task_edit_detail.html', locals())
 
+        # 任务说明
+        elif oper_type == 'task_shuoming':
+            print('o_ido_id --  > ',o_id)
+            shuoming_obj = models.EditContentManagement.objects.select_related('task').filter(id=o_id)
+            obj_remark = shuoming_obj[0].remark
+            return render(request,'wenda/edit_content_management/edit_content_management_modal_renwushuoming.html',locals())

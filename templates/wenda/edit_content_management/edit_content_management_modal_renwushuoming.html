@@ -1,0 +1,79 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h3 class="modal-title">任务说明</h3>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal" id="modal_beizhu" onsubmit="return false">
+        {% csrf_token %}
+
+
+{#        宣传要求#}
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="renwushuoming">任务说明 <span class="form-span-active">*</span></label>
+            <div class="col-md-8">
+                <textarea name="renwushuoming" id="renwushuoming" class="form-control" rows="10" placeholder="请输入说明！" >{{ obj_remark }}</textarea>
+            </div>
+        </div>
+
+
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" id="queding_button">确定</button>
+</div>
+
+<script>
+        function init() {
+           $panduan = $('#xinwenda');
+            if($('#panduan_xinwenda').attr('checked')){
+                $panduan.show()
+            }else {
+                $panduan.hide()
+
+            }
+        };
+            init();
+        $('#panduan_xinwenda').on({'click':function(){
+            $panduan = $('#xinwenda');
+            $panduan.toggle(300);
+            if(this.attr('checked',true))
+            {
+                 $panduan.show()
+            }else{
+                 $panduan.hide()
+            }
+      }});
+    $('#xinwenda').on({
+        'click':function(e){
+            var src = e.target;
+            if(src.id && src.id === ''){
+                $panduan.hide()
+            }else{
+                return false
+          }
+         }
+      });
+
+
+    $("#exampleFormModal .modal-dialog").css("width", "700px");
+    $('#inputRadiosChecked').on('change',function(){
+    });
+    $("#queding_button").on('click', function () {
+        var data = $("#modal_beizhu").serialize();
+        var url = '{% url "edit_content_management" %}task_shuoming/{{ o_id }}/';
+        $.post(url, data, function (result) {
+            if(!result['status']){
+                toastr['error'](result['message']);
+            }else{
+                toastr['success'](result['message']);
+                $('.modal').modal("hide");
+                table.ajax.reload();
+            }
+            }, 'json')
+
+    });
+
+
+</script>
