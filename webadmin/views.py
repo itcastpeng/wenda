@@ -130,10 +130,6 @@ def test(request):
     return HttpResponse('dfdfdsfsd')
 
 
-def img_upLoad(request):
-    return HttpResponse('x')
-
-
 # 图片上传
 @pub.is_login
 def img_upLoad(request):

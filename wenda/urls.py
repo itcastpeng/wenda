@@ -83,6 +83,9 @@ urlpatterns = [
 
     # 新问答完成不会打回到编辑
     url(r'api/xinwenda_wancheng_budahui', api.xinwenda_wancheng_budahui),
+
+    # 五十个关键词 获取关键词
+    url(r'api/fifty_guanjianci_fabu', api.fifty_guanjianci_fabu),
     # #################### 问答 ####################
 
     # 问答机器人
