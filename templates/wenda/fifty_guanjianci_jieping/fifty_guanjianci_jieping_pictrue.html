@@ -14,19 +14,17 @@
     <form class="form-horizontal modal-form">
         {% csrf_token %}
         {#用户#}
-{#        <div class="form-group">#}
-{#            <label class="col-md-2 control-label" for="yonghuming">用户 <span class="form-span-active">*</span></label>#}
-{#            <div class="col-md-6">#}
-{#                <select style="width: 300px;" class="form-control" data-plugin="select2" tabindex="-1" aria-hidden="true" id="yonghuming" name="yonghuming">#}
-{#                    <option value="">请选择</option>#}
-{#                    {% for obj in client_objs %}#}
-{#                        <option value="{{ obj.id }}">{{ obj.username }}</option>#}
-{#                    {% endfor %}#}
-{#                </select>#}
-{#            </div>#}
-{#        </div>#}
-
-        <img src="/statics/picture/六小龄童叫什么--3--0.png" alt="">
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="yonghuming">用户 <span class="form-span-active">*</span></label>
+            <div class="col-md-6">
+                <select style="width: 300px;" class="form-control" data-plugin="select2" tabindex="-1" aria-hidden="true" id="yonghuming" name="yonghuming">
+                    <option value="">请选择</option>
+                    {% for obj in client_objs %}
+                        <option value="{{ obj.id }}">{{ obj.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
     </form>
 
 </div>

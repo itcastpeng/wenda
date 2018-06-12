@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # Author:zhangcong
 # Email:zc_92@sina.com
-import chardet
-import requests
+
+
 from django.shortcuts import render, HttpResponse, redirect, HttpResponsePermanentRedirect
 from webadmin.views_dir import pub
 
@@ -11,7 +11,7 @@ from webadmin import models
 from django.http import JsonResponse
 
 from bson.objectid import ObjectId
-import base64
+
 from django.views.decorators.csrf import csrf_exempt
 
 import datetime
@@ -23,9 +23,8 @@ import json
 from wenda_celery_project import tasks
 
 from webadmin.modules.WeChat import WeChatPublicSendMsg
-
-from webadmin.modules import RedisOper
 import base64
+from webadmin.modules import RedisOper
 
 
 # 登录
@@ -1056,7 +1055,7 @@ def check_zhidao_url(request):
             }
     """
     if request.method == "POST":
-        # print('request_POST===> ',request.POST)
+        print('request_POST===> ',request.POST)
         url = request.POST.get("url")
         client_user_id = request.POST.get("client_user_id")
         is_pause = int(request.POST.get("is_pause"))
@@ -1066,7 +1065,7 @@ def check_zhidao_url(request):
             url=url,
             # is_pause=False,         # 未暂停, 已发布,答案被删除,问答关闭,则会将该字段修改为True
         )
-        # print('tongji_keywords_objs=====> ',tongji_keywords_objs)
+        print('tongji_keywords_objs=====> ',tongji_keywords_objs)
         # 如果统计表中存在,则表示操作过
         if tongji_keywords_objs:
             if is_pause:
@@ -1368,6 +1367,7 @@ def xinwenda_wancheng_budahui(request):
     return HttpResponse('======')
 
 
+
 # 关键词提取 每次取出一个 时间最小的
 @csrf_exempt
 def fifty_guanjianci_fabu(request):
@@ -1426,7 +1426,6 @@ def fifty_guanjianci_fabu(request):
             obj.jieping_time = now_time
             obj.save()
 
-    return JsonResponse(response.__dict__)
 
 
 
