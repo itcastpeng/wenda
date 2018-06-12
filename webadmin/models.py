@@ -788,7 +788,7 @@ class GetKeywordsJiePing(models.Model):
 class GuanJianCiFifty(models.Model):
     guanjianci = models.TextField(verbose_name='五十个关键词',null=True, blank=True)
     yonghu_user = models.ForeignKey(to='UserProfile',verbose_name='归属哪个用户')
-
+    jieping_time = models.DateField(verbose_name='截屏时间', null=True, blank=True)
 
 
 
