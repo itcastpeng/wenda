@@ -23,7 +23,7 @@ import json
 from wenda_celery_project import tasks
 
 from webadmin.modules.WeChat import WeChatPublicSendMsg
-
+import base64
 from webadmin.modules import RedisOper
 
 
@@ -1368,6 +1368,63 @@ def xinwenda_wancheng_budahui(request):
 
 
 
+# 关键词提取 每次取出一个 时间最小的
+@csrf_exempt
+def fifty_guanjianci_fabu(request):
+    response = pub.BaseResponse()
+    now_time = datetime.datetime.today()
+    # if request.GET.get('jieping'):
+    if request.method == "POST":
+        print('-----------进入截屏-----------')
+        keyword = request.POST.get('keyword')
+        guanjianci_num = request.POST.get('guanjianci_num')
+        guanjianci_id = request.POST.get('guanjianci_id')
+        print('关键词 - - -- - - -- > ',keyword)
+        jieping_1 = request.POST.get('jieping_1')
+        jieping_1 = base64.b64decode(jieping_1)
+        open('statics/picture/' + keyword + '--1--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num),'wb').write(jieping_1)
+        jieping_2 = request.POST.get('jieping_2')
+        jieping_2 = base64.b64decode(jieping_2)
+        open('statics/picture/' + keyword + '--2--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num),'wb').write(jieping_2)
+        jieping_3 = request.POST.get('jieping_3')
+        jieping_3 = base64.b64decode(jieping_3)
+        open('statics/picture/' + keyword + '--3--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num),'wb').write(jieping_3)
+        picture_path_one = '/' + 'statics/picture/' + keyword + '--1--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num)
+        picture_path_two = '/' + 'statics/picture/' + keyword + '--2--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num)
+        picture_path_three = '/' + 'statics/picture/' + keyword + '--3--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num)
+
+        q = Q()
+        q.add(Q(picture_path=picture_path_one) | Q(picture_path=picture_path_two) | Q(picture_path=picture_path_three),Q.AND)
+        objs = models.GetKeywordsJiePing.objects.filter(q)
+        print('objs - - >',objs)
+        if objs:
+            print('if - - - if ---- if --- if ')
+            objs.update(picture_path=picture_path_one,guanjianci_id=guanjianci_id)
+            objs.update(picture_path=picture_path_two,guanjianci_id=guanjianci_id)
+            objs.update(picture_path=picture_path_three,guanjianci_id=guanjianci_id)
+        else:
+            print('else -- else -- else -- else ')
+            objs.create(picture_path=picture_path_one, guanjianci_id=guanjianci_id)
+            objs.create(picture_path=picture_path_two, guanjianci_id=guanjianci_id)
+            objs.create(picture_path=picture_path_three, guanjianci_id=guanjianci_id)
+    else:
+        print('get-----')
+        objs = models.GuanJianCiFifty.objects.filter(
+            jieping_time__lt=datetime.datetime.today(),
+        ).order_by('jieping_time')
+        # print(objs )
+        if objs:
+            guanjianci = objs[0].guanjianci
+            user_id = objs[0].yonghu_user_id
+            guanjianci_id = objs[0].id
+            response.data={
+                'guanjianci':guanjianci,
+                'user_id':user_id,
+                'guanjianci_id':guanjianci_id
+            }
+            obj = models.GuanJianCiFifty.objects.get(guanjianci=guanjianci)
+            obj.jieping_time = now_time
+            obj.save()
 
 
 
