@@ -1379,7 +1379,7 @@ def fifty_guanjianci_fabu(request):
         keyword = request.POST.get('keyword')
         guanjianci_num = request.POST.get('guanjianci_num')
         guanjianci_id = request.POST.get('guanjianci_id')
-
+        print('关键词 - - -- - - -- > ',keyword)
         jieping_1 = request.POST.get('jieping_1')
         jieping_1 = base64.b64decode(jieping_1)
         open('statics/picture/' + keyword + '--1--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num),'wb').write(jieping_1)
@@ -1393,12 +1393,20 @@ def fifty_guanjianci_fabu(request):
         picture_path_two = '/' + 'statics/picture/' + keyword + '--2--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num)
         picture_path_three = '/' + 'statics/picture/' + keyword + '--3--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num)
 
-        obj = models.GetKeywordsJiePing.objects.filter(picture_path=picture_path_one).filter(picture_path=picture_path_two).filter(picture_path=picture_path_three)
-        if not obj:
-            obj.create(picture_path=picture_path_one,guanjianci_id=guanjianci_id)
-            obj.create(picture_path=picture_path_two,guanjianci_id=guanjianci_id)
-            obj.create(picture_path=picture_path_three,guanjianci_id=guanjianci_id)
-
+        q = Q()
+        q.add(Q(picture_path=picture_path_one) | Q(picture_path=picture_path_two) | Q(picture_path=picture_path_three),Q.AND)
+        objs = models.GetKeywordsJiePing.objects.filter(q)
+        print('objs - - >',objs)
+        if objs:
+            print('if - - - if ---- if --- if ')
+            objs.update(picture_path=picture_path_one,guanjianci_id=guanjianci_id)
+            objs.update(picture_path=picture_path_two,guanjianci_id=guanjianci_id)
+            objs.update(picture_path=picture_path_three,guanjianci_id=guanjianci_id)
+        else:
+            print('else -- else -- else -- else ')
+            objs.create(picture_path=picture_path_one, guanjianci_id=guanjianci_id)
+            objs.create(picture_path=picture_path_two, guanjianci_id=guanjianci_id)
+            objs.create(picture_path=picture_path_three, guanjianci_id=guanjianci_id)
     else:
         print('get-----')
         objs = models.GuanJianCiFifty.objects.filter(
