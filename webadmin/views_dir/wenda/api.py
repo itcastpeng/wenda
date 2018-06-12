@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # Author:zhangcong
 # Email:zc_92@sina.com
-import chardet
-import requests
+
+
 from django.shortcuts import render, HttpResponse, redirect, HttpResponsePermanentRedirect
 from webadmin.views_dir import pub
 
@@ -11,7 +11,7 @@ from webadmin import models
 from django.http import JsonResponse
 
 from bson.objectid import ObjectId
-import base64
+
 from django.views.decorators.csrf import csrf_exempt
 
 import datetime
@@ -25,7 +25,6 @@ from wenda_celery_project import tasks
 from webadmin.modules.WeChat import WeChatPublicSendMsg
 
 from webadmin.modules import RedisOper
-import base64
 
 
 # 登录
@@ -1056,7 +1055,7 @@ def check_zhidao_url(request):
             }
     """
     if request.method == "POST":
-        # print('request_POST===> ',request.POST)
+        print('request_POST===> ',request.POST)
         url = request.POST.get("url")
         client_user_id = request.POST.get("client_user_id")
         is_pause = int(request.POST.get("is_pause"))
@@ -1066,7 +1065,7 @@ def check_zhidao_url(request):
             url=url,
             # is_pause=False,         # 未暂停, 已发布,答案被删除,问答关闭,则会将该字段修改为True
         )
-        # print('tongji_keywords_objs=====> ',tongji_keywords_objs)
+        print('tongji_keywords_objs=====> ',tongji_keywords_objs)
         # 如果统计表中存在,则表示操作过
         if tongji_keywords_objs:
             if is_pause:
@@ -1368,57 +1367,8 @@ def xinwenda_wancheng_budahui(request):
     return HttpResponse('======')
 
 
-# 关键词提取 每次取出一个 时间最小的
-@csrf_exempt
-def fifty_guanjianci_fabu(request):
-    response = pub.BaseResponse()
-    now_time = datetime.datetime.today()
-    # if request.GET.get('jieping'):
-    if request.method == "POST":
-        print('-----------进入截屏-----------')
-        keyword = request.POST.get('keyword')
-        guanjianci_num = request.POST.get('guanjianci_num')
-        guanjianci_id = request.POST.get('guanjianci_id')
 
-        jieping_1 = request.POST.get('jieping_1')
-        jieping_1 = base64.b64decode(jieping_1)
-        open('statics/picture/' + keyword + '--1--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num),'wb').write(jieping_1)
-        jieping_2 = request.POST.get('jieping_2')
-        jieping_2 = base64.b64decode(jieping_2)
-        open('statics/picture/' + keyword + '--2--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num),'wb').write(jieping_2)
-        jieping_3 = request.POST.get('jieping_3')
-        jieping_3 = base64.b64decode(jieping_3)
-        open('statics/picture/' + keyword + '--3--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num),'wb').write(jieping_3)
-        picture_path_one = '/' + 'statics/picture/' + keyword + '--1--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num)
-        picture_path_two = '/' + 'statics/picture/' + keyword + '--2--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num)
-        picture_path_three = '/' + 'statics/picture/' + keyword + '--3--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num)
 
-        obj = models.GetKeywordsJiePing.objects.filter(picture_path=picture_path_one).filter(picture_path=picture_path_two).filter(picture_path=picture_path_three)
-        if not obj:
-            obj.create(picture_path=picture_path_one,guanjianci_id=guanjianci_id)
-            obj.create(picture_path=picture_path_two,guanjianci_id=guanjianci_id)
-            obj.create(picture_path=picture_path_three,guanjianci_id=guanjianci_id)
-
-    else:
-        print('get-----')
-        objs = models.GuanJianCiFifty.objects.filter(
-            jieping_time__lt=datetime.datetime.today(),
-        ).order_by('jieping_time')
-        # print(objs )
-        if objs:
-            guanjianci = objs[0].guanjianci
-            user_id = objs[0].yonghu_user_id
-            guanjianci_id = objs[0].id
-            response.data={
-                'guanjianci':guanjianci,
-                'user_id':user_id,
-                'guanjianci_id':guanjianci_id
-            }
-            obj = models.GuanJianCiFifty.objects.get(guanjianci=guanjianci)
-            obj.jieping_time = now_time
-            obj.save()
-
-    return JsonResponse(response.__dict__)
 
 
 
