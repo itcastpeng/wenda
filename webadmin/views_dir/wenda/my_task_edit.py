@@ -132,7 +132,11 @@ def my_task_edit(request):
                         <i class="icon fa-search" aria-hidden="true"></i> 查看编写内容
                         </a>
                     """.format(obj_id=obj.id)
-
+            remark_obj =  """
+                        <a  href="remark_shuoming/{obj_id}/" data-toggle="modal" data-target="#exampleFormModal">
+                         任务说明
+                        </a>
+                    """.format(obj_id=obj.id)
             client_username = "%s-%s" % (obj.task.client_user.username, obj.id)
 
             number = "%s/%s" % (obj.number, obj.editpublicktaskmanagement_set.filter(status=3).count())
@@ -140,8 +144,8 @@ def my_task_edit(request):
             result_data["data"].append(
                 [
                     index, client_username, number, obj.get_status_display(), obj.task.task.get_wenda_type_display(),
-                    reference_file_path, obj.task.remark, obj.task.create_user.username, obj.edit_user.username,
-                    create_date, complete_date, oper
+                    reference_file_path, obj.task.create_user.username, obj.edit_user.username,
+                    create_date, complete_date, remark_obj, oper
                 ]
             )
         return HttpResponse(json.dumps(result_data))
@@ -619,6 +623,17 @@ def my_task_edit_oper(request, oper_type, o_id):
             print(title_list)
             print(content_list)
             print(response.message)
+
+        # 任务说明
+        elif oper_type == "remark_shuoming":
+            renwushuoming = request.POST.get('renwushuoming')
+            objs = models.EditTaskManagement.objects.filter(id=o_id)
+            task_id = objs[0].task.id
+            models.EditContentManagement.objects.filter(id=task_id).update(remark=renwushuoming)
+            response.status = True
+            response.message = '修改成功'
+
+
         return JsonResponse(response.__dict__)
 
     else:
@@ -636,5 +651,10 @@ def my_task_edit_oper(request, oper_type, o_id):
             edit_content_objs = models.EditPublickTaskManagement.objects.filter(task_id=o_id).order_by("-status")
             return render(request, 'wenda/my_task_edit/my_task_edit_modal_search_edit_content.html', locals())
 
+        # 任务说明
+        elif oper_type == "remark_shuoming":
+            objs = models.EditTaskManagement.objects.filter(id=o_id)
+            obj_remark = objs[0].task.remark
+            return render(request,'wenda/my_task_edit/my_task_edit_modal_remark_shuoming.html',locals())
 
 
