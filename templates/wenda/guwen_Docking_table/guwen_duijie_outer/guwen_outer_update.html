@@ -21,10 +21,10 @@
         </div>
 {#        编辑#}
             <div class="form-group">
-           <label class="col-md-2 control-label" for="bianji">编辑 <span class="form-span-active">*</span></label>
+           <label class="col-md-2 control-label" for="bianji_outer_update">编辑 <span class="form-span-active">*</span></label>
             <div class="col-md-6">
-                <select style="width: 300px;" class="form-control" data-plugin="select2" tabindex="-1" aria-hidden="true" id="bianji" name="bianji">
-                    <option value="{{ bianji_id }}">{{ bianjiming }}</option>
+                <select style="width: 300px;" class="form-control" data-plugin="select2" tabindex="-1" aria-hidden="true" id="bianji_outer_update" name="bianji_outer_update">
+                    <option value="{{ bianji_id }}">{{ bianji_name }}</option>
                     {% for obj in bianjis %}
                         <option value="{{ obj.id }}">{{ obj.username }}</option>
                     {% endfor %}
@@ -47,23 +47,23 @@
         </div>
     {#        停表时间#}
          <div class="form-group" id="div_stop_time">
-            <label class="col-md-2 control-label" for="daokuan_time">到款日期 </label>
+            <label class="col-md-2 control-label" for="daokuan_riqi">到款日期 </label>
                <div class="col-md-6">
-                  <input class="Wdate form-control" id="daokuan_time" name="daokuan_time" onchange="" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" type="text" value="{{ daokuan_time }}">
+                  <input class="Wdate form-control" id="daokuan_riqi" name="daokuan_riqi" onchange="" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" type="text" value="{{ daokuan_time }}">
              </div>
         </div>
 {#        开始时间#}
          <div class="form-group" id="div_start_time">
-            <label class="col-md-2 control-label" for="start_time">开始日期 </label>
+            <label class="col-md-2 control-label" for="start_datatime">开始日期 </label>
                <div class="col-md-6">
-                   <input class="Wdate form-control" id="start_time" name="start_time" onchange="" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" type="text" value="{{ jifeishijian_start }}">
+                   <input class="Wdate form-control" id="start_datatime" name="start_datatime" onchange="" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" type="text" value="{{ kaishi_time }}">
              </div>
         </div>
 {#        停表时间#}
          <div class="form-group" id="div_stop_time">
-            <label class="col-md-2 control-label" for="stop_time">结束日期 </label>
+            <label class="col-md-2 control-label" for="stop_datatime">结束日期 </label>
                <div class="col-md-6">
-                  <input class="Wdate form-control" id="stop_time" name="stop_time" onchange="" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" type="text" value="{{ jifeishijian_stop }}">
+                  <input class="Wdate form-control" id="stop_datatime" name="stop_datatime" onchange="" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" type="text" value="{{ jieshu_time }}">
              </div>
         </div>
 

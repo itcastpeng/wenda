@@ -144,6 +144,7 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
         # 查看关键词截屏
         elif oper_type == 'guanjianci_jieping':
             client_objs = models.UserProfile.objects.filter(is_delete=False, role_id=5)
+
             return render(request,'wenda/fifty_guanjianci_jieping/fifty_guanjianci_jieping_pictrue.html',locals())
 
 
