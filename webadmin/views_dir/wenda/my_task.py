@@ -670,34 +670,25 @@ def my_task_oper(request, oper_type, o_id):
                 response.status = False
                 response.message = "提交内容不能为空"
 
-        #
+        # 备注 pub
         elif oper_type == 'beizhu_pub_marker':
-            print('111111111111111111111111111111111')
+            print('o_id== ',o_id)
             pub_remark = request.POST.get('pub_remark')
             print('pub_remark- - ========--> ',pub_remark)
             objs = models.Task.objects.filter(id=o_id)
-            if objs[0].publish_remark:
-                objs.update(pub_remark=pub_remark)
-                response.status = True
-                response.message = '修改成功'
-            else:
-                objs.create(pub_remark=pub_remark)
+            objs.update(publish_remark=pub_remark)
             response.status = True
             response.message = '修改成功'
 
-        #
+        # 备注 obj
         elif oper_type == 'beizhu_obj_marker':
             obj_remark = request.POST.get('obj_remark')
             print('obj_remark- -  = = ============>',obj_remark)
             objs = models.Task.objects.filter(id=o_id)
-            if objs[0].remark:
-                objs.update(remark=obj_remark)
-                response.status = True
-                response.message = '修改成功'
-            else:
-                objs.create(remark=obj_remark)
-                response.status = True
-                response.message = '修改成功'
+            objs.update(remark=obj_remark)
+            response.status = True
+            response.message = '修改成功'
+
 
         return JsonResponse(response.__dict__)
 

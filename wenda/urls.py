@@ -180,6 +180,7 @@ urlpatterns = [
     # 编辑编写报表
     url(r'^bianxiebaobiao/', bianxiebaobiao.bianxiebaobiao, name="bianxiebaobiao"),
 
+    # 接收链接返回电话号码
     url(r'^according/',according_geturl.according_geturl,name='according_geturl'),
 
     # 营销顾问对接表
