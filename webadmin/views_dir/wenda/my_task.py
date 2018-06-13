@@ -244,9 +244,16 @@ def my_task(request):
                 """.format(obj_id=obj.id)
 
             if 6 > obj.status > 1:
-                remark = obj.remark
+                # remark = obj.remark
+                remark = """
+                    <a class="btn btn-round btn-sm bg-success" aria-hidden="true" href="upload_task_file/{obj_id}/" data-toggle="modal" data-target="#exampleFormModal"><i class="icon fa-upload" aria-hidden="true"></i>上传任务结果</a>
+                """.format(obj_id=obj.id)
+
             else:
-                remark = obj.publish_remark
+                # remark = obj.publish_remark
+                remark = """
+                    <a class="btn btn-round btn-sm bg-success" aria-hidden="true" href="upload_task_file/{obj_id}/" data-toggle="modal" data-target="#exampleFormModal"><i class="icon fa-upload" aria-hidden="true"></i>上传任务结果</a>
+                """.format(obj_id=obj.id)
 
             result_data["data"].append(
                 [index, obj.name, release_platform, wenda_type, obj.num, status, task_demand_excel, task_result_excel,
