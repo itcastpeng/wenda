@@ -674,9 +674,11 @@ def my_task_oper(request, oper_type, o_id):
         elif oper_type == 'beizhu_pub_marker':
             pub_remark = request.POST.get('pub_remark')
             print('pub_remark- - ========--> ',pub_remark)
-            obj = models.Task.objects.get(id=o_id)
-            obj.publish_remark = pub_remark
-            obj.save()
+            objs = models.Task.objects.filter(id=o_id)
+            if objs[0].publish_remark:
+                objs.update(pub_remark=pub_remark)
+            else:
+                objs.create(pub_remark=pub_remark)
             response.status = True
             response.message = '修改成功'
 
@@ -684,11 +686,16 @@ def my_task_oper(request, oper_type, o_id):
         elif oper_type == 'beizhu_obj_marker':
             obj_remark = request.POST.get('obj_remark')
             print('obj_remark- -  = = ============>',obj_remark)
-            obj = models.Task.objects.get(id=o_id)
-            obj.remark = obj_remark
-            obj.save()
-            response.status = True
-            response.message = '修改成功'
+            objs = models.Task.objects.filter(id=o_id)
+            if objs[0].remark:
+                objs.update(remark=obj_remark)
+                response.status = True
+                response.message = '修改成功'
+            else:
+                objs.create(remark=obj_remark)
+                response.status = True
+                response.message = '修改成功'
+
         return JsonResponse(response.__dict__)
 
     else:
