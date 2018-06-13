@@ -672,13 +672,21 @@ def my_task_oper(request, oper_type, o_id):
 
         #
         elif oper_type == 'beizhu_pub_marker':
-            pass
+            pub_remark = request.POST.get('pub_remark')
+            obj = models.Task.objects.get(id=o_id)
+            obj.publish_remark = pub_remark
+            obj.save()
+            response.status = True
+            response.message = '修改成功'
 
         #
         elif oper_type == 'beizhu_obj_marker':
-            pass
-
-
+            obj_remark = request.POST.get('obj_remark')
+            obj = models.Task.objects.get(id=o_id)
+            obj.remark = obj_remark
+            obj.save()
+            response.status = True
+            response.message = '修改成功'
         return JsonResponse(response.__dict__)
 
     else:
