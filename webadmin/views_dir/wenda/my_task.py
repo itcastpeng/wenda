@@ -244,16 +244,16 @@ def my_task(request):
                 """.format(obj_id=obj.id)
 
             if 6 > obj.status > 1:
-                remark = obj.remark
-                # remark = """
-                #     <a  href="beizhu_obj_marker/{obj_id}/" data-toggle="modal" data-target="#exampleFormModal">备注</a>
-                # """.format(obj_id=obj.id)
+                # remark = obj.remark
+                remark = """
+                    <a  href="beizhu_obj_marker/{obj_id}/" data-toggle="modal" data-target="#exampleFormModal">备注</a>
+                """.format(obj_id=obj.id)
 
             else:
-                remark = obj.publish_remark
-                # remark = """
-                #     <a  href="beizhu_pub_marker/{obj_id}/" data-toggle="modal" data-target="#exampleFormModal">备注</a>
-                # """.format(obj_id=obj.id)
+                # remark = obj.publish_remark
+                remark = """
+                    <a  href="beizhu_pub_marker/{obj_id}/" data-toggle="modal" data-target="#exampleFormModal">备注</a>
+                """.format(obj_id=obj.id)
 
             result_data["data"].append(
                 [index, obj.name, release_platform, wenda_type, obj.num, status, task_demand_excel, task_result_excel,
