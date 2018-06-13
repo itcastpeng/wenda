@@ -699,7 +699,11 @@ def keywords_top_page_cover_excel(user_id=None):
             # 生成营销顾问直接能够上传的报表
             keywords_top_info_objs = models.KeywordsTopInfo.objects.filter(
                 keyword__client_user=user_obj).values("url", "title").annotate(Count("url")).order_by("url__count")
-
+            guanjianci_leixing = ''
+            obj_status = models.KeywordsTopInfo.objects.filter(keyword__client_user=user_obj)
+            for obj in obj_status:
+                guanjianci_leixing = obj.get_status_display()
+            # guanjianci_leixing = obj_status[0].keyword.get_keywords_type_display()
             if not keywords_top_info_objs:
                 continue
 
@@ -711,11 +715,12 @@ def keywords_top_page_cover_excel(user_id=None):
             ws.cell(row=1, column=3, value="问题")
             ws.cell(row=1, column=4, value="覆盖数")
             ws.cell(row=1, column=5, value="关键词")
-            ws.cell(row=1, column=6, value="是否可以采纳")
-            ws.cell(row=1, column=7, value="回复数量")
-            ws.cell(row=1, column=8, value="创建时间")
-            ws.cell(row=1, column=9, value="更新时间")
-            ws.cell(row=1, column=10, value="状态")
+            ws.cell(row=1, column=6, value="关键词类型")
+            ws.cell(row=1, column=7, value="是否可以采纳")
+            ws.cell(row=1, column=8, value="回复数量")
+            ws.cell(row=1, column=9, value="创建时间")
+            ws.cell(row=1, column=10, value="更新时间")
+            ws.cell(row=1, column=11, value="状态")
 
             url_publish_list = [i[0] for i in models.WendaRobotTask.objects.filter(task__release_user=user_obj,
                 wenda_type=2, ).values_list(
@@ -764,11 +769,12 @@ def keywords_top_page_cover_excel(user_id=None):
                         ws.cell(row=n, column=3, value=title)
                         ws.cell(row=n, column=4, value=url__count)
                         ws.cell(row=n, column=5, value=keywords)
-                        ws.cell(row=n, column=6, value=is_caina)
-                        ws.cell(row=n, column=7, value=huifu_num)
-                        ws.cell(row=n, column=8, value=create_date)
-                        ws.cell(row=n, column=9, value=update_date)
-                        ws.cell(row=n, column=10, value=flag_publish_str)
+                        ws.cell(row=n, column=6, value=guanjianci_leixing)
+                        ws.cell(row=n, column=7, value=is_caina)
+                        ws.cell(row=n, column=8, value=huifu_num)
+                        ws.cell(row=n, column=9, value=create_date)
+                        ws.cell(row=n, column=10, value=update_date)
+                        ws.cell(row=n, column=11, value=flag_publish_str)
 
                         n += 1
                     except IllegalCharacterError:
