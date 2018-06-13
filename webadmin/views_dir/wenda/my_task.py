@@ -672,11 +672,14 @@ def my_task_oper(request, oper_type, o_id):
 
         #
         elif oper_type == 'beizhu_pub_marker':
+            print('111111111111111111111111111111111')
             pub_remark = request.POST.get('pub_remark')
             print('pub_remark- - ========--> ',pub_remark)
             objs = models.Task.objects.filter(id=o_id)
             if objs[0].publish_remark:
                 objs.update(pub_remark=pub_remark)
+                response.status = True
+                response.message = '修改成功'
             else:
                 objs.create(pub_remark=pub_remark)
             response.status = True
