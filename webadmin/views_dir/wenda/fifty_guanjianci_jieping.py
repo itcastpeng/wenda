@@ -143,7 +143,14 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
 
         # 查看关键词截屏
         elif oper_type == 'guanjianci_jieping':
-            client_objs = models.UserProfile.objects.filter(is_delete=False, role_id=5)
+            print('o_id - - > ',o_id)
+
+            objs = models.GetKeywordsJiePing.objects.filter(guanjianci_id=o_id)
+            data_list = []
+            for obj in objs:
+                picture = obj.picture_path
+                print('picture- - -> ',picture)
+                data_list.append(picture)
 
             return render(request,'wenda/fifty_guanjianci_jieping/fifty_guanjianci_jieping_pictrue.html',locals())
 

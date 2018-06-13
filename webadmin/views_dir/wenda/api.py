@@ -1373,7 +1373,6 @@ def xinwenda_wancheng_budahui(request):
 def fifty_guanjianci_fabu(request):
     response = pub.BaseResponse()
     now_time = datetime.datetime.today()
-    # if request.GET.get('jieping'):
     if request.method == "POST":
         print('-----------进入截屏-----------')
         keyword = request.POST.get('keyword')
@@ -1398,34 +1397,39 @@ def fifty_guanjianci_fabu(request):
         objs = models.GetKeywordsJiePing.objects.filter(q)
         print('objs - - >',objs)
         if objs:
-            print('if - - - if ---- if --- if ')
-            objs.update(picture_path=picture_path_one,guanjianci_id=guanjianci_id)
-            objs.update(picture_path=picture_path_two,guanjianci_id=guanjianci_id)
-            objs.update(picture_path=picture_path_three,guanjianci_id=guanjianci_id)
+            pass
+            # print('if - - - if ---- if --- if ')
+            # models.GetKeywordsJiePing.objects.filter(q).update(picture_path=picture_path_one,guanjianci_id=guanjianci_id)
+            # models.GetKeywordsJiePing.objects.filter(q).update(picture_path=picture_path_two,guanjianci_id=guanjianci_id)
+            # models.GetKeywordsJiePing.objects.filter(q).update(picture_path=picture_path_three,guanjianci_id=guanjianci_id)
         else:
             print('else -- else -- else -- else ')
-            objs.create(picture_path=picture_path_one, guanjianci_id=guanjianci_id)
-            objs.create(picture_path=picture_path_two, guanjianci_id=guanjianci_id)
-            objs.create(picture_path=picture_path_three, guanjianci_id=guanjianci_id)
+            one_obj = models.GetKeywordsJiePing(picture_path=picture_path_one, guanjianci_id=guanjianci_id)
+            one_obj.save()
+            two_obj = models.GetKeywordsJiePing(picture_path=picture_path_two, guanjianci_id=guanjianci_id)
+            two_obj.save()
+            three_obj = models.GetKeywordsJiePing(picture_path=picture_path_three, guanjianci_id=guanjianci_id)
+            three_obj.save()
     else:
         print('get-----')
         objs = models.GuanJianCiFifty.objects.filter(
             jieping_time__lt=datetime.datetime.today(),
         ).order_by('jieping_time')
-        # print(objs )
+        print(objs )
         if objs:
             guanjianci = objs[0].guanjianci
             user_id = objs[0].yonghu_user_id
             guanjianci_id = objs[0].id
-            response.data={
-                'guanjianci':guanjianci,
-                'user_id':user_id,
-                'guanjianci_id':guanjianci_id
+            response.data = {
+                'guanjianci': guanjianci,
+                'user_id': user_id,
+                'guanjianci_id': guanjianci_id
             }
             obj = models.GuanJianCiFifty.objects.get(guanjianci=guanjianci)
             obj.jieping_time = now_time
             obj.save()
 
+    return JsonResponse(response.__dict__)
 
 
 

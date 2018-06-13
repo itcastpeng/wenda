@@ -19,6 +19,8 @@ import time
 from wenda_celery_project import tasks
 import datetime
 from webadmin.forms import  guwen_duijie_biao
+import datetime
+
 
 # 顾问对接
 @pub.is_login
@@ -105,8 +107,13 @@ def guwen_duijie(request):
             if  obj.daokuan_time:
                 daokuan_time = obj.daokuan_time.strftime('%Y-%m-%d')
             fugai_count = obj.fugai_count
+
+            if obj.jifeishijian_start and obj.jifeishijian_stop and obj.jifeishijian_stop<datetime.date.today():
+                kehu_name = '<span style="color: red">{username}</span>'.format(username=kehu_name)
+
             # print('xiaoshou --- - >',xiaoshou)
             # print('-------> ',user_id,tingbiao,kaishi_jifei,daozhang,kehu_name,user_id,index,daokuan_time,fugai_count,xiaoshou)
+
             oper = ''
             oper += "<a href='beizhu_botton/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>备注</a>".format(
                 user_id=user_id)
@@ -126,6 +133,7 @@ def guwen_duijie(request):
                 'daokuan_time':daokuan_time,
                 'fugai_count':fugai_count
             })
+
         return HttpResponse(json.dumps(result_data))
     if "_pjax" in request.GET:
         return render(request, 'wenda/guwen_Docking_table/guwen_duijie_biao_pjax.html', locals())

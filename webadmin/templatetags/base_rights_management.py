@@ -464,7 +464,7 @@ def get_left_wenda_html(access_rules, access_rules_objs):
         fifty_guanjianci_jieping_html = """
                  <li class="site-menu-item">
                      <a data-pjax="" href="{cover_reports}" target="_blank">
-                         <i class="icon fa-random"></i>
+                         <i class="icon fa-photo" aria-hidden="true"></i>   
                          <span class="site-menu-title margin-left-5">关键词截屏</span>
                      </a> 
                  </li>
