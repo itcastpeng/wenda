@@ -244,9 +244,16 @@ def my_task(request):
                 """.format(obj_id=obj.id)
 
             if 6 > obj.status > 1:
-                remark = obj.remark
+                # remark = obj.remark
+                remark = """
+                    <a  href="beizhu_obj_marker/{obj_id}/" data-toggle="modal" data-target="#exampleFormModal">备注</a>
+                """.format(obj_id=obj.id)
+
             else:
-                remark = obj.publish_remark
+                # remark = obj.publish_remark
+                remark = """
+                    <a  href="beizhu_pub_marker/{obj_id}/" data-toggle="modal" data-target="#exampleFormModal">备注</a>
+                """.format(obj_id=obj.id)
 
             result_data["data"].append(
                 [index, obj.name, release_platform, wenda_type, obj.num, status, task_demand_excel, task_result_excel,
@@ -663,6 +670,26 @@ def my_task_oper(request, oper_type, o_id):
                 response.status = False
                 response.message = "提交内容不能为空"
 
+        # 备注 pub
+        elif oper_type == 'beizhu_pub_marker':
+            print('o_id== ',o_id)
+            pub_remark = request.POST.get('pub_remark')
+            print('pub_remark- - ========--> ',pub_remark)
+            objs = models.Task.objects.filter(id=o_id)
+            objs.update(publish_remark=pub_remark)
+            response.status = True
+            response.message = '修改成功'
+
+        # 备注 obj
+        elif oper_type == 'beizhu_obj_marker':
+            obj_remark = request.POST.get('obj_remark')
+            print('obj_remark- -  = = ============>',obj_remark)
+            objs = models.Task.objects.filter(id=o_id)
+            objs.update(remark=obj_remark)
+            response.status = True
+            response.message = '修改成功'
+
+
         return JsonResponse(response.__dict__)
 
     else:
@@ -856,3 +883,17 @@ def my_task_oper(request, oper_type, o_id):
             wendalink_objs = obj.wendalink_set.filter(status__gt=2)
 
             return render(request, "wenda/my_task/my_task_modal_online_preview_yichang.html", locals())
+
+        # 备注 pub
+        elif oper_type == 'beizhu_pub_marker':
+            objs = models.Task.objects.filter(is_delete=False).filter(id=o_id)
+            pub_remark= objs[0].publish_remark
+            print('pub_remark - - -> ',pub_remark )
+            return render(request,'wenda/my_task/my_task_modal_beizhu_pub_marker.html',locals())
+
+        # 备注 obj
+        elif oper_type == 'beizhu_obj_marker':
+            objs =  models.Task.objects.filter(is_delete=False).filter(id=o_id)
+            obj_remark = objs[0].remark
+            print('-obj_remark- -- > ',obj_remark)
+            return render(request, 'wenda/my_task/my_task_modal_beizhu_obj_marker.html', locals())

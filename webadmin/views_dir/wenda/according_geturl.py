@@ -18,8 +18,8 @@ from webadmin.views_dir import pub
 
 def according_geturl(request):
     response = pub.BaseResponse()
-    # url = request.POST.get('url')
-    url = 'https://zhidao.baidu.com/question/1674396040757875467.html'
+    url = request.POST.get('url')
+    # url = 'https://zhidao.baidu.com/question/1674396040757875467.html'
     objs = models.WendaRobotTask.objects.filter(wenda_url=url)
     if objs:
         objs = objs[0].robotaccountlog_set.values('phone_num').annotate(Count('id'))
