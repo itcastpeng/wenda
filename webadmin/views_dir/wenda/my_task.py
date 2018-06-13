@@ -673,6 +673,7 @@ def my_task_oper(request, oper_type, o_id):
         #
         elif oper_type == 'beizhu_pub_marker':
             pub_remark = request.POST.get('pub_remark')
+            print('pub_remark- - ========--> ',pub_remark)
             obj = models.Task.objects.get(id=o_id)
             obj.publish_remark = pub_remark
             obj.save()
@@ -682,6 +683,7 @@ def my_task_oper(request, oper_type, o_id):
         #
         elif oper_type == 'beizhu_obj_marker':
             obj_remark = request.POST.get('obj_remark')
+            print('obj_remark- -  = = ============>',obj_remark)
             obj = models.Task.objects.get(id=o_id)
             obj.remark = obj_remark
             obj.save()
