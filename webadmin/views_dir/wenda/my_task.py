@@ -670,6 +670,15 @@ def my_task_oper(request, oper_type, o_id):
                 response.status = False
                 response.message = "提交内容不能为空"
 
+        #
+        elif oper_type == 'beizhu_pub_marker':
+            pass
+
+        #
+        elif oper_type == 'beizhu_obj_marker':
+            pass
+
+
         return JsonResponse(response.__dict__)
 
     else:
@@ -868,9 +877,12 @@ def my_task_oper(request, oper_type, o_id):
         elif oper_type == 'beizhu_pub_marker':
             objs = models.Task.objects.filter(is_delete=False).filter(id=o_id)
             pub_remark= objs[0].publish_remark
+            print('pub_remark - - -> ',pub_remark )
             return render(request,'wenda/my_task/my_task_modal_beizhu_pub_marker.html',locals())
-
 
         # 备注 obj
         elif oper_type == 'beizhu_obj_marker':
-            pass
+            objs =  models.Task.objects.filter(is_delete=False).filter(id=o_id)
+            obj_remark = objs[0].remark
+            print('-obj_remark- -- > ',obj_remark)
+            return render(request, 'wenda/my_task/my_task_modal_beizhu_obj_marker.html', locals())
