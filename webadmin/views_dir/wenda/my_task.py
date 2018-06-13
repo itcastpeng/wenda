@@ -246,13 +246,13 @@ def my_task(request):
             if 6 > obj.status > 1:
                 # remark = obj.remark
                 remark = """
-                    <a href="upload_task_file/{obj_id}/" data-toggle="modal" data-target="#exampleFormModal">备注</a>
+                    <a  href="beizhu_obj_marker/{obj_id}/" data-toggle="modal" data-target="#exampleFormModal">备注</a>
                 """.format(obj_id=obj.id)
 
             else:
                 # remark = obj.publish_remark
                 remark = """
-                    <a  href="upload_task_file/{obj_id}/" data-toggle="modal" data-target="#exampleFormModal">备注</a>
+                    <a  href="beizhu_pub_marker/{obj_id}/" data-toggle="modal" data-target="#exampleFormModal">备注</a>
                 """.format(obj_id=obj.id)
 
             result_data["data"].append(
@@ -863,3 +863,14 @@ def my_task_oper(request, oper_type, o_id):
             wendalink_objs = obj.wendalink_set.filter(status__gt=2)
 
             return render(request, "wenda/my_task/my_task_modal_online_preview_yichang.html", locals())
+
+        # 备注 pub
+        elif oper_type == 'beizhu_pub_marker':
+            objs = models.Task.objects.filter(is_delete=False).filter(id=o_id)
+            pub_remark= objs[0].publish_remark
+            return render(request,'wenda/my_task/my_task_modal_beizhu_pub_marker.html',locals())
+
+
+        # 备注 obj
+        elif oper_type == 'beizhu_obj_marker':
+            pass
