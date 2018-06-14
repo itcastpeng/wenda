@@ -23,12 +23,13 @@ from webadmin.views_dir.wenda.message import AddMessage
 def user_management(request):
     role_names = models.Role.objects.values_list("id", "name")
     status_choices = models.UserProfile.status_choices
+
     if "type" in request.GET and request.GET["type"] == "ajax_json":
         length = int(request.GET.get("length"))
         start = int(request.GET.get("start"))
 
         # 排序
-        column_list = ["id", "username", "role", "status", "balance", "xie_wenda_money", "fa_wenda_money", "create_date", "last_login_date", "oper", "role_names"]
+        column_list = ["id", "username", "role", "status", "balance", "xie_wenda_money", "fa_wenda_money", "create_date", "last_login_date", "oper", "role_names","guanzhu_status"]
         order_column = request.GET.get('order[0][column]', 1)  # 第几列排序
         order = request.GET.get('order[0][dir]')  # 正序还是倒序
         order_column = column_list[int(order_column)]
@@ -39,12 +40,19 @@ def user_management(request):
 
         q = Q()
         for index, field in enumerate(column_list):
+            print('field - - ->',field)
             if field in request.GET and request.GET.get(field):  # 如果该字段存在并且不为空
                 if field in ["status"]:
                     q.add(Q(**{field: request.GET[field]}), Q.AND)
                 elif field == "role_names":
                     print(request.GET[field])
                     q.add(Q(**{"role_id": request.GET[field]}), Q.AND)
+                elif field == 'guanzhu_status':
+                    print(type(request.GET[field]))
+                    if request.GET[field]=='1':
+                        q.add(Q(openid__isnull=False),Q.AND)
+                    if request.GET[field]=='2':
+                        q.add(Q(openid__isnull=True), Q.AND)
                 else:
                     q.add(Q(**{field + "__contains": request.GET[field]}), Q.AND)
 
@@ -108,13 +116,18 @@ def user_management_oper(request, oper_type, o_id):
 
             response.status = True
             response.message = "添加成功"
+            username = request.POST.get('username')
+            xiaoshou_id = request.POST.get('xiaoshou_id')
+            print('username ,xiaoshou_id - -- ->',username ,xiaoshou_id)
 
             form_obj = user.UserProfileCreateForm(request.POST)
-
             if form_obj.is_valid():
                 form_obj.cleaned_data["oper_user_id"] = user_id
-                models.UserProfile.objects.create(**form_obj.cleaned_data)
-
+                user_obj = models.UserProfile.objects.create(**form_obj.cleaned_data)
+                models.YingXiaoGuWen_DuiJie.objects.create(
+                    kehu_username_id=user_obj.id,
+                    market=user_obj.xiaoshou
+                )
             else:
                 response.status = False
                 for i in ["username", "password", "role_id", "guwen_id", "xiaoshou_id"]:

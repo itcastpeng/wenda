@@ -758,7 +758,7 @@ class BianXieBaoBiao(models.Model):
 class YingXiaoGuWen_DuiJie(models.Model):
     market = models.ForeignKey(to='UserProfile',verbose_name='销售', null=True, blank=True)
     kehu_username = models.ForeignKey(to='UserProfile',verbose_name='客户名称',related_name='guwenduijie_kehuming', null=True, blank=True)
-    bianji = models.ForeignKey(to='UserProfile',verbose_name='编辑',related_name='guwenduijie_bian', null=True, blank=True)
+    guwen_duijie_bianji = models.ManyToManyField(to='UserProfile',verbose_name='编辑',related_name='guwen_duijie_bianji' ,null=True, blank=True)
     shiji_daozhang = models.IntegerField(verbose_name='实际到账钱数',null=True, blank=True)
 
     daokuan_time = models.DateField(verbose_name='到款时间',null=True, blank=True)
@@ -780,11 +780,13 @@ class YingXiaoGuWen_NeiBiao(models.Model):
     xinwenda = models.BooleanField(verbose_name='是否操作新问答', default=False)
     guishu = models.ForeignKey(to='YingXiaoGuWen_DuiJie',verbose_name='外键ID',null=True, blank=True)
 
-
+# 关键词截屏  --  保存图片路径
 class GetKeywordsJiePing(models.Model):
     picture_path = models.TextField(verbose_name='图片路径',null=True,blank=True)
     guanjianci = models.ForeignKey(to='GuanJianCiFifty',verbose_name='属于哪个关键词')
 
+
+# 关键词截屏  --  保存50个关键词
 class GuanJianCiFifty(models.Model):
     guanjianci = models.TextField(verbose_name='五十个关键词',null=True, blank=True)
     yonghu_user = models.ForeignKey(to='UserProfile',verbose_name='归属哪个用户')
