@@ -23,8 +23,16 @@
             <div class="form-group">
            <label class="col-md-2 control-label" for="bianji_outer_update">编辑 <span class="form-span-active">*</span></label>
             <div class="col-md-6">
-                <select style="width: 300px;" class="form-control" data-plugin="select2" tabindex="-1" aria-hidden="true" id="bianji_outer_update" name="bianji_outer_update">
-                    <option value="{{ bianji_id }}">{{ bianji_name }}</option>
+                <select style="width: 300px;" multiple class="form-control" data-plugin="select2" tabindex="-1" aria-hidden="true" id="bianji_outer_update" name="bianji_outer_update">
+{#                <select style="width: 300px;"  class="form-control" data-plugin="select2" tabindex="-1" aria-hidden="true" id="bianji_outer_update" name="bianji_outer_update">#}
+{#                    <option value="{{ bianji.o_id }}">123165</option>#}
+                        <span class="select2-selection select2-selection--multiple" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="-1" >
+                            <ul class="select2-selection__rendered">
+                                <li class="select2-selection__choice" title="111111111"><span class="select2-selection__choice__remove" role="presentation">×</span>
+                                    "111111111"
+                                </li>
+                            </ul>
+                        </span>
                     {% for obj in bianjis %}
                         <option value="{{ obj.id }}">{{ obj.username }}</option>
                     {% endfor %}
