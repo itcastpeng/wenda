@@ -56,6 +56,12 @@
                             <option value="{{ i.0 }}">{{ i.1 }}</option>
                         {% endfor %}
                     </select>
+                    <label for="guanzhu_status">是否关注：</label>
+                    <select class="form-control" name="guanzhu_status" id="guanzhu_status">
+                        <option value="0">全部</option>
+                            <option value="1">已关注</option>
+                            <option value="2">未关注</option>
+                    </select>
 
                     <label for="create_date">创建时间：</label>
                     <input class="Wdate form-control" id="create_date" name="create_date" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" type="text">

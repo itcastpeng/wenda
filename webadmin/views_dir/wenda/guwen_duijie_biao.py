@@ -12,12 +12,6 @@ import json
 from webadmin.forms.form_cover_update_jifei import jifeiupdateForm
 from django.db.models import F
 from django.db.models import Q
-from webadmin.views_dir.wenda.message import AddMessage
-from django.db.models import Count,Sum
-import os
-import time
-from wenda_celery_project import tasks
-import datetime
 from webadmin.forms import  guwen_duijie_biao
 import datetime
 
@@ -73,26 +67,33 @@ def guwen_duijie(request):
                 print('client_- > ',client_user)
                 user_profile_objs = models.YingXiaoGuWen_DuiJie.objects.filter(kehu_username_id=client_user)
             elif bianji_user:
-                user_profile_objs = models.YingXiaoGuWen_DuiJie.objects.filter(bianji_id=bianji_user)
+                user_profile_objs = models.YingXiaoGuWen_DuiJie.objects.filter(guwen_duijie_bianji=bianji_user)
             else:
                 user_profile_objs = models.YingXiaoGuWen_DuiJie.objects.filter(marketid=xiaoshou_user)
 
         else:
-            user_profile_objs = models.YingXiaoGuWen_DuiJie.objects.select_related("market",'bianji').filter(kehu_username__is_delete=False).filter(
+            user_profile_objs = models.YingXiaoGuWen_DuiJie.objects.select_related("market").filter(kehu_username__is_delete=False).filter(
                 q).order_by(order_column)
 
         result_data = {'data':[]}
+
         for index, obj in enumerate(user_profile_objs[start: (start + length)], start=1):
-            q.add(Q(id=obj.bianji_id) | Q(id=obj.market_id),Q.AND)
-            bianji_obj = models.UserProfile.objects.filter(id=obj.bianji_id)
-            # xiaoshou_obj = models.UserProfile.objects.filter(id=obj.market_id)
+            q.add(Q(id=obj.kehu_username_id) | Q(id=obj.market_id),Q.AND)
+            # bianji_obj = models.YingXiaoGuWen_DuiJie.objects.all()
+            bianji_obj = obj.guwen_duijie_bianji.all().values('username')
+
+
+
+            xiaoshou_obj = models.UserProfile.objects.filter(id=obj.market_id)
             bianji = ''
             xiaoshou = ''
             if bianji_obj:
-                bianji = bianji_obj[0].username
+                # print('bianji_obj - - >', bianji_obj)
+
+                bianji = ",".join([i['username'] for i in bianji_obj])
+
             user_id = obj.id
             daozhang = obj.shiji_daozhang
-            bianji  = bianji
             if obj.market:
                 xiaoshou = obj.market
             kehu_name = obj.kehu_username.username
@@ -148,7 +149,12 @@ def guwen_duijie_oper(request, oper_type, o_id):
     if request.method == "POST":
         # 外层添加
         if oper_type == "outer_create":
+            print('request_post  -> ',request.POST)
             yonghuming_id = request.POST.get('yonghuming')
+            bianjis = request.POST.getlist('bianji')
+            bianji_list = []
+            for bianji in bianjis:
+                bianji_list.append(int(bianji))
             forms_obj = guwen_duijie_biao.OuterAddForm(request.POST)
             print('request_post = => ',request.POST)
             if forms_obj.is_valid():
@@ -159,16 +165,20 @@ def guwen_duijie_oper(request, oper_type, o_id):
                 else:
                     print('forms_obj.cleaned_data = ==  > ',forms_obj.cleaned_data)
 
-                    models.YingXiaoGuWen_DuiJie.objects.create(
+                    yingxiaoguwen_obj = models.YingXiaoGuWen_DuiJie.objects.create(
                         market_id=forms_obj.cleaned_data['xiaoshou'],              # 销售
                         kehu_username_id=yonghuming_id,       # 客户名
                         shiji_daozhang=forms_obj.cleaned_data['daozhang'],              # 实际到账
                         fugai_count=forms_obj.cleaned_data['fugailiang'],               # 覆盖总数
                         jifeishijian_start=forms_obj.cleaned_data['start_time'],  # 计费开始
                         jifeishijian_stop=forms_obj.cleaned_data['stop_time'],    # 结束计费
-                        bianji_id=forms_obj.cleaned_data['bianji'],            # 编辑
+                        # bianji_id=forms_obj.cleaned_data['bianji'],            # 编辑
                         daokuan_time=forms_obj.cleaned_data['daokuan_time']       # 到款日期
                     )
+                    # for bianji in bianji_list:
+                    #     print('ianji - - - > ',bianji)
+                    yingxiaoguwen_obj.guwen_duijie_bianji = bianji_list
+
                     response.status = True
                     response.message = "添加成功"
             else:
@@ -222,12 +232,17 @@ def guwen_duijie_oper(request, oper_type, o_id):
             if forms_obj.is_valid():
                 print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
                 obj = models.YingXiaoGuWen_DuiJie.objects.filter(id=o_id)
+                bianjis = request.POST.getlist('bianji_outer_update')
+                print('bianjis -- -  >',bianjis)
+                bianji_list = []
+                for bianji in bianjis:
+                    bianji_list.append(int(bianji))
                 if obj:
-                    obj.update(
+                    obj_update = obj.update(
                     market_id=forms_obj.cleaned_data['xiaoshou_outer_update'],   # 销售
                     shiji_daozhang=forms_obj.cleaned_data['daozhang'],           # 实际到账
                     fugai_count=forms_obj.cleaned_data['fugailiang'],            # 覆盖总数
-                    bianji_id=forms_obj.cleaned_data['bianji_outer_update'],     # 编辑
+                    # bianji_id=forms_obj.cleaned_data['bianji_outer_update'],     # 编辑
                     )
                     if forms_obj.cleaned_data['daokuan_riqi']:
                        obj.update(daokuan_time=forms_obj.cleaned_data['daokuan_riqi'])    # 到款日期
@@ -235,8 +250,12 @@ def guwen_duijie_oper(request, oper_type, o_id):
                         obj.update(jifeishijian_stop=forms_obj.cleaned_data['stop_datatime'])   # 结束计费
                     if  forms_obj.cleaned_data['start_datatime']:
                         obj.update(jifeishijian_start=forms_obj.cleaned_data['start_datatime'])       # 计费开始
-                response.status = True
-                response.message = '修改成功'
+                    print('bianji_list - -- >',bianji_list)
+                    if bianji_list:
+                        obj[0].guwen_duijie_bianji=bianji_list
+
+                        response.status = True
+                        response.message = '修改成功'
             else:
                 print('cuowu --',forms_obj.errors)
                 response.status = False
@@ -369,39 +388,46 @@ def guwen_duijie_oper(request, oper_type, o_id):
 
         # 外层修改
         elif oper_type == 'outer_update':
-            obj = models.YingXiaoGuWen_DuiJie.objects.filter(id=o_id)
-            if obj:
-                print('obj[0].market_id -- > ',obj[0].market_id)
-                print('obj[0].market_id -- > ',obj[0].market)
-
+            objs = models.YingXiaoGuWen_DuiJie.objects.filter(id=o_id)
+            if objs:
+                bianji_list  = []
+                print('进入 -- - - -= == = == =')
+                bianji_panduan=''
+                bianji_panduan = objs[0].guwen_duijie_bianji.all()
+                if bianji_panduan:
+                    bianji_panduan = bianji_panduan.values('username','id')
+                    for bianji in bianji_panduan:
+                        bianji_name = bianji['username']
+                        bianji_id = bianji['id']
+                        bianji_list.append({
+                            'username':bianji_name,
+                            'o_id':bianji_id
+                        })
                 xiaoshou_id = ''
                 xiaoshouming = ''
-                if obj[0].market_id:
-                    xiaoshou_id = int(obj[0].market_id)
-                if obj[0].market:
-                    xiaoshouming = obj[0].market
-                bianji_id = ''
-                bianji_name = ''
-                if obj[0].bianji:
-                    bianji_id = int(obj[0].bianji.id)
-                    bianji_name = obj[0].bianji.username
+                if objs[0].market_id:
+                    xiaoshou_id = int(objs[0].market_id)
+                if objs[0].market:
+                    xiaoshouming = objs[0].market
                 daozhang = ''
-                if obj[0].shiji_daozhang:
-                    daozhang = obj[0].shiji_daozhang
+                if objs[0].shiji_daozhang:
+                    daozhang = objs[0].shiji_daozhang
                 fugai = ''
-                if obj[0].fugai_count:
-                    fugai = obj[0].fugai_count
+                if objs[0].fugai_count:
+                    fugai = objs[0].fugai_count
                 kaishi_time = ''
                 jieshu_time = ''
                 daokuan_time = ''
-                if obj[0].jifeishijian_start:
-                    kaishi_time = obj[0].jifeishijian_start.strftime('%Y-%m-%d')
-                if obj[0].jifeishijian_stop:
-                    jieshu_time = obj[0].jifeishijian_stop.strftime('%Y-%m-%d')
-                if obj[0].daokuan_time:
-                    daokuan_time = obj[0].daokuan_time.strftime('%Y-%m-%d')
+                if objs[0].jifeishijian_start:
+                    kaishi_time = objs[0].jifeishijian_start.strftime('%Y-%m-%d')
+                if objs[0].jifeishijian_stop:
+                    jieshu_time = objs[0].jifeishijian_stop.strftime('%Y-%m-%d')
+                if objs[0].daokuan_time:
+                    daokuan_time = objs[0].daokuan_time.strftime('%Y-%m-%d')
                 xiaoshous = models.UserProfile.objects.filter(role_id=12)
                 bianjis = models.UserProfile.objects.filter(role_id=13)
+                print('bianji_list --  >',bianji_list)
+                print('locals() = = == = >',locals())
             return render(request, 'wenda/guwen_Docking_table/guwen_duijie_outer/guwen_outer_update.html',locals())
 
         # 外层删除

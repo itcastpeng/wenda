@@ -26,14 +26,14 @@ def cover_reports(request):
     role_id = request.session.get("role_id")
     user_id = request.session.get("user_id")
 
-    # print("role_id -->", role_id)
-    # print("user_id -->", user_id)
+    print("role_id -->", role_id)
+    print("user_id -->", user_id)
     filter_dict = {}
     if role_id == 5:  # 客户角色只能看到自己的
         filter_dict["client_user"] = user_id
     # elif role_id == 12:  # 销售角色只能看到自己客户的
-    #     filter_dict["keywords__client_user__xiaoshou_id"] = user_id
-
+    #     filter_dict["client_user__xiaoshou_id"] = user_id
+    #     print('filter_dict = = ',filter_dict)
     if "type" in request.GET and request.GET["type"] == "ajax_json":
         # print("1 -->", datetime.datetime.now())
         length = int(request.GET.get("length"))
@@ -99,6 +99,7 @@ def cover_reports(request):
         status_choices = models.UserProfile.status_choices
 
         # print("3 -->", datetime.datetime.now())
+        print('data_objs  === > ',data_objs)
         for index, obj in enumerate(data_objs[start: (start + length)], start=1):
 
             # keywords_topset_obj = models.KeywordsTopSet.objects.filter(
@@ -184,7 +185,9 @@ def cover_reports(request):
             jifei_start_date = ''
             jifei_stop_date = ''
 
-            if role_id in [1,4,6,7]:
+            xiaoshou_id = obj.client_user.xiaoshou.id
+
+            if role_id in [1,4,6,7] or user_id == xiaoshou_id:
                 if obj.client_user.jifei_start_date:
                     jifei_start_date = obj.client_user.jifei_start_date.strftime('%Y-%m-%d')
                 if obj.client_user.jifei_stop_date:
@@ -226,9 +229,11 @@ def cover_reports(request):
                 }
             )
             # print("4 -->", datetime.datetime.now())
+            print('result_data - - > ',result_data )
         return HttpResponse(json.dumps(result_data))
 
     if role_id == 12:
+        print('进入销售角色 - -- > ',filter_dict)
         client_data = models.ClientCoveringData.objects.filter(client_user__is_delete=False).filter(**filter_dict).exclude(
             client_user__username__contains='YZ-'
         ).values(
