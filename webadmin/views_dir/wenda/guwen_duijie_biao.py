@@ -113,7 +113,7 @@ def guwen_duijie(request):
                 daokuan_time = obj.daokuan_time.strftime('%Y-%m-%d')
             fugai_count = obj.fugai_count
 
-            if obj.jifeishijian_start and obj.jifeishijian_stop and obj.jifeishijian_stop<datetime.date.today():
+            if obj.jifeishijian_start and obj.jifeishijian_stop and obj.jifeishijian_stop>datetime.date.today():
                 kehu_name = '<span style="color: red">{username}</span>'.format(username=kehu_name)
 
             # print('xiaoshou --- - >',xiaoshou)
