@@ -837,7 +837,12 @@ def tongji_kehu_shiyong():
 
 # 覆盖报表功能中生成客户覆盖报表
 @app.task
-def cover_reports_generate_excel(file_name, data_list, debug):
+def cover_reports_generate_excel(file_name, data_list,url_list, debug):
+    xinbi = len(set(url_list['xin']))
+    laobi = len(set(url_list['lao']))
+    count_baifenbi = xinbi + laobi
+    xinbaifenbi = int(xinbi / count_baifenbi)
+    laobaifenbi = int(laobi / count_baifenbi)
     # 生成客户查看的覆盖报表
     # 生成客户查看的覆盖报表
     wb = Workbook()
@@ -852,7 +857,7 @@ def cover_reports_generate_excel(file_name, data_list, debug):
         ws.cell(row=1, column=7, value="类型")
         ws.cell(row=1, column=8, value="发布时间")
         ws.cell(row=1, column=9, value="问答类型")
-
+    xunhuan_yici = 0
     for row, i in enumerate(data_list, start=2):
         try:
             ws.cell(row=row, column=1, value=i["username"])
@@ -863,6 +868,11 @@ def cover_reports_generate_excel(file_name, data_list, debug):
                 ws.cell(row=row, column=7, value=i["is_zhedie"])
                 ws.cell(row=row, column=8, value=i["create_time"])
                 ws.cell(row=row, column=9, value=i["wenda_type"])
+                if xunhuan_yici < 2:
+                    ws.cell(row=row, column=10, value=str(xinbaifenbi) + '%')
+                    ws.cell(row=row, column=11, value=str(laobaifenbi) + '%')
+                    xunhuan_yici += 1
+
             else:
                 if i["link"]:
                     ws["D{row}".format(row=row)].hyperlink = i["link"]
@@ -931,6 +941,10 @@ def userprofile_keywords_cover(debug=False):
         if not search_objs:
             continue
 
+        url_list = {
+            'xin': [],
+            'lao': []
+        }
 
         data_day_list = []
         for search_obj in search_objs:
@@ -946,6 +960,10 @@ def userprofile_keywords_cover(debug=False):
                 create_time = ''
                 print('objs - -- - =--==- > ', objs)
                 if objs:
+                    if objs[0].wenda_type in [1, 10]:
+                        url_list['xin'].append(url)
+                    if objs[0].wenda_type == 2:
+                        url_list['lao'].append(url)
                     robotaccountlog_objs = objs[0].robotaccountlog_set.all()
                     if robotaccountlog_objs:
                         create_time = robotaccountlog_objs.last().create_date.strftime("%Y-%m-%d")
@@ -1013,7 +1031,7 @@ def userprofile_keywords_cover(debug=False):
         )
         yingxiaoguwen_file_path_name = os.path.join("statics", "upload_files", yingxiaoguwen_file_name)
 
-        cover_reports_generate_excel(yingxiaoguwen_file_path_name, data_day_list, debug=False)
+        cover_reports_generate_excel(yingxiaoguwen_file_path_name, data_day_list,url_list, debug=False)
 
         url_num = search_objs.values('url').distinct().count()
 

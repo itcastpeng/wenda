@@ -428,6 +428,7 @@ def get_wenda_task(request):
                     "task_id": wenda_robot_task_obj.id,
                     "release_platform": release_platform,
                     "status": wenda_robot_task_obj.status,
+                    "wenda_type": wenda_robot_task_obj.wenda_type
                 }
 
                 # 没有任务ID的属于养账号的任务,发布任务的id 为 235 的也是养账号任务
