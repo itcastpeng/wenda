@@ -1345,13 +1345,13 @@ def fugailiangtixing(request, oper_type, o_id):
             'count': cover_num,
             'create_date':create_date
         })
-    print('data_list ',data_list)
+
     if oper_type == 'json':
         response.code = 200
         response.data = data_list
         return JsonResponse(response.__dict__)
     else:
-        return render(request, 'test.html', locals())
+        return render(request, 'api/chaxun_kehu_fugai.html', locals())
 
 
 # 新问答完成的不打回到编辑

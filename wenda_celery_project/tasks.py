@@ -1662,7 +1662,7 @@ def robot_release_num():
                     robot_count=count
                 )
 
-"""
+
 # 微信推送每日覆盖量
 @app.task
 def weixin_meiri_fugai_tuisong():
@@ -1696,15 +1696,15 @@ def weixin_meiri_fugai_tuisong():
         print('data_list - -- -- > ', data_list)
         return data_list
 
-    # # 公用发送链接
+    # 公用发送链接
     def gongyong(openid, gongyong_id, username):
         post_data = {
             "touser": "o7Xw_0fq6LrmCjBbxAzDZHTbtQ3g",
             # "touser": "{openid}".format(openid=openid),
             "template_id": "ksNf6WiqO5JEqd3bY6SUqJvWeL2-kEDqukQC4VeYVvw",
-            # "url": "http://wenda.zhugeyingxiao.com/api/fugailiangtixing/null/{gongyong_id}".format(
-            #     gongyong_id=gongyong_id),
-            "url": "http://127.0.0.1:8006/api/fugailiangtixing/null/{gongyong_id}".format(gongyong_id=gongyong_id),
+            "url": "http://wenda.zhugeyingxiao.com/api/fugailiangtixing/null/{gongyong_id}".format(
+                gongyong_id=gongyong_id),
+            # "url": "http://127.0.0.1:8006/api/fugailiangtixing/null/{gongyong_id}".format(gongyong_id=gongyong_id),
             "data": {
                 "first": {
                     "value": "诸葛霸屏王查询覆盖通知！",
@@ -1763,11 +1763,11 @@ def weixin_meiri_fugai_tuisong():
             if data_list:
                 gongyong(data_temp['openid'], yonghu_id, data_temp['username'])
 
-    print('顾问 - -- - 》 ')
-    guwen_weixin()
-    # print('销售 - - -- 》 ')
-    # xiaoshou_weixin()
-"""
+    # print('顾问 - -- - 》 ')
+    # guwen_weixin()
+    print('销售 - - -- 》 ')
+    xiaoshou_weixin()
+
 
 # 下载关键词与关键词类型
 @app.task

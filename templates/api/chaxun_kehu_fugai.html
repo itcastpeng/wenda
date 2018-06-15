@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>查询客户覆盖</title>
+</head>
+<body>
+{% for i in data_list %}
+<h1>名字：{{ i.name }}</h1><h1>创建时间：{{ i.create_date }}</h1><h1>今日覆盖：{{ i.count }}</h1>
+    <br>
+{% endfor %}
+</body>
+</html>
+
