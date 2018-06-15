@@ -27,56 +27,60 @@ def guwen_duijie(request):
     if "type" in request.GET and request.GET["type"] == "ajax_json":
         length = int(request.GET.get("length"))
         start = int(request.GET.get("start"))
-        # print('length ---- start',start ,length)
-        client_user = request.GET.get('client_user')
-        bianji_user = request.GET.get('bianji_user')
-        xiaoshou_user = request.GET.get('xiaoshou_user')
-        print('=======================================> ',
-            client_user ,
-            # 'xiaoshou:',
-            xiaoshou_user,
-            # 'guwen',
-            bianji_user)
-
+        # print('request -- >',request.GET)
         # 排序
-        column_list = [ "id", "market__xiaoshou", "bianji", "kehu_username__username", "shiji_daozhang", "fugai_count",
-                       "jifeishijian_start", "jifeishijian_stop"]
+        column_list = [ "id",  "kehu_username__username","market__xiaoshou", "guwen_duijie_bianji",
+                        "shiji_daozhang", "fugai_count",
+                       "jifeishijian_start", "jifeishijian_stop",'client_user','xiaoshou_user','bianji_user',]
+
+        # print("request.GET.get('order[0][column]', 1) ===>",request.GET.get('order[0][column]', 1))
         order_column = request.GET.get('order[0][column]', 1)  # 第几列排序
         order = request.GET.get('order[0][dir]')  # 正序还是倒序
         order_column = column_list[int(order_column)]
+        # print('column_list - -- -- >',order_column,type(order_column))
+        # print('order[0] - - >',request.GET.get('order[0][column]'))
         if order == "desc":
             order_column = "-{order_column}".format(order_column=order_column)
         else:
             order_column = order_column
-
+        print('order = = > ',order)
+        print('order_column = = > ',order_column)
         q = Q()
         for index, field in enumerate(column_list):
+            print('field = =  >',field)
             if field in request.GET and request.GET.get(field):  # 如果该字段存在并且不为空
-                if field in ["status"]:
-                    q.add(Q(**{field: request.GET[field]}), Q.AND)
-                elif field == "role_names":
-                    print(request.GET[field])
-                    q.add(Q(**{"role_id": request.GET[field]}), Q.AND)
+                if field =='client_user':
+                    q.add(Q(**{'kehu_username': request.GET[field]}), Q.AND)
+                elif field == "xiaoshou_user":
+                    # print(request.GET[field])
+                    q.add(Q(**{"market": request.GET[field]}), Q.AND)
+                elif field == 'bianji_user':
+                    q.add(Q(**{"guwen_duijie_bianji":request.GET[field]}),Q.AND)
                 else:
                     q.add(Q(**{field + "__contains": request.GET[field]}), Q.AND)
 
         user_profile_objs = ''
+        print('q ====q====q====q=====q=== q>',q)
 
-        if client_user or bianji_user or xiaoshou_user:
-            if client_user:
-                print('client_- > ',client_user)
-                user_profile_objs = models.YingXiaoGuWen_DuiJie.objects.filter(kehu_username_id=client_user)
-            elif bianji_user:
-                user_profile_objs = models.YingXiaoGuWen_DuiJie.objects.filter(guwen_duijie_bianji=bianji_user)
-            else:
-                user_profile_objs = models.YingXiaoGuWen_DuiJie.objects.filter(marketid=xiaoshou_user)
+        # if client_user or bianji_user or xiaoshou_user:
+        #     if client_user:
+        #         print('client_- > ',client_user)
+        #         user_profile_objs = models.YingXiaoGuWen_DuiJie.objects.filter(kehu_username_id=client_user)
+        #     elif bianji_user:
+        #         user_profile_objs = models.YingXiaoGuWen_DuiJie.objects.filter(guwen_duijie_bianji=bianji_user)
+        #     else:
+        #         user_profile_objs = models.YingXiaoGuWen_DuiJie.objects.filter(marketid=xiaoshou_user)
 
-        else:
-            user_profile_objs = models.YingXiaoGuWen_DuiJie.objects.select_related("market").filter(kehu_username__is_delete=False).filter(
-                q).order_by(order_column)
+        # else:
+        user_profile_objs = models.YingXiaoGuWen_DuiJie.objects.select_related("market").filter(kehu_username__is_delete=False).filter(
+            q).order_by(order_column)
 
         result_data = {'data':[]}
-
+        result_data = {
+            "recordsFiltered": user_profile_objs.count(),
+            "recordsTotal": user_profile_objs.count(),
+            "data": []
+        }
         for index, obj in enumerate(user_profile_objs[start: (start + length)], start=1):
             q.add(Q(id=obj.kehu_username_id) | Q(id=obj.market_id),Q.AND)
             # bianji_obj = models.YingXiaoGuWen_DuiJie.objects.all()
