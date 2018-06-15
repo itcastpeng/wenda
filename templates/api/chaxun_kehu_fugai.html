@@ -2,13 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>查询客户覆盖</title>
+    <title>查询系统</title>
 </head>
 <body>
-{% for i in data_list %}
-<h1>名字：{{ i.name }}</h1><h1>创建时间：{{ i.create_date }}</h1><h1>今日覆盖：{{ i.count }}</h1>
+<div style="text-align: center">
+    <span style="font-size: 30px; font-weight: bold; ">查询客户覆盖</span>
+    <hr>
+
+
+</div>
+
+<div style="text-align: center">
+{#<div >#}
+<span style="display: inline">客户名称：{{ data_list.0.name }}</span>
     <br>
+<span style="display: inline" >今日覆盖:{{ now_count }}</span>
+
+</div>
+{% for i in data_list %}
+    <ul>
+    <li style="display: inline">时间：{{ i.create_date }}</li>
+    <li style="display: inline;">-------覆盖量：{{ i.count }}</li>
+    </ul>
 {% endfor %}
 </body>
 </html>
+
+
 
