@@ -131,13 +131,13 @@ app.conf.beat_schedule = {
         'task': 'wenda_celery_project.tasks.robot_release_num',
         'schedule': crontab('*/10', '*', '*', '*', '*'),
     },
-    """
+
     # 查询每日覆盖量微信推送
     'fugailiangtixing': {
         'task': 'wenda_celery_project.tasks.fugailiangtixing',
         'schedule': crontab('*', '1', '*', '*', '*'),
     },
-    """
+
     # 宕机微信推送提醒
     'dangjitixing': {
         'task': 'wenda_celery_project.tasks.dangjitixing',

@@ -1324,6 +1324,7 @@ def jifeidaoqitixing(request, oper_type, p_id):
 @csrf_exempt
 def fugailiangtixing(request, oper_type, o_id):
     print('进入--->',o_id)
+    now_date = datetime.datetime.now()
     response = pub.BaseResponse()
     q = Q()
     q.add(Q(client_user__is_delete=False) & Q(client_user__status=1) , Q.AND)
@@ -1345,13 +1346,17 @@ def fugailiangtixing(request, oper_type, o_id):
             'count': cover_num,
             'create_date':create_date
         })
-    print('data_list ',data_list)
+        print("data_list[0]['name'] --  >",data_list[0]['name'])
+    objs.filter(create_date=now_date)
+    now_name = objs[0]['client_user__username']
+    now_count = objs[0]['cover_num']
+    print('now_count,now_date -- - >',now_count,now_date)
     if oper_type == 'json':
         response.code = 200
         response.data = data_list
         return JsonResponse(response.__dict__)
     else:
-        return render(request, 'test.html', locals())
+        return render(request, 'api/chaxun_kehu_fugai.html', locals())
 
 
 # 新问答完成的不打回到编辑
