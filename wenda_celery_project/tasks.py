@@ -837,13 +837,7 @@ def tongji_kehu_shiyong():
 
 # 覆盖报表功能中生成客户覆盖报表
 @app.task
-def cover_reports_generate_excel(file_name, data_list,url_list, debug):
-    xinbi = len(set(url_list['xin']))
-    laobi = len(set(url_list['lao']))
-    count_baifenbi = xinbi + laobi
-    xinbaifenbi = int(xinbi / count_baifenbi)
-    laobaifenbi = int(laobi / count_baifenbi)
-    # 生成客户查看的覆盖报表
+def cover_reports_generate_excel(file_name, data_list, debug, url_list=None):
     # 生成客户查看的覆盖报表
     wb = Workbook()
     ws = wb.active
@@ -857,7 +851,17 @@ def cover_reports_generate_excel(file_name, data_list,url_list, debug):
         ws.cell(row=1, column=7, value="类型")
         ws.cell(row=1, column=8, value="发布时间")
         ws.cell(row=1, column=9, value="问答类型")
-    xunhuan_yici = 0
+
+    if url_list:  # 如果有url_list 则表示需要填写新问答和老问答所占的百分比
+        xinbi = len(set(url_list['xin']))
+        laobi = len(set(url_list['lao']))
+        count_baifenbi = xinbi + laobi
+        xinbaifenbi = int(xinbi / count_baifenbi)
+        laobaifenbi = int(laobi / count_baifenbi)
+        ws.cell(row=2, column=10, value=str(xinbaifenbi) + '%')
+        ws.cell(row=2, column=11, value=str(laobaifenbi) + '%')
+    # xunhuan_yici = 0
+
     for row, i in enumerate(data_list, start=2):
         try:
             ws.cell(row=row, column=1, value=i["username"])
@@ -868,16 +872,14 @@ def cover_reports_generate_excel(file_name, data_list,url_list, debug):
                 ws.cell(row=row, column=7, value=i["is_zhedie"])
                 ws.cell(row=row, column=8, value=i["create_time"])
                 ws.cell(row=row, column=9, value=i["wenda_type"])
-                if xunhuan_yici < 2:
-                    ws.cell(row=row, column=10, value=str(xinbaifenbi) + '%')
-                    ws.cell(row=row, column=11, value=str(laobaifenbi) + '%')
-                    xunhuan_yici += 1
+                # if xunhuan_yici < 2:
+                #
+                #     xunhuan_yici += 1
 
             else:
                 if i["link"]:
                     ws["D{row}".format(row=row)].hyperlink = i["link"]
                     ws["D{row}".format(row=row)].value = "点击打开知道问答页面"
-
 
             ws.cell(row=row, column=5, value=i["rank"])
             ws.cell(row=row, column=6, value=i["create_date"])
@@ -1031,7 +1033,7 @@ def userprofile_keywords_cover(debug=False):
         )
         yingxiaoguwen_file_path_name = os.path.join("statics", "upload_files", yingxiaoguwen_file_name)
 
-        cover_reports_generate_excel(yingxiaoguwen_file_path_name, data_day_list,url_list, debug=False)
+        cover_reports_generate_excel(yingxiaoguwen_file_path_name, data_day_list, debug=False, url_list=url_list)
 
         url_num = search_objs.values('url').distinct().count()
 
