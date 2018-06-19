@@ -17,10 +17,10 @@ sys.path.append(project_dir)
 print(project_dir)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'wenda.settings'
 import django
-
+from selenium.webdriver.common.action_chains import ActionChains
 django.setup()
 
-
+from selenium.webdriver.common.keys import Keys
 class GuanJianCi:
 
     # 初始化文件
@@ -44,36 +44,44 @@ class GuanJianCi:
         self.panduan_url = 'http://127.0.0.1:8006/api/check_zhidao_url'
 
     # 随机数 增加装饰器 该函数有self属性
-    @property
-    def rand(self):
-        return random.randint(1, 5)
-
+    # @property
+    # def rand(self):
+    #     return random.randint(1, 5)
+    def timesleep(self):
+        time.sleep(random.randint(2, 5))
     # 获取输入框  输入关键词 查询
     def data_url(self, user_id, keyword, guanjianci_id):
         # 获取输入框  输入 关键词 并查询
         print('-----------输入数据-----------')
         self.browser.get(self.url)
         self.browser.find_element_by_id('index-kw').send_keys(keyword)
-        sleep(self.rand)
-        self.browser.find_element_by_id('index-bn').click()
+        self.timesleep()
+        self.browser.find_element_by_id('index-bn').send_keys(Keys.ENTER)
+
         self.unit()
+        self.timesleep()
         guanjianci_num = 0
         soup = BeautifulSoup(self.browser.page_source, 'lxml')
-        sleep(self.rand)
+        self.timesleep()
+        print('执行js ----- js  ----- js ---')
+
+        js = """$("#page-hd").css({"position":"fixed"})"""
+        # js = """$("#page-hd").css({"position":"fixed"; "z-index":1000})"""
+        self.browser.execute_script(js)
+        self.browser.save_screenshot('page.png')
         results = soup.find('div', class_='results')
         for result in results:
             try:
                 # print('lianjie - - -- >',lianjie)
                 lianjie = result['data-log']
-                print('判断一 = == ')
                 if lianjie:
-                    # js = """$("#page-hd").css({"border":"3px solid red"})"""
-                    js = """$("#page-hd").css({"position":"fixed"})"""
-                    sleep(self.rand)
+                    js = """$("#page-hd").css({"z-index":"1000"})"""
                     self.browser.execute_script(js)
-                    self.browser.save_screenshot('page.png')
-                    # js = """$("#page").css({"padding-top":"146px"})"""
-                    # self.browser.execute_script(js)
+                    js = """$("#page-hd").css({"position":"fixed"})"""
+                    self.browser.execute_script(js)
+                    js = """$("#page").css({"padding-top":"146px"})"""
+                    self.browser.execute_script(js)
+
                     dict_lianjie = eval(lianjie)
                     order = dict_lianjie['order']
                     zhidao_url = dict_lianjie['mu']
@@ -116,7 +124,7 @@ class GuanJianCi:
                                         '//*[@id="results"]/div[%d]' % int(order))
                                 # selenium下拉
                                 self.browser.execute_script("window.scrollBy(0,{})".format(div_tag.location['y']))
-                                sleep(self.rand)
+                                self.timesleep()
                                 # js下拉
                                 # js = "document.documentElement.scrollbottom={}".format(int(div_tag.location['y']))
                                 # self.browser.execute_script(js)
@@ -126,9 +134,9 @@ class GuanJianCi:
                                         guanjianci_num=guanjianci_num))
                                 print('---下拉--标红截图第二张---')
                                 js = """$("div[order='%d']").css({"border":"3px solid red"})""" % int(order)
-                                sleep(self.rand)
+                                self.timesleep()
                                 self.browser.execute_script(js)
-                                sleep(self.rand)
+                                self.timesleep()
                                 self.browser.get_screenshot_as_file(
                                     './picture/' + keyword + '--2--' + '{guanjianci_num}.png'.format(
                                         guanjianci_num=guanjianci_num))
@@ -136,7 +144,7 @@ class GuanJianCi:
                                 print('---截第三张截图---')
                                 js = """$(".best-answer-container").css({"border":"3px solid red"})"""
                                 self.browser.execute_script(js)
-                                sleep(self.rand)
+                                self.timesleep()
                                 self.browser.get_screenshot_as_file(
                                     './picture/' + keyword + '--3--' + '{guanjianci_num}.png'.format(
                                         guanjianci_num=guanjianci_num))
@@ -171,8 +179,8 @@ class GuanJianCi:
                                 guanjianci_num += 2
                         else:
                             print('---链接对--答案不对---')
-                    else:
-                        continue
+                else:
+                    continue
             except Exception as e:
                 print('错误----> ', e)
 
@@ -197,7 +205,7 @@ class GuanJianCi:
         user_id = self.data['user_id']
         keyword = self.data['guanjianci']
         guanjianci_id = self.data['guanjianci_id']
-        print('user_id --- guanjianci --> ', user_id, keyword, guanjianci_id)
+        # print('user_id --- guanjianci --> ', user_id, keyword, guanjianci_id)
 
         self.data_url(user_id, keyword, guanjianci_id)
 

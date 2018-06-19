@@ -856,11 +856,16 @@ def cover_reports_generate_excel(file_name, data_list, debug, url_list=None):
         xinbi = len(set(url_list['xin']))
         laobi = len(set(url_list['lao']))
         count_baifenbi = xinbi + laobi
-        xinbaifenbi = int(xinbi / count_baifenbi)
-        laobaifenbi = int(laobi / count_baifenbi)
-        ws.cell(row=2, column=10, value= "新问答占比:" + str(xinbaifenbi) + '%')
-        ws.cell(row=2, column=11, value= "老问答占比:" + str(laobaifenbi) + '%')
-    # xunhuan_yici = 0
+        print('新问答 -- - -- -- ->', xinbi)
+        print('老问答 -- -- -- -- ->', laobi)
+        print('总数  - - - - --  > ', count_baifenbi)
+        xinbaifenbi = float((xinbi + .0) / count_baifenbi) * 100
+        laobaifenbi = float((laobi + .0) / count_baifenbi) * 100
+        yunsuanxin = round(xinbaifenbi)
+        yunsuanlao = round(laobaifenbi)
+        print('运算结果 - - -- - 》', yunsuanxin, yunsuanlao)
+        ws.cell(row=2, column=10, value="新问答占比:" + str(yunsuanxin) + '%')
+        ws.cell(row=2, column=11, value="老问答占比:" + str(yunsuanlao) + '%')
 
     for row, i in enumerate(data_list, start=2):
         try:
@@ -872,9 +877,7 @@ def cover_reports_generate_excel(file_name, data_list, debug, url_list=None):
                 ws.cell(row=row, column=7, value=i["is_zhedie"])
                 ws.cell(row=row, column=8, value=i["create_time"])
                 ws.cell(row=row, column=9, value=i["wenda_type"])
-                # if xunhuan_yici < 2:
-                #
-                #     xunhuan_yici += 1
+
 
             else:
                 if i["link"]:
