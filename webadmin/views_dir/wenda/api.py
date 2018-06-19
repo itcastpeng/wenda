@@ -987,6 +987,7 @@ def keywords_cover(request):
 
     else:
         area = request.GET.get('area')
+        print('area -=-=>', area)
         print("--->1: ", datetime.datetime.now())
         now_date = datetime.datetime.now().strftime("%Y-%m-%d")
 
