@@ -1043,7 +1043,7 @@ def keywords_cover(request):
             models.KeywordsTopSet.objects.filter(id=obj['id']).update(**updateData)
             # KeywordsSearchLog
             models.KeywordsSearchLog.objects.create(
-                keyword=obj,
+                keyword_id=obj.id,
                 area=area
             )
 
