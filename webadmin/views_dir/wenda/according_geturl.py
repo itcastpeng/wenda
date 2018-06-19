@@ -38,10 +38,14 @@ def according_geturl(request):
             })
         # print('data_list = = >',data_list)
         response.code = 200
+        response.status = True
         response.data = data_list
         response.message = '查询成功'
         # return HttpResponse('查询成功')
     else:
+        response.code = 200
+        response.status =False
+        response.data = ''
         response.message = '链接不存在'
         # return HttpResponse('链接不存在')
     return JsonResponse(response.__dict__)
