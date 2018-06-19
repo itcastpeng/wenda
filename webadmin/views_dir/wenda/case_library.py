@@ -38,7 +38,8 @@ def case_library(request):
         # 排序
         column_list = [
             "index", "keywords__client_user__username", "keywords__keyword", "title",
-            "page_type", "rank", "create_date", 'keywords__client_user_id', 'search_keyword', 'task_type','keywords__client_user__status'
+            "page_type", "rank", "create_date", 'keywords__client_user_id', 'search_keyword', 'task_type'
+            # ,'keywords__client_user__status'
         ]
         order_column = request.GET.get('order[0][column]', 1)  # 第几列排序
         order = request.GET.get('order[0][dir]')  # 正序还是倒序
@@ -80,11 +81,11 @@ def case_library(request):
 
         # 成都美尔贝不显示
         objs = models.KeywordsCover.objects.select_related('keywords', 'keywords__client_user').filter(q).exclude(keywords__client_user_id=175)
+        print('objs   ----->',objs)
         if role_id == 12:
             objs = objs.exclude(keywords__client_user__username__contains='YZ-')
 
         objs = objs.order_by(order_column)
-        print("01-->", datetime.datetime.now())
         count = objs.count()
         print(objs.query)
         print("0-->", datetime.datetime.now())
@@ -122,6 +123,7 @@ def case_library(request):
                 index, obj.keywords.client_user.username, keyword, title,
                 obj.get_page_type_display(), obj.rank, create_date
             ])
+            print('result  ------ > ',result_data)
         print("2-->", datetime.datetime.now())
         return HttpResponse(json.dumps(result_data))
     qiyong_status = models.UserProfile.status_choices
@@ -131,7 +133,8 @@ def case_library(request):
         role_id=5,
         # status=1,
         is_delete=False
-     ).exclude(status=2).exclude(username__contains='测试')
+     # ).exclude(status=2).exclude(username__contains='测试')
+     ).exclude(username__contains='测试')
     if role_id == 12:
         user_objs = user_objs.exclude(username__contains='YZ-')
 
