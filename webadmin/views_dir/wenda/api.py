@@ -1004,9 +1004,11 @@ def keywords_cover(request):
         print("--->2: ", datetime.datetime.now())
         # user_list_id = [214]
         print('user_list_id -->', user_list_id)
+        get_select_date = datetime.datetime.now() - datetime.timedelta(minutes=5)
         q = Q(
                 Q(client_user_id__in=user_list_id) &
                 Q(is_delete=False) &
+                Q(get_select_date__lt=get_select_date) &
                 Q(Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date))
         )
 
@@ -1032,7 +1034,8 @@ def keywords_cover(request):
             updateData = {
                 'update_select_cover_date': datetime.datetime.now(),
                 'status': 3,
-                'area': area
+                'area': area,
+                'get_select_date': datetime.datetime.now()
             }
 
             # 当日查询次数
