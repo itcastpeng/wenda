@@ -959,8 +959,12 @@ def keywords_cover(request):
         )
 
         if not keywords_cover_obj:
+            keywords_top_set_objs = models.KeywordsTopSet.objects.filter(id=kid)
+            keywords_top_set_objs.update(
+                update_select_cover_date=datetime.datetime.now()
+            )
             wenda_robot_task_objs = models.WendaRobotTask.objects.filter(
-                task__release_user_id=models.KeywordsTopSet.objects.filter(id=kid)[0].client_user.id,
+                task__release_user_id=keywords_top_set_objs[0].client_user.id,
                 add_map=1,
                 wenda_url=url
             )
@@ -982,6 +986,7 @@ def keywords_cover(request):
         response.message = "添加成功"
 
     else:
+        area = request.GET.get('area')
         print("--->1: ", datetime.datetime.now())
         now_date = datetime.datetime.now().strftime("%Y-%m-%d")
 
@@ -998,12 +1003,17 @@ def keywords_cover(request):
         print("--->2: ", datetime.datetime.now())
         # user_list_id = [214]
         print('user_list_id -->', user_list_id)
-        q = Q(Q(client_user_id__in=user_list_id) & Q(is_delete=False) & Q(
-            Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date)))
+        q = Q(
+                Q(client_user_id__in=user_list_id) &
+                Q(is_delete=False) &
+                Q(Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date))
+        )
+
         # q = Q(Q(is_delete=False) & Q(Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date)))
         print(q)
-        keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).order_by(
-            '-client_user__fugai_youxian')[0:10].values('id', 'keyword', 'client_user_id')
+        keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).exclude(area=area).order_by(
+            '-client_user__fugai_youxian'
+        )[0:10].values('id', 'keyword', 'client_user_id')
         # keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).order_by('?')[0:10]
         # keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').get(q).order_by('client_user')
         print("--->3: ", datetime.datetime.now())
@@ -1012,15 +1022,28 @@ def keywords_cover(request):
         if not keywords_objs:
             q = Q(Q(status=1) & Q(is_delete=False) & Q(
                 Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date)))
-            keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).order_by(
+            keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).exclude(area=area).order_by(
                 'client_user')[0:10].values('id', 'keyword', 'client_user_id')
 
         print('keywords_objs -->', keywords_objs)
         if keywords_objs:
             obj = keywords_objs[0]
-            models.KeywordsTopSet.objects.filter(id=obj['id']).update(
-                update_select_cover_date=datetime.datetime.now(),
-                status=3
+            updateData = {
+                'update_select_cover_date': datetime.datetime.now(),
+                'status': 3,
+                'area': area
+            }
+
+            # 当日查询次数
+            search_count = models.KeywordsSearchLog.objects.filter(create_date__gt=now_date)
+            if search_count < 2:   # 如果今日查询次数小于2次，则在查询一次
+                del updateData['update_select_cover_date']
+
+            models.KeywordsTopSet.objects.filter(id=obj['id']).update(**updateData)
+            # KeywordsSearchLog
+            models.KeywordsSearchLog.objects.create(
+                keyword=obj,
+                area=area
             )
 
             print("--->4: ", datetime.datetime.now())
