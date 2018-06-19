@@ -112,9 +112,10 @@ def guwen_duijie(request):
             if  obj.daokuan_time:
                 daokuan_time = obj.daokuan_time.strftime('%Y-%m-%d')
             fugai_count = obj.fugai_count
-
-            if obj.jifeishijian_start and obj.jifeishijian_stop and obj.jifeishijian_stop>datetime.date.today():
-                kehu_name = '<span style="color: red">{username}</span>'.format(username=kehu_name)
+            neibiao_obj = models.YingXiaoGuWen_NeiBiao.objects.filter(guishu=obj.id)
+            if neibiao_obj:
+                if neibiao_obj[0].jifeishijian_stop > datetime.date.today() or neibiao_obj[0].jifeishijian_stop == datetime.date.today():
+                    kehu_name = '<span style="color: red">{username}</span>'.format(username=kehu_name)
 
             # print('xiaoshou --- - >',xiaoshou)
             # print('-------> ',user_id,tingbiao,kaishi_jifei,daozhang,kehu_name,user_id,index,daokuan_time,fugai_count,xiaoshou)

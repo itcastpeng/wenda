@@ -858,8 +858,8 @@ def cover_reports_generate_excel(file_name, data_list, debug, url_list=None):
         count_baifenbi = xinbi + laobi
         xinbaifenbi = int(xinbi / count_baifenbi)
         laobaifenbi = int(laobi / count_baifenbi)
-        ws.cell(row=2, column=10, value=str(xinbaifenbi) + '%')
-        ws.cell(row=2, column=11, value=str(laobaifenbi) + '%')
+        ws.cell(row=2, column=10, value= "新问答占比:" + str(xinbaifenbi) + '%')
+        ws.cell(row=2, column=11, value= "老问答占比:" + str(laobaifenbi) + '%')
     # xunhuan_yici = 0
 
     for row, i in enumerate(data_list, start=2):

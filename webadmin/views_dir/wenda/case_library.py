@@ -38,7 +38,7 @@ def case_library(request):
         # 排序
         column_list = [
             "index", "keywords__client_user__username", "keywords__keyword", "title",
-            "page_type", "rank", "create_date", 'keywords__client_user_id', 'search_keyword', 'task_type'
+            "page_type", "rank", "create_date", 'keywords__client_user_id', 'search_keyword', 'task_type','keywords__client_user__status'
         ]
         order_column = request.GET.get('order[0][column]', 1)  # 第几列排序
         order = request.GET.get('order[0][dir]')  # 正序还是倒序
@@ -55,12 +55,12 @@ def case_library(request):
                     tomorrow_dt = datetime.datetime.strptime(request.GET[field], "%Y-%m-%d") + datetime.timedelta(days=1)
                     q.add(Q(**{field + "__gte": request.GET[field]}), Q.AND)
                     q.add(Q(**{field + "__lt": tomorrow_dt}), Q.AND)
-
                 elif field == "search_keyword":
                     q.add(Q(**{"keywords__keyword__contains": request.GET[field]}), Q.AND)
                 else:
                     q.add(Q(**{field: request.GET[field]}), Q.AND)
-
+                print('field == = =>', field)
+        print('q= = = = => ',q)
         if not request.GET.get('create_date'):
             q.add(Q(**{"create_date__gte": now_date}), Q.AND)
 
@@ -77,7 +77,6 @@ def case_library(request):
 
         objss = models.KeywordsCover.objects.filter(keywords__client_user_id__in=[37, 63, 66, 80, 104, 112, 113, 127])
         print("objss -->", objss.count())
-        print('q -->', q)
 
         # 成都美尔贝不显示
         objs = models.KeywordsCover.objects.select_related('keywords', 'keywords__client_user').filter(q).exclude(keywords__client_user_id=175)
@@ -117,7 +116,7 @@ def case_library(request):
 
             wenda_robot_task_objs = models.WendaRobotTask.objects.filter(wenda_url=obj.url, task__release_user_id=obj.keywords.client_user.id)
             title = wenda_robot_task_objs[0].title
-
+            # title = '测试'
             # ["index", "keywords__client_user_id", "keywords__keywords", "page_type", "rank", "create_date", "oper"]
             result_data["data"].append([
                 index, obj.keywords.client_user.username, keyword, title,
@@ -125,7 +124,7 @@ def case_library(request):
             ])
         print("2-->", datetime.datetime.now())
         return HttpResponse(json.dumps(result_data))
-
+    qiyong_status = models.UserProfile.status_choices
     page_type_choices = models.KeywordsCover.page_type_choices
     task_type_choices = models.KeywordsCover.task_type_choices
     user_objs = models.UserProfile.objects.filter(
