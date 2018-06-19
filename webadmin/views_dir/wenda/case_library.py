@@ -114,9 +114,9 @@ def case_library(request):
                 url = 'https://m.baidu.com/s?word={keyword}'.format(keyword=obj.keywords.keyword)
             keyword = keyword.format(url=url, keyword=obj.keywords.keyword)
 
-            wenda_robot_task_objs = models.WendaRobotTask.objects.filter(wenda_url=obj.url, task__release_user_id=obj.keywords.client_user.id)
-            title = wenda_robot_task_objs[0].title
-            # title = '测试'
+            # wenda_robot_task_objs = models.WendaRobotTask.objects.filter(wenda_url=obj.url, task__release_user_id=obj.keywords.client_user.id)
+            # title = wenda_robot_task_objs[0].title
+            title = '测试'
             # ["index", "keywords__client_user_id", "keywords__keywords", "page_type", "rank", "create_date", "oper"]
             result_data["data"].append([
                 index, obj.keywords.client_user.username, keyword, title,
@@ -131,7 +131,7 @@ def case_library(request):
         role_id=5,
         # status=1,
         is_delete=False
-     )
+     ).exclude(status=2).exclude(username__contains='测试')
     if role_id == 12:
         user_objs = user_objs.exclude(username__contains='YZ-')
 
