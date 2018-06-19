@@ -1035,7 +1035,7 @@ def keywords_cover(request):
             }
 
             # 当日查询次数
-            search_count = models.KeywordsSearchLog.objects.filter(create_date__gt=now_date)
+            search_count = models.KeywordsSearchLog.objects.filter(create_date__gt=now_date).count()
             if search_count < 2:   # 如果今日查询次数小于2次，则在查询一次
                 del updateData['update_select_cover_date']
 
