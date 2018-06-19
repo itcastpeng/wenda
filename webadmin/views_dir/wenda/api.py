@@ -1013,7 +1013,7 @@ def keywords_cover(request):
         # q = Q(Q(is_delete=False) & Q(Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date)))
         print(q)
         keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).exclude(area=area).order_by(
-            '-client_user__fugai_youxian'
+            '?'
         )[0:10].values('id', 'keyword', 'client_user_id')
         # keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).order_by('?')[0:10]
         # keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').get(q).order_by('client_user')
@@ -1024,7 +1024,7 @@ def keywords_cover(request):
             q = Q(Q(status=1) & Q(is_delete=False) & Q(
                 Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date)))
             keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).exclude(area=area).order_by(
-                'client_user')[0:10].values('id', 'keyword', 'client_user_id')
+                '?')[0:10].values('id', 'keyword', 'client_user_id')
 
         print('keywords_objs -->', keywords_objs)
         if keywords_objs:
