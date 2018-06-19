@@ -348,6 +348,7 @@ def cover_reports_oper(request, oper_type, o_id):
                 models.KeywordsCover.objects.filter(keywords__client_user_id=o_id, create_date__gte=today_date).delete()
                 models.KeywordsTopSet.objects.filter(client_user_id=o_id).update(update_select_cover_date=None)
                 models.UserprofileKeywordsCover.objects.filter(client_user_id=o_id, create_date__gte=today_date).delete()
+                models.KeywordsSearchLog.objects.filter(keyword__client_user_id=o_id, create_date__gte=today_date).delete()
 
             # 删除链接
             if delete_lianjie:
