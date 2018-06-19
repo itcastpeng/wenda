@@ -628,6 +628,14 @@ class KeywordsTopSet(models.Model):
 
     update_select_cover_date = models.DateTimeField(verbose_name="更新查询排名的时间", null=True, blank=True)
     is_delete = models.BooleanField(verbose_name="是否删除", default=False)
+    area = models.CharField(verbose_name="查询地区", max_length=128)
+
+
+# 记录查询关键词覆盖日志
+class KeywordsSearchLog(models.Model):
+    keyword = models.ForeignKey('KeywordsTopSet', verbose_name='关键词')
+    create_date = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
+    area = models.CharField(verbose_name="查询地区", max_length=128)
 
 
 # 指定关键词首页数据表
