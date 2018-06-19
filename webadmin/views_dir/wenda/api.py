@@ -1008,12 +1008,12 @@ def keywords_cover(request):
         q = Q(
                 Q(client_user_id__in=user_list_id) &
                 Q(is_delete=False) &
-                Q(Q(get_select_date__isnull=True) | Q(get_select_date__lt=now_date)) &
+                Q(Q(get_select_date__isnull=True) | Q(get_select_date__lt=datetime.datetime.now())) &
                 Q(Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date))
         )
 
         # q = Q(Q(is_delete=False) & Q(Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date)))
-        print(q)
+        print('q -->', q)
         keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).exclude(area=area).order_by(
             '?'
         )[0:10].values('id', 'keyword', 'client_user_id')
