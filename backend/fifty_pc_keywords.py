@@ -30,12 +30,14 @@ class GuanJianCi:
         self.data = data
         self.options = webdriver.ChromeOptions()
         # 设置中文
-        self.options.add_argument('lang=zh_CN.UTF-8')
-        # 更换头部
-        self.options.add_argument(
-            'user-agent=Mozilla/5.0 (iPhone; CPU iPhone OS 9_3_4 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Mobile/13G35 QQ/6.5.3.410 V1_IPH_SQ_6.5.3_1_APP_A Pixel/750 Core/UIWebView NetType/2G Mem/117')
+        # self.options.add_argument('lang=zh_CN.UTF-8')
+        # # 更换头部
+        # self.options.add_argument(
+        #     'user-agent=Mozilla/5.0 (iPhone; CPU iPhone OS 9_3_4 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Mobile/13G35 QQ/6.5.3.410 V1_IPH_SQ_6.5.3_1_APP_A Pixel/750 Core/UIWebView NetType/2G Mem/117')
+        mobileEmulation = {'deviceName': 'iPhone 6'}
+        self.options.add_experimental_option('mobileEmulation', mobileEmulation)
         self.browser = webdriver.Chrome('./chromedriver_2.36.exe', chrome_options=self.options)
-        self.browser.maximize_window()  # 全屏
+        # self.browser.maximize_window()  # 全屏
         self.url = 'https://m.baidu.com'
         # 判断是否为自己的链接 url
         # self.panduan_url = 'http://wenda.zhugeyingxiao.com/api/check_zhidao_url'
@@ -57,13 +59,21 @@ class GuanJianCi:
         self.unit()
         guanjianci_num = 0
         soup = BeautifulSoup(self.browser.page_source, 'lxml')
+        sleep(self.rand)
         results = soup.find('div', class_='results')
-        data_list = []
         for result in results:
             try:
-                lianjie = result['data-log']
                 # print('lianjie - - -- >',lianjie)
+                lianjie = result['data-log']
+                print('判断一 = == ')
                 if lianjie:
+                    # js = """$("#page-hd").css({"border":"3px solid red"})"""
+                    js = """$("#page-hd").css({"position":"fixed"})"""
+                    sleep(self.rand)
+                    self.browser.execute_script(js)
+                    self.browser.save_screenshot('page.png')
+                    # js = """$("#page").css({"padding-top":"146px"})"""
+                    # self.browser.execute_script(js)
                     dict_lianjie = eval(lianjie)
                     order = dict_lianjie['order']
                     zhidao_url = dict_lianjie['mu']
@@ -123,7 +133,7 @@ class GuanJianCi:
                                     './picture/' + keyword + '--2--' + '{guanjianci_num}.png'.format(
                                         guanjianci_num=guanjianci_num))
                                 self.browser.get(zhidao_url)
-                                print('---下拉--截第三张截图---')
+                                print('---截第三张截图---')
                                 js = """$(".best-answer-container").css({"border":"3px solid red"})"""
                                 self.browser.execute_script(js)
                                 sleep(self.rand)
@@ -161,8 +171,8 @@ class GuanJianCi:
                                 guanjianci_num += 2
                         else:
                             print('---链接对--答案不对---')
-                else:
-                    continue
+                    else:
+                        continue
             except Exception as e:
                 print('错误----> ', e)
 
