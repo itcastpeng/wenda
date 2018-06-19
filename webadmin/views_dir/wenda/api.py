@@ -1008,7 +1008,7 @@ def keywords_cover(request):
         q = Q(
                 Q(client_user_id__in=user_list_id) &
                 Q(is_delete=False) &
-                Q(get_select_date__lt=get_select_date) &
+                Q(Q(get_select_date__isnull=True) | Q(get_select_date__lt=now_date)) &
                 Q(Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date))
         )
 
