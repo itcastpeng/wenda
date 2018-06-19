@@ -627,6 +627,7 @@ class KeywordsTopSet(models.Model):
     oper_user = models.ForeignKey("UserProfile", verbose_name="操作用户", related_name="keywords_top_set_oper_user")
 
     update_select_cover_date = models.DateTimeField(verbose_name="更新查询排名的时间", null=True, blank=True)
+    get_select_date = models.DateTimeField(verbose_name="获取关键词的时间", null=True, blank=True)
     is_delete = models.BooleanField(verbose_name="是否删除", default=False)
     area = models.CharField(verbose_name="查询地区", max_length=128)
 
