@@ -217,8 +217,11 @@ def ToRobotTask():
     task_objs = models.Task.objects.filter(status=6, publish_user_id__in=robot_ids)  # 状态为发布中,且发布用户为机器人
     for obj in task_objs:
         wenda_robot_task_obj = models.WendaRobotTask.objects.filter(task=obj)
-        if wenda_robot_task_obj:
+        if wenda_robot_task_obj:  # 已经进入机器人中则跳过
             continue
+
+        obj.fabu_date = datetime.datetime.now()
+        obj.save()
 
         file_path = obj.task_result_file_path
         if not file_path:
@@ -284,7 +287,7 @@ def RobotTaskToTask():
 
         # 如果分配给机器人的所有任务都已经完成或者创建时间距离现在5天
         if (wenda_robot_task_objs.count() and wenda_robot_task_objs.filter(
-                status=6).count() == wenda_robot_task_objs.count()) or task_obj.create_date < five_days_ago:
+                status=6).count() == wenda_robot_task_objs.count()) or task_obj.fabu_date < five_days_ago:
             if task_obj.create_date < five_days_ago:
                 wenda_robot_task_objs.update(status=6)
                 models.EditPublickTaskManagement.objects.filter(task__task__task=task_obj).update(status=3)
