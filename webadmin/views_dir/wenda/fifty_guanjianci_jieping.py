@@ -90,11 +90,11 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
             # 数据库查询条数
             objs = models.GuanJianCiFifty.objects.filter(yonghu_user=yonghu_id).values('yonghu_user_id').annotate(Count('id'))
             # 输入的条数
-            len_guanjianci = len(guanjianci_list)
-            print('输入的条数 - -- - -> ',len_guanjianci )
             if objs:
-                print('数据库条数 - -- - -> ',objs[0]['id__count'] )
-                print('数据库条数 + 输入的条数 - -- - -> ',objs[0]['id__count'] + len_guanjianci )
+                len_guanjianci = len(guanjianci_list)
+                # print('输入的条数 - -- - -> ',len_guanjianci )
+                # print('数据库条数 - -- - -> ',objs[0]['id__count'] )
+                # print('数据库条数 + 输入的条数 - -- - -> ',objs[0]['id__count'] + len_guanjianci )
                 if objs[0]['id__count'] + len_guanjianci > 50:
                     response.status=False
                     response.message='数据库大于50条,请删除部分关键词'
@@ -104,20 +104,54 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
                 else:
                     obj = models.UserProfile.objects.filter(id=yonghu_id)
                     if obj:
-                        print('查询user成功 = = = = 》')
+                        # print('查询user成功 = = = = 》')
                         for guanjianci in guanjianci_list:
-                            print('关键词入库 -- -- - - 》',  guanjianci)
-                            print('用户id ------ 》 ',yonghu_id    )
+                            # print('关键词入库 -- -- - - 》',  guanjianci)
+                            # print('用户id ------ 》 ',yonghu_id    )
                             models.GuanJianCiFifty.objects.create(
                                 guanjianci=guanjianci,
                                 yonghu_user=obj[0]
                             )
-                        response.status=False
+                        response.status=True
                         response.message='添加成功'
             else:
-                response.status = False
-                response.message = '添加数据异常'
-
+                len_guanjianci = len(guanjianci_list)
+                # if objs[0]['id__count'] + len_guanjianci > 50:
+                #     response.status = False
+                #     response.message = '数据库大于50条,请删除部分关键词'
+                if len_guanjianci > 50:
+                    response.status = False
+                    response.message = '关键字超出50条,请检查!'
+                else:
+                    obj = models.UserProfile.objects.filter(id=yonghu_id)
+                    if obj:
+                        for guanjianci in guanjianci_list:
+                            models.GuanJianCiFifty.objects.create(
+                                guanjianci=guanjianci,
+                                yonghu_user=obj[0]
+                            )
+                        response.status = True
+                        response.message = '添加成功'
+            # else:
+            #     if objs[0]['id__count'] + len_guanjianci > 50:
+            #         response.status = False
+            #         response.message = '数据库大于50条,请删除部分关键词'
+            #     elif len_guanjianci > 50:
+            #         response.status = False
+            #         response.message = '关键字超出50条,请检查!'
+            #     else:
+            #         obj = models.UserProfile.objects.filter(id=yonghu_id)
+            #         if obj:
+            #             print('查询user成功 = = = = 》')
+            #             for guanjianci in guanjianci_list:
+            #                 print('关键词入库 -- -- - - 》', guanjianci)
+            #                 print('用户id ------ 》 ', yonghu_id)
+            #                 models.GuanJianCiFifty.objects.create(
+            #                     guanjianci=guanjianci,
+            #                     yonghu_user=obj[0]
+            #                 )
+            #         response.status = False
+            #         response.message = '添加成功'
         # 修改关键词
         elif oper_type == 'update_guanjianci':
             guanjianci = request.POST.get('guanjianci')
