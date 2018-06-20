@@ -208,7 +208,9 @@ def cover_reports(request):
                             temp = obj.client_user.jifei_stop_date - datetime.date.today()
                             username += "<span style='color: #ff9900'> (还有{}天到期)</span>".format(temp.days)
 
-
+            one_user_generation = ''
+            if role_id == 1:
+                one_user_generation = "<a href='one_user_generation/{client_user_id}/'data-toggle='modal' data-target='#exampleFormModal'>重新生成 </a>".format(client_user_id=obj.client_user_id)
             jifeishijian = jifei_start_date + '<br>' + jifei_stop_date
             result_data["data"].append(
                 {
@@ -224,12 +226,13 @@ def cover_reports(request):
                     "total_oper_num": total_oper_num,
                     'zhanshibianji':zhanshibianji,
                     'xiugaijifeiriqistop': jifeishijian,
+                    'one_user_generation':one_user_generation,
                     # "xiugaijifeiriqi": xiugaijifeiriqi,
                     # 'xiugaijifeiriqistart': jifei_start_date,
                 }
             )
             # print("4 -->", datetime.datetime.now())
-            print('result_data - - > ',result_data )
+            # print('result_data - - > ',result_data )
         return HttpResponse(json.dumps(result_data))
 
     if role_id == 12:
@@ -423,6 +426,24 @@ def cover_reports_oper(request, oper_type, o_id):
             objs.delete()
             response.code = 200
             response.message = '生成成功'
+
+        # 单用户生成覆盖报表
+        elif oper_type == 'one_user_generation':
+            date_obj = datetime.datetime.now()
+            date = date_obj.strftime("%Y-%m-%d")
+            objs = models.UserprofileKeywordsCover.objects.filter(
+                create_date=date,
+                client_user=o_id
+            )
+            if objs:
+                objs.delete()
+                response.code = 200
+                response.status = True
+                response.message = '生成成功'
+            else:
+                response.status = False
+                response.message = '没有报表,请勿重复操作！'
+
         # 下载报表
         if oper_type == "download":
             user_id = request.POST.get("user_id")
@@ -660,3 +681,10 @@ def cover_reports_oper(request, oper_type, o_id):
         # 重新生成覆盖报表
         elif oper_type == 'rebuild':
             return render(request,'wenda/cover_reports/cover_chongxin_shengcheng_baobiao.html',locals())
+
+        # 单用户生成覆盖报表
+        elif oper_type =='one_user_generation':
+            print('o_id = === = =>',o_id)
+            objs = models.UserProfile.objects.filter(id=o_id)
+            user_name = objs[0].username
+            return render(request,'wenda/cover_reports/cover_chongxin_one_user_shengcheng_baobiao.html',locals())

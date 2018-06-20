@@ -121,6 +121,7 @@
                         <th>总发布次数</th>
                         <th>计费时间</th>
                         <th>设置</th>
+                        <th>生成报表</th>
                         {#                            <th>修改计费</th>#}
                         <th></th>
 
@@ -197,6 +198,7 @@
             {#{'data':'xiugaijifeiriqistart'},#}
             {'data': 'xiugaijifeiriqistop'},
             {"data": "oper"},
+            {"data":'one_user_generation'},
             {#{"data": "xiugaijifeiriqi"},#}
             {
                 "class": 'details-control',
@@ -213,6 +215,14 @@
                 "sortable": false
                 {#                "visible": false       // 不可见#}
             }
+            {% if role_id != 1 %}
+                ,{
+                    "targets":[12],
+                    "visible": false
+            }
+
+            {% endif %}
+
             {# 客户不可见的数据 #}
             {% if role_id == 5 %}
                 ,{
