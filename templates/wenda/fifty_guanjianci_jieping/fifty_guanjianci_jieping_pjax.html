@@ -1,4 +1,7 @@
 <title>关键词截屏</title>
+<link rel="stylesheet" href="http://cdn.admui.com/demo/pjax/1.3.0/vendor/magnific-popup/magnific-popup.css">
+<link rel="stylesheet" href="http://cdn.admui.com/demo/pjax/1.3.0/css/examples/components/advanced/lightbox.css">
+
 
 <style>
 
@@ -37,8 +40,17 @@
 </style>
 
 {% csrf_token %}
+
 <div class="page animation-fade page-index page-data-tables">
     <div class="page-content">
+
+         <div class="example-wrap hidden">
+            <div class="example" id="exampleGallery">
+                <a class="inline-block" href="http://cdn.admui.com/demo/pjax/1.3.0/images/photos/view-8.jpg" title="view-7" id="tanchu">
+                <img class="img-responsive hidden" src="http://cdn.admui.com/demo/pjax/1.3.0/images/photos/view-8.jpg" alt="..." width="220">
+                </a>
+            </div>
+        </div>
 
         <div class="panel" style="padding: 10px; height: auto">
             <form class="form-horizontal search_form">
@@ -52,7 +64,6 @@
 {#                                <option value="22">紫琪尔</option>#}
                             {% endfor %}
                         </select>
-
 {#                        <label for="cimingcheng">词名称：</label>#}
 {#                        <select class="form-control select2-hidden-accessible col-md-2" data-plugin="select2" tabindex="-1"#}
 {#                                aria-hidden="true" id="cimingcheng" name="cimingcheng" >#}
@@ -61,19 +72,12 @@
 {#                                <option value="{{ obj.id }}">{{ obj.guanjianci }}</option>#}
 {#                            {% endfor %}#}
 {#                        </select>#}
-
                 </div>
-
-
                 <div style="position: absolute; bottom:0; right: 20px;">
-                    <button type="button" class="btn btn-primary" id="search_button"><i class="icon fa-search"
-                                                                                        aria-hidden="true"></i>搜索
-                    </button>
+                    <button type="button" class="btn btn-primary" id="search_button"><i class="icon fa-search" aria-hidden="true"></i>搜索</button>
                 </div>
-
             </form>
         </div>
-
         <div class="panel" style="height: 100%;">
             <div class="panel-body">
                 <div class="col-md-12 form-group" style="margin-bottom: 10px">
@@ -86,22 +90,21 @@
 {#                            <i  aria-hidden="true"></i> 修改词#}
 {#                        </button>#}
 
-
                         <button type="button" href="create_guanjianci/0/" data-toggle="modal" data-target="#exampleFormModal"
-                                class="btn btn-info pull-right margin-right-5" >
+                                class="btn btn-info pull-right margin-right-5" id="create_guanjianci">
                             <i  aria-hidden="true"></i> 添加关键词
                         </button>
                 </div>
                 <table class="table table-bordered table-hover dataTable table-striped width-full text-nowrap"
                        id="dataTable" data-scroll-x="True">
                     <thead>
-                    <tr>
+                        <tr>
                         <th>编号</th>
                         <th>客户ID</th>
                         <th>客户名称</th>
                         <th>关键词</th>
                         <th>操作</th>
-                    </tr>
+                        </tr>
                     </thead>
                     <tbody>
                     </tbody>
@@ -111,10 +114,11 @@
     </div>
 </div>
 
+<script src="http://cdn.admui.com/demo/pjax/1.3.0/vendor/magnific-popup/jquery.magnific-popup.min.js" data-name="popup"></script>
+<script src="http://cdn.admui.com/demo/pjax/1.3.0/js/examples/components/advanced/lightbox.js" data-deps="popup"></script>
+
 
 <script>
-
-
     {# 在模态对话框关闭时清空数据 #}
     $(".modal").on("hidden.bs.modal", function () {
         $(this).removeData("bs.modal");
@@ -170,27 +174,28 @@
 
 
 
-    {# 搜索按钮被点击 #}
-    $("#search_button").click(function () {
-        var search_data = $(".search_form").serialize();
-        var get_url = "?type=ajax_json&" + search_data;
 
-        table.ajax.url(get_url);
-        table.draw();
-    });
+
+    {# 搜索按钮被点击 #}
+    {#$("#search_button").click(function () {#}
+    {#    var search_data = $(".search_form").serialize();#}
+    {#    var get_url = "?type=ajax_json&" + search_data;#}
+    {##}
+    {#    table.ajax.url(get_url);#}
+    {#    table.draw();#}
+    {#{);#}
 
     {# 搜框中的input标签 回车键被触发 #}
-    $(".search_form input").keydown(function () {
-        var e = window.event || arguments.callee.caller.arguments[0];
-        if (e.keyCode == 13) {
-            $("#search_button").click();
-        }
-    });
+    {#$(".search_form input").keydown(function () {#}
+    {#    var e = window.event || arguments.callee.caller.arguments[0];#}
+    {#    if (e.keyCode == 13) {#}
+    {#        $("#search_button").click();#}
+    {#    }#}
+    {#{);#}
 
     {# 搜框中的select标签 回车键被触发 #}
-    $(".search_form select").change(function () {
-        $("#search_button").click();
-    });
-
+    {#$(".search_form select").change(function () {#}
+    {#    $("#search_button").click();#}
+    {#{);#}
 
 </script>

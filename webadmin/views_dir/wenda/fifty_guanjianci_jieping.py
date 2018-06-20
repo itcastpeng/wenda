@@ -60,7 +60,7 @@ def guanjianci_jieping(request):
             "data": []}
         for index,obj in enumerate(objs[start: (start + length)], start=0):
             oper = ''
-            oper += "<a href='guanjianci_jieping/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>查看截屏</a>".format(user_id=obj.id)
+            oper += "<a href='guanjianci_jieping/{user_id}/' id='chakan_jieping' data-toggle='modal' data-target='#exampleFormModal'>查看截屏</a>".format(user_id=obj.id)
             oper += "----<a href='update_guanjianci/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>修改</a>".format(user_id=obj.id)
             oper += "----<a href='delete_guanjianci/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>删除</a>".format(user_id=obj.id)
             result_data['data'].append({
@@ -70,7 +70,7 @@ def guanjianci_jieping(request):
                 'guanjianci':obj.guanjianci,
                 'index':index + 1,
             })
-        return HttpResponse(json.dumps(result_data)  )
+        return HttpResponse(json.dumps(result_data))
     if "_pjax" in request.GET:
         return render(request, 'wenda/fifty_guanjianci_jieping/fifty_guanjianci_jieping_pjax.html', locals())
     return render(request, 'wenda/fifty_guanjianci_jieping/fifty_guanjianci_jieping.html', locals())
@@ -101,8 +101,6 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
                 elif len_guanjianci > 50:
                     response.status=False
                     response.message='关键字超出50条,请检查!'
-
-
                 else:
                     obj = models.UserProfile.objects.filter(id=yonghu_id)
                     if obj:
@@ -116,6 +114,9 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
                             )
                         response.status=True
                         response.message='添加成功'
+            else:
+                response.status = False
+                response.message = '添加数据异常'
 
         # 修改关键词
         elif oper_type == 'update_guanjianci':
@@ -149,8 +150,6 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
         elif oper_type == 'guanjianci_jieping':
             pass
 
-
-
         return JsonResponse(response.__dict__)
 
 
@@ -176,16 +175,15 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
 
         # 查看关键词截屏
         elif oper_type == 'guanjianci_jieping':
-            print('o_id - - > ',o_id)
-
             objs = models.GetKeywordsJiePing.objects.filter(guanjianci_id=o_id)
             data_list = []
             for obj in objs:
                 picture = obj.picture_path
-                print('picture- - -> ',picture)
+                print('picture- - -> ', picture)
                 data_list.append(picture)
+            return render(request,'wenda/fifty_guanjianci_jieping/fifty_guanjianci_jieping_pjax.html',locals())
 
-            return render(request,'wenda/fifty_guanjianci_jieping/fifty_guanjianci_jieping_pictrue.html',locals())
+
 
 
 
