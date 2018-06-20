@@ -51,8 +51,8 @@ def guanjianci_jieping(request):
         client_user = request.GET.get('client_user')
         if client_user:
             objs = models.GuanJianCiFifty.objects.filter(q).filter(yonghu_user=client_user).order_by(order_column)
-        else:
-            objs = models.GuanJianCiFifty.objects.filter(q).all().order_by(order_column)
+        # else:
+        objs = models.GuanJianCiFifty.objects.filter(q).all().order_by(order_column)
         result_data = {'data': []}
         result_data = {
             "recordsFiltered": objs.count(),
