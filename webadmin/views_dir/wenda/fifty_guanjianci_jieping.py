@@ -19,14 +19,46 @@ from webadmin.forms import  guwen_duijie_biao
 def guanjianci_jieping(request):
     status_choices = models.UserProfile.status_choices
     client_data = models.UserProfile.objects.filter(is_delete=False, role_id=5).values('username', 'id')
-    print('client_data --- -- -<>',client_data)
+    # print('client_data --- -- -<>',client_data)
 
     if "type" in request.GET and request.GET["type"] == "ajax_json":
+        length = int(request.GET.get("length"))
+        start = int(request.GET.get("start"))
+
+        column_list = ["id", "yonghu_user_id", "yonghu_user","jieping_time"]
+        order_column = request.GET.get('order[0][column]', 1)  # 第几列排序
+        order = request.GET.get('order[0][dir]')  # 正序还是倒序
+        order_column = column_list[int(order_column)]
+
+
+        if order == "desc":
+            order_column = "-{order_column}".format(order_column=order_column)
+        else:
+            order_column = order_column
+        # print('order = = > ', order)
+        # print('order_column = = > ', order_column)
+        q = Q()
+        for index, field in enumerate(column_list):
+            # print('field = =  >', field)
+            if field in request.GET and request.GET.get(field):  # 如果该字段存在并且不为空
+                if field == 'client_user':
+                    print('field ==== client_user')
+                    q.add(Q(**{'yonghu_user': request.GET[field]}), Q.AND)
+                else:
+                    q.add(Q(**{field + "__contains": request.GET[field]}), Q.AND)
+
+        objs = ''
         client_user = request.GET.get('client_user')
-        # print('client_user ---------- >',client_user)
-        result_data={'data':[]}
-        objs = models.GuanJianCiFifty.objects.filter(yonghu_user=client_user)
-        for index,obj in enumerate(objs):
+        if client_user:
+            objs = models.GuanJianCiFifty.objects.filter(q).filter(yonghu_user=client_user).order_by(order_column)
+        else:
+            objs = models.GuanJianCiFifty.objects.filter(q).all().order_by(order_column)
+        result_data = {'data': []}
+        result_data = {
+            "recordsFiltered": objs.count(),
+            "recordsTotal": objs.count(),
+            "data": []}
+        for index,obj in enumerate(objs[start: (start + length)], start=0):
             oper = ''
             oper += "<a href='guanjianci_jieping/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>查看截屏</a>".format(user_id=obj.id)
             oper += "----<a href='update_guanjianci/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>修改</a>".format(user_id=obj.id)
@@ -53,6 +85,7 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
         if oper_type == "create_guanjianci":
             yonghu_id = request.POST.get('yonghuming')
             guanjianci_create = request.POST.get('guanjianci_create')
+            print('guanjianci_create =  == = == = >',guanjianci_create )
             guanjianci_list = set(guanjianci_create.splitlines())
             # 数据库查询条数
             objs = models.GuanJianCiFifty.objects.filter(yonghu_user=yonghu_id).values('yonghu_user_id').annotate(Count('id'))
@@ -65,24 +98,24 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
                 if objs[0]['id__count'] + len_guanjianci > 50:
                     response.status=False
                     response.message='数据库大于50条,请删除部分关键词'
-            elif len_guanjianci > 50:
-                response.status=False
-                response.message='关键字超出50条,请检查!'
+                elif len_guanjianci > 50:
+                    response.status=False
+                    response.message='关键字超出50条,请检查!'
 
 
-            else:
-                obj = models.UserProfile.objects.filter(id=yonghu_id)
-                if obj:
-                    # print('查询user成功 = = = = 》')
-                    for guanjianci in guanjianci_list:
-                        # print('关键词入库 -- -- - - 》',  guanjianci)
-                        # print('用户id ------ 》 ',yonghu_id    )
-                        models.GuanJianCiFifty.objects.create(
-                            guanjianci=guanjianci,
-                            yonghu_user=obj[0]
-                        )
-                    response.status=True
-                    response.message='添加成功'
+                else:
+                    obj = models.UserProfile.objects.filter(id=yonghu_id)
+                    if obj:
+                        print('查询user成功 = = = = 》')
+                        for guanjianci in guanjianci_list:
+                            print('关键词入库 -- -- - - 》',  guanjianci)
+                            print('用户id ------ 》 ',yonghu_id    )
+                            models.GuanJianCiFifty.objects.create(
+                                guanjianci=guanjianci,
+                                yonghu_user=obj[0]
+                            )
+                        response.status=True
+                        response.message='添加成功'
 
         # 修改关键词
         elif oper_type == 'update_guanjianci':
