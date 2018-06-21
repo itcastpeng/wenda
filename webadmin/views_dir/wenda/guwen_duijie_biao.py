@@ -286,6 +286,7 @@ def guwen_duijie_oper(request, oper_type, o_id):
             fugailiang = request.POST.get('fugailiang')
             start_time = request.POST.get('start_time')
             stop_time = request.POST.get('stop_time')
+            daokuan_time = request.POST.get('daokuan_time')
             panduan_xinwenda = request.POST.get('panduan_xinwenda')
             if panduan_xinwenda :
                 panduan_xinwenda = True
@@ -295,6 +296,7 @@ def guwen_duijie_oper(request, oper_type, o_id):
             forms_obj = guwen_duijie_biao.InnerCreateForm(request.POST)
             if forms_obj.is_valid():
                 data_temp = {
+                    'daokuan_time':daokuan_time,
                     "shiji_daozhang":daozhang,
                     "fugai_count":fugailiang,
                     "jifeishijian_start":start_time,
@@ -448,7 +450,7 @@ def guwen_duijie_oper(request, oper_type, o_id):
             tr_html = ''
             result_data = """
                              <table class="table table-bordered text-nowrap padding-left-50 margin-bottom-0" >
-                                 <tr><td>编号</td><td style="display:none;">ID</td><td>实际到账</td><td>覆盖总数</td><td>计费时间</td><td>停表时间</td><td>是否操作新问答</td><td>操作</td></tr>
+                                 <tr><td>编号</td><td style="display:none;">ID</td><td>实际到账</td><td>覆盖总数</td><td>到款时间</td><td>计费时间</td><td>停表时间</td><td>是否操作新问答</td><td>操作</td></tr>
                                  {tr_html}
                              </table>
                          """
@@ -459,6 +461,7 @@ def guwen_duijie_oper(request, oper_type, o_id):
                 fugai = obj.fugai_count
                 daozhang = obj.shiji_daozhang
                 panduan_xinwenda = obj.xinwenda
+                daokuan_time = obj.daokuan_time
                 if panduan_xinwenda == True:
                     panduan_xinwenda = '是'
                 else:
@@ -468,6 +471,7 @@ def guwen_duijie_oper(request, oper_type, o_id):
                            <td>{index}</td>
                            <td>{daozhang}</td>
                            <td>{fugai}</td>
+                           <td>{daokuan_time}</td>
                            <td>{jifeistart}</td>
                            <td>{tingbiao}</td>
                            <td>{panduan_xinwenda}</td>
@@ -477,7 +481,7 @@ def guwen_duijie_oper(request, oper_type, o_id):
                            ----<a href="inner_delete/{o_id}/"  data-toggle='modal' data-target='#exampleFormModal'>删除</a></td>
                            </tr>                                   
                             """.format(index=index,inner_id=inner_id,fugai=fugai,daozhang=daozhang,
-                            jifeistart=jifeistart,tingbiao=tingbiao,panduan_xinwenda=panduan_xinwenda,o_id=obj.id)
+                            jifeistart=jifeistart,tingbiao=tingbiao,panduan_xinwenda=panduan_xinwenda,o_id=obj.id,daokuan_time=daokuan_time)
 
 
             result_data = result_data.format(tr_html=tr_html)
