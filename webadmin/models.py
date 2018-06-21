@@ -779,7 +779,6 @@ class YingXiaoGuWen_DuiJie(models.Model):
     xuanchuanyaoqiu = models.TextField(verbose_name='宣传要求',null=True, blank=True)
     shangwutong = models.TextField(verbose_name='商务通',null=True, blank=True)
     wenda_geshu = models.IntegerField(verbose_name='新问答个数',null=True, blank=True)
-    xxx = models.CharField(verbose_name='x', max_length=12)
 
 
 # 营销顾问对接表--内表
