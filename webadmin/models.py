@@ -233,7 +233,7 @@ class Task(models.Model):
     status = models.SmallIntegerField(verbose_name="状态", choices=status_choices, default=1)
     task_demand_file_path = models.CharField(verbose_name="任务需求excel表格路径", max_length=128)
     create_date = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
-    fabu_date = models.DateTimeField(verbose_name="创建时间")
+    fabu_date = models.DateTimeField(verbose_name="进入小明时间",null=True, blank=True)
     update_date = models.DateTimeField(verbose_name="更新时间", null=True, blank=True)
 
     receive_user = models.ForeignKey("UserProfile", verbose_name="接收任务的用户", related_name="receive_user", null=True,
@@ -800,7 +800,7 @@ class GetKeywordsJiePing(models.Model):
 class GuanJianCiFifty(models.Model):
     guanjianci = models.TextField(verbose_name='五十个关键词',null=True, blank=True)
     yonghu_user = models.ForeignKey(to='UserProfile',verbose_name='归属哪个用户')
-    jieping_time = models.DateField(verbose_name='截屏时间', null=True, blank=True)
+    jieping_time = models.DateTimeField(verbose_name='截屏时间', null=True, blank=True)
 
 
 
