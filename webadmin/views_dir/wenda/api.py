@@ -1432,10 +1432,6 @@ def fifty_guanjianci_fabu(request):
         print('objs - - >',objs)
         if objs:
             pass
-            # print('if - - - if ---- if --- if ')
-            # models.GetKeywordsJiePing.objects.filter(q).update(picture_path=picture_path_one,guanjianci_id=guanjianci_id)
-            # models.GetKeywordsJiePing.objects.filter(q).update(picture_path=picture_path_two,guanjianci_id=guanjianci_id)
-            # models.GetKeywordsJiePing.objects.filter(q).update(picture_path=picture_path_three,guanjianci_id=guanjianci_id)
         else:
             print('else -- else -- else -- else ')
             one_obj = models.GetKeywordsJiePing(picture_path=picture_path_one, guanjianci_id=guanjianci_id)
@@ -1445,7 +1441,6 @@ def fifty_guanjianci_fabu(request):
             three_obj = models.GetKeywordsJiePing(picture_path=picture_path_three, guanjianci_id=guanjianci_id)
             three_obj.save()
     else:
-        print('get-----')
         objs = models.GuanJianCiFifty.objects.filter(
             jieping_time__lt=datetime.datetime.today(),
         ).order_by('jieping_time')

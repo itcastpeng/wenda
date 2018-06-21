@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 # Author:zhangcong
 # Email:zc_92@sina.com
+import datetime
+
 from django.shortcuts import render, HttpResponse, redirect, reverse
 from webadmin.views_dir import pub
 from webadmin import models
@@ -48,6 +50,7 @@ def guanjianci_jieping(request):
 
         objs = ''
         client_user = request.GET.get('client_user')
+        print('client_user  == == == > ',client_user)
         if client_user:
             objs = models.GuanJianCiFifty.objects.filter(q).filter(yonghu_user=client_user).order_by(order_column)
         else:
@@ -62,11 +65,15 @@ def guanjianci_jieping(request):
             oper += "<span url='guanjianci_jieping/{user_id}/' class='chakan_jieping'>查看截屏</span>".format(user_id=obj.id)
             oper += "----<a href='update_guanjianci/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>修改</a>".format(user_id=obj.id)
             oper += "----<a href='delete_guanjianci/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>删除</a>".format(user_id=obj.id)
+            jieping_time = ''
+            if obj.jieping_time:
+                jieping_time = obj.jieping_time.strftime('%Y-%m-%d %H:%M:%Ss %p')
             result_data['data'].append({
                 'oper':oper,
                 'kehu_name':obj.yonghu_user.username,
                 'user_id':obj.id,
                 'guanjianci':obj.guanjianci,
+                'jieping_time':jieping_time,
                 'index':index + 1,
             })
         return HttpResponse(json.dumps(result_data))
@@ -89,6 +96,7 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
             # 数据库查询条数
             objs = models.GuanJianCiFifty.objects.filter(yonghu_user=yonghu_id).values('yonghu_user_id').annotate(Count('id'))
             # 输入的条数
+            # now_date_time = datetime.date.today()
             if objs:
                 len_guanjianci = len(guanjianci_list)
                 # print('输入的条数 - -- - -> ',len_guanjianci )
@@ -109,7 +117,7 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
                             # print('用户id ------ 》 ',yonghu_id    )
                             models.GuanJianCiFifty.objects.create(
                                 guanjianci=guanjianci,
-                                yonghu_user=obj[0]
+                                yonghu_user=obj[0],
                             )
                         response.status=True
                         response.message='添加成功'
@@ -124,7 +132,7 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
                         for guanjianci in guanjianci_list:
                             models.GuanJianCiFifty.objects.create(
                                 guanjianci=guanjianci,
-                                yonghu_user=obj[0]
+                                yonghu_user=obj[0],
                             )
                         response.status = True
                         response.message = '添加成功'

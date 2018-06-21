@@ -108,6 +108,7 @@
                         <th>客户ID</th>
                         <th>客户名称</th>
                         <th>关键词</th>
+                        <th>截屏时间</th>
                         <th>操作</th>
                         </tr>
                     </thead>
@@ -171,6 +172,7 @@ var table = $('#dataTable').DataTable({
         {"data": "kehu_name"},
         {"data": "guanjianci",
         "orderable": false},
+        {"data": "jieping_time"},
         {"data": "oper",
         "orderable": false},
 
@@ -196,4 +198,27 @@ var table = $('#dataTable').DataTable({
         $("#exampleGallery a:first").click();
     })
  });
+
+     {# 搜索按钮被点击 #}
+    $("#search_button").click(function () {
+        var search_data = $(".search_form").serialize();
+        var get_url = "?type=ajax_json&" + search_data;
+
+        table.ajax.url(get_url);
+        table.draw();
+
+    });
+
+    {# 搜框中的input标签 回车键被触发 #}
+    $(".search_form input").keydown(function () {
+        var e = window.event || arguments.callee.caller.arguments[0];
+        if (e.keyCode == 13) {
+            $("#search_button").click();
+        }
+    });
+
+    {# 搜框中的select标签 回车键被触发 #}
+    $(".search_form select").change(function () {
+        $("#search_button").click();
+    });
 </script>
