@@ -267,10 +267,10 @@ def keywords_top_set_oper(request, oper_type, o_id):
 
             if response.status:
                 keyword_list = set(keyword.splitlines())
+                print('keyword_list - - -> ',keyword_list)
 
                 query = []
                 repeat_num = 0
-                print(keyword_list)
                 for i in keyword_list:
                     if not i:  # 如果为空 则跳过
                         continue
@@ -460,3 +460,8 @@ def keywords_top_set_oper(request, oper_type, o_id):
                     }
 
             return render(request, 'wenda/keywords_top_set/keywords_top_set_modal_client_cover.html', locals())
+
+        # 清除所有客户发布老问答优先
+        elif oper_type == "clearLaowendaYouxian":
+            print('请求到 GET -=---------------')
+            return render(request,'wenda/keywords_top_set/keyword_top_set_modal_clearLaowendaYouxian.html',locals())
