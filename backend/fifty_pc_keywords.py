@@ -57,38 +57,29 @@ class GuanJianCi:
         self.browser.find_element_by_id('index-kw').send_keys(keyword)
         self.timesleep()
         self.browser.find_element_by_id('index-bn').send_keys(Keys.ENTER)
-
         self.unit()
         self.timesleep()
         guanjianci_num = 0
         soup = BeautifulSoup(self.browser.page_source, 'lxml')
         self.timesleep()
-        print('执行js ----- js  ----- js ---')
-
-        js = """$("#page-hd").css({"position":"fixed"})"""
-        # js = """$("#page-hd").css({"position":"fixed"; "z-index":1000})"""
-        self.browser.execute_script(js)
-        self.browser.save_screenshot('page.png')
         results = soup.find('div', class_='results')
         for result in results:
             try:
-                # print('lianjie - - -- >',lianjie)
                 lianjie = result['data-log']
                 if lianjie:
+                    # 固定搜索框 ---
                     js = """$("#page-hd").css({"z-index":"1000"})"""
                     self.browser.execute_script(js)
                     js = """$("#page-hd").css({"position":"fixed"})"""
                     self.browser.execute_script(js)
                     js = """$("#page").css({"padding-top":"146px"})"""
                     self.browser.execute_script(js)
-
+                    # 转换 字典 eval
                     dict_lianjie = eval(lianjie)
                     order = dict_lianjie['order']
                     zhidao_url = dict_lianjie['mu']
-                    # print('---判断是否为百度知道链接---')
-                    # 判断以zhidao开头的链接
+                    # 判断以zhidao开头的链接 ---判断是否为百度知道链接---
                     if zhidao_url.startswith('https://zhidao.baidu') or zhidao_url.startswith('http://zhidao.baidu'):
-                        # print('---此链接为百度知道链接---')
                         # 获取当前url
                         data_temp = {
                             'client_user_id': user_id,
@@ -99,21 +90,24 @@ class GuanJianCi:
                         ret_json = ret_panduan.content.decode()
                         str_ret = json.loads(ret_json)
                         # print('---判断答案---')
+                        daan_list = []
                         if str_ret['status']:
-                            print('答案一致')
-                            print('user_id 为: ', user_id)
-                            # print('zhidao_url -- -- --- > ',zhidao_url )
-                            print('order - -  > ', order)
                             daan_str = str_ret['data']['content']
                             ret = requests.get(zhidao_url)
                             ret.encoding = 'gbk'
                             soup = BeautifulSoup(ret.text, 'lxml')
                             div_tag = soup.find('div', class_='layout-wrap')
                             div_line = div_tag.find('div', class_='line content')
-                            zhidao_daan = div_line.find('pre').get_text()
-                            print('----知道答案----', zhidao_daan)
+                            zhidao_daan = div_line.find('pre').get_text().strip()
+                            daan_list.append(zhidao_daan)
+                            wgt_div = div_tag.find('div',class_='wgt-answers')
+                            span_alls = wgt_div.find_all('span',class_='con')
+                            for span_all in span_alls:
+                                zhidao_daan = span_all.get_text().strip()
+                                daan_list.append(zhidao_daan)
+                            print('----知道答案----', daan_list)
                             print('----自己答案----', daan_str[0])
-                            if daan_str[0] in zhidao_daan:
+                            if daan_str[0] in daan_list:
                                 # # 获取坐标 js下拉
                                 print('---下拉--截第一张屏---')
                                 # """  //*[@id="results"]/div[1] """
@@ -149,7 +143,6 @@ class GuanJianCi:
                                     './picture/' + keyword + '--3--' + '{guanjianci_num}.png'.format(
                                         guanjianci_num=guanjianci_num))
                                 sleep(3)
-
                                 # jieping_url = "http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu"
                                 jieping_url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
                                 jieping_1 = open('./picture/' + keyword + '--1--' + '{guanjianci_num}.png'.format(
@@ -160,7 +153,6 @@ class GuanJianCi:
 
                                 jieping_3 = open('./picture/' + keyword + '--3--' + '{guanjianci_num}.png'.format(
                                     guanjianci_num=guanjianci_num), 'rb').read()
-                                print('len(jieping_1) - ->', len(jieping_1))
                                 base64_tupian1 = base64.b64encode(jieping_1)
                                 base64_tupian2 = base64.b64encode(jieping_2)
                                 base64_tupian3 = base64.b64encode(jieping_3)
@@ -174,7 +166,6 @@ class GuanJianCi:
                                     "jieping_3": base64_tupian3
                                 }
                                 ret = requests.post(jieping_url, data=data_temp)
-                                print('ret == > ', ret)
                                 sleep(2)
                                 self.browser.back()
                                 guanjianci_num += 2
