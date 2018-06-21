@@ -785,6 +785,7 @@ class YingXiaoGuWen_DuiJie(models.Model):
 class YingXiaoGuWen_NeiBiao(models.Model):
     shiji_daozhang = models.IntegerField(verbose_name='实际到账钱数',null=True, blank=True)
     fugai_count = models.IntegerField(verbose_name='覆盖总数', null=True, blank=True)
+    daokuan_time = models.DateField(verbose_name='客户到款日期', null=True, blank=True)
     jifeishijian_start = models.DateField(verbose_name='开始计费时间', null=True, blank=True)
     jifeishijian_stop = models.DateField(verbose_name='停止计费时间', null=True, blank=True)
     xinwenda = models.BooleanField(verbose_name='是否操作新问答', default=False)

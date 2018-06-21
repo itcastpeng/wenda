@@ -391,26 +391,19 @@ def cover_reports_oper(request, oper_type, o_id):
             client_id = request.POST.get('client_id')
             print( '开始时间--结束时间 --  - ->',startfugai,stopfugai)
             print('id -- -- -> ',client_id)
-
-
+            q = Q()
+            q.add(Q(create_date__gte=startfugai) & Q(create_date__lte=stopfugai) & Q(client_user_id=client_id),Q.AND)
+            print('q = == == == >',q)
             if startfugai and stopfugai:
-
-                objs = models.UserprofileKeywordsCover.objects.filter(
-                    client_user_id=client_id,
-                    create_date__gte=startfugai,
-                    create_date__lt=stopfugai
-                ).values('cover_num')
-                # print('objs -->', objs)
-                data_list = []
+                # objs = models.UserprofileKeywordsCover.objects.filter(q).values('cover_num')
+                objs = models.UserprofileKeywordsCover.objects.filter(q)
+                data_temp = {}
                 data_obj = 0
                 for obj in objs:
-                    print(obj)
-                    for k,v in obj.items():
-                        data_list.append(v)
-                print(data_list)
-                for data in data_list:
+                    data_temp[obj.create_date] = obj.cover_num
+                for index,data in data_temp.items():
                     data_obj += int(data)
-                print('data - - - - >',data_obj)
+
                 response.code = 200
                 response.message = '查询成功'
                 response.data = data_obj
