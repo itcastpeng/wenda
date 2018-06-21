@@ -180,7 +180,6 @@ var table = $('#dataTable').DataTable({
 
     $("table").on('click', '.chakan_jieping', function () {
         var url = $(this).attr('url');
-        alert(url);
         $.get(url, function (data) {
             result = data.data;
         {#    先把内容清空#}
