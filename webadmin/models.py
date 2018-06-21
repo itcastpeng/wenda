@@ -768,7 +768,7 @@ class BianXieBaoBiao(models.Model):
 class YingXiaoGuWen_DuiJie(models.Model):
     market = models.ForeignKey(to='UserProfile',verbose_name='销售', null=True, blank=True)
     kehu_username = models.ForeignKey(to='UserProfile',verbose_name='客户名称',related_name='guwenduijie_kehuming', null=True, blank=True)
-    guwen_duijie_bianji = models.ManyToManyField(to='UserProfile',verbose_name='编辑',related_name='guwen_duijie_bianji' ,null=True, blank=True)
+    guwen_duijie_bianji = models.ManyToManyField(to='UserProfile',verbose_name='编辑',related_name='guwen_duijie_bianji')
     shiji_daozhang = models.IntegerField(verbose_name='实际到账钱数',null=True, blank=True)
 
     daokuan_time = models.DateField(verbose_name='到款时间',null=True, blank=True)
@@ -779,6 +779,7 @@ class YingXiaoGuWen_DuiJie(models.Model):
     xuanchuanyaoqiu = models.TextField(verbose_name='宣传要求',null=True, blank=True)
     shangwutong = models.TextField(verbose_name='商务通',null=True, blank=True)
     wenda_geshu = models.IntegerField(verbose_name='新问答个数',null=True, blank=True)
+    xxx = models.CharField(verbose_name='x', max_length=12)
 
 
 # 营销顾问对接表--内表

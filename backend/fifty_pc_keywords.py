@@ -150,6 +150,7 @@ class GuanJianCi:
                                         guanjianci_num=guanjianci_num))
                                 sleep(3)
 
+                                # jieping_url = "http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu"
                                 jieping_url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
                                 jieping_1 = open('./picture/' + keyword + '--1--' + '{guanjianci_num}.png'.format(
                                     guanjianci_num=guanjianci_num), 'rb').read()

@@ -84,17 +84,17 @@ def guwen_duijie(request):
         for index, obj in enumerate(user_profile_objs[start: (start + length)], start=1):
             q.add(Q(id=obj.kehu_username_id) | Q(id=obj.market_id),Q.AND)
             # bianji_obj = models.YingXiaoGuWen_DuiJie.objects.all()
-            bianji_obj = obj.guwen_duijie_bianji.all().values('username')
+            # bianji_obj = obj.guwen_duijie_bianji.all().values('username')
 
 
 
             xiaoshou_obj = models.UserProfile.objects.filter(id=obj.market_id)
             bianji = ''
             xiaoshou = ''
-            if bianji_obj:
-                # print('bianji_obj - - >', bianji_obj)
-
-                bianji = ",".join([i['username'] for i in bianji_obj])
+            # if bianji_obj:
+            #     # print('bianji_obj - - >', bianji_obj)
+            #
+            #     bianji = ",".join([i['username'] for i in bianji_obj])
 
             user_id = obj.id
             daozhang = obj.shiji_daozhang
