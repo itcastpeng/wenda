@@ -114,8 +114,9 @@ def send_msg_gongzhonghao(wenda_robot_task_obj, yuanyin):
     )
     if edit_objs:
         edit_obj = edit_objs[0]
-        edit_obj.status = 2
-        edit_obj.save()
+        # edit_obj.status = 2
+        # edit_obj.save()
+        edit_objs.update(status=2)
 
         models.EditTaskLog.objects.create(
             edit_public_task_management=edit_obj,
@@ -124,53 +125,53 @@ def send_msg_gongzhonghao(wenda_robot_task_obj, yuanyin):
             remark=yuanyin
         )
 
-        now_datetime = datetime.datetime.now()
-        flag = False
-        if 20 > now_datetime.hour > 8:
-            flag = True
-
-        # 只在 8-20点之间通知,其余时间不通知
-        if not flag:
-            return
-
-        # 给对应编辑发送消息
-        openid = edit_obj.task.edit_user.openid
-        if openid:
-            now_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            url = "http://wenda.zhugeyingxiao.com/edit_error_content/{t_id}/".format(t_id=edit_obj.id)
-            post_data = {
-                "touser": openid,
-                "template_id": "REblvLGT0dVxwzyrp28mBaXKF6XnHhP2_b7hXjUyI2A",
-                "url": url,
-                "data": {
-                    "first": {
-                        "value": "问答任务异常！",
-                        "color": "#173177"
-                    },
-                    "keyword2": {
-                        "value": now_datetime,
-                        "color": "#173177"
-                    },
-                    "remark": {
-                        "value": "问题:{title}\n\n答案:{content}\n\n异常原因:{yuanyin}".format(
-                            title=edit_obj.title,
-                            content=edit_obj.content,
-                            yuanyin=yuanyin
-                        ),
-                        "color": "#173177"
-                    }
-                }
-            }
-
-            tasks.send_msg_gongzhonghao.delay(post_data)
-
-        else:
-            now_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            text = "通知时间: {now_datetime} \n通知平台:诸葛问答\n用户 {username} 未设置微信id".format(
-                now_datetime=now_datetime,
-                username=edit_obj.task.edit_user.username
-            )
-            tasks.send_msg.delay("zhangcong", text)
+        # now_datetime = datetime.datetime.now()
+        # flag = False
+        # if 20 > now_datetime.hour > 8:
+        #     flag = True
+        #
+        # # 只在 8-20点之间通知,其余时间不通知
+        # if not flag:
+        #     return
+        #
+        # # 给对应编辑发送消息
+        # openid = edit_obj.task.edit_user.openid
+        # if openid:
+        #     now_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        #     url = "http://wenda.zhugeyingxiao.com/edit_error_content/{t_id}/".format(t_id=edit_obj.id)
+        #     post_data = {
+        #         "touser": openid,
+        #         "template_id": "REblvLGT0dVxwzyrp28mBaXKF6XnHhP2_b7hXjUyI2A",
+        #         "url": url,
+        #         "data": {
+        #             "first": {
+        #                 "value": "问答任务异常！",
+        #                 "color": "#173177"
+        #             },
+        #             "keyword2": {
+        #                 "value": now_datetime,
+        #                 "color": "#173177"
+        #             },
+        #             "remark": {
+        #                 "value": "问题:{title}\n\n答案:{content}\n\n异常原因:{yuanyin}".format(
+        #                     title=edit_obj.title,
+        #                     content=edit_obj.content,
+        #                     yuanyin=yuanyin
+        #                 ),
+        #                 "color": "#173177"
+        #             }
+        #         }
+        #     }
+        #
+        #     tasks.send_msg_gongzhonghao.delay(post_data)
+        #
+        # else:
+        #     now_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        #     text = "通知时间: {now_datetime} \n通知平台:诸葛问答\n用户 {username} 未设置微信id".format(
+        #         now_datetime=now_datetime,
+        #         username=edit_obj.task.edit_user.username
+        #     )
+        #     tasks.send_msg.delay("zhangcong", text)
 
 
 # 任务完成
