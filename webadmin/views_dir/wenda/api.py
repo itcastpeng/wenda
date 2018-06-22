@@ -1461,10 +1461,61 @@ def fifty_guanjianci_fabu(request):
 
     return JsonResponse(response.__dict__)
 
+# 指定关键词-优化-协助调用查询数据库
+@csrf_exempt
+def keywords_select_models(request):
+    response = pub.BaseResponse()
+    canshu = request.POST.get('canshu')
+    data_objs_list = []
+    client_user_id = request.POST.get('user_id')
+    if canshu == 'KeywordsTopInfo':
+        data_objs = models.KeywordsTopInfo.objects.filter(keyword__client_user__is_delete=False).values(
+            'keyword__client_user',
+            'keyword__client_user__username',
+            'keyword__client_user__laowenda_youxian',
+            'page_type',
+        ).annotate(cover=Count("keyword__client_user")).order_by('-keyword__client_user__laowenda_youxian',
+            '-keyword__client_user__create_date')
+        for obj in data_objs:
+            data_objs_list.append(obj)
+        response.data = {
+            'data_objs_list':data_objs_list
+        }
+    if canshu == 'KeywordsTopSet':
+        keywords_top_set_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(
+        client_user_id=client_user_id, is_delete=False)
+        keywords_top_set_obj = keywords_top_set_objs[0]
 
+        response.data = {
+            'keywords_num': keywords_top_set_objs.count(),
+            'no_select_keywords_num': keywords_top_set_objs.filter(status=1).count(),
+            'keywords_top_page_cover_excel_path': keywords_top_set_obj.client_user.keywords_top_page_cover_excel_path,
+            'keywords_top_page_cover_yingxiao_excel_path': keywords_top_set_obj.client_user.keywords_top_page_cover_yingxiao_excel_path,
+        }
+    if canshu == 'UserProfile':
+        user_obj = models.UserProfile.objects.filter(id=client_user_id)
+        response.data = {
+            'user_obj':user_obj[0].id
+        }
+    if canshu == 'KeyWords_YouHua':
+        data_temp = {
+        'username_id' : request.POST.get('username_id'),
+        'koywords_status' : request.POST.get('koywords_status'),
+        'keywords_num' : request.POST.get('keywords_num'),
+        'total_cover' : request.POST.get('total_cover'),
+        'pc_cover' : request.POST.get('pc_cover'),
+        'wap_cover' : request.POST.get('wap_cover'),
+        'no_select_keywords_num' : request.POST.get('no_select_keywords_num'),
+        'keywords_top_page_cover_excel_path' : request.POST.get('keywords_top_page_cover_excel_path'),
+        'keywords_top_page_cover_yingxiao_excel_path' : request.POST.get('keywords_top_page_cover_yingxiao_excel_path'),
+        }
+        youhua_objs = models.KeyWords_YouHua.objects.filter(username_id=data_temp['username_id'])
+        if youhua_objs:
+            youhua_objs.update(**data_temp)
+        else:
+            youhua_objs.create(**data_temp)
 
-
-
+    return JsonResponse(response.__dict__)
 
 
 

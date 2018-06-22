@@ -26,8 +26,8 @@ from wenda_celery_project import tasks
 
 # 生成表格中显示的数据
 def init_data(role_id=None, q=Q(), start=0, length=-1):
-    print(start, length)
-    print(q)
+    # print(start, length)
+    # print(q)
     # data_objs = models.KeywordsTopInfo.objects.filter(keyword__client_user__is_delete=False).filter(q).values(
     #     'keyword__client_user',
     #     'keyword__client_user__username',
@@ -60,43 +60,30 @@ def init_data(role_id=None, q=Q(), start=0, length=-1):
     #
     # print("3--> ", datetime.datetime.now())
     objs = models.KeyWords_YouHua.objects.filter(q)
-    print(objs[0])
+    obj_count = objs.count()
+    # print('obj_count ----------》',obj_count)
     result_data = {
-        "recordsFiltered": '',
-        "recordsTotal": '',
+        "recordsFiltered": obj_count,
+        "recordsTotal": obj_count,
         "data": []
     }
     if objs:
-        for index, obj in enumerate(objs[start: (start + length)], start=1):
+        for index, obj in enumerate(objs[start: (start + (length - 1))], start=1):
             client_user_id = obj.username.id
-            username = obj.username
+            username = str(obj.username)
             pc_cover = obj.pc_cover
             wap_cover = obj.wap_cover
-            user_id_list = []
-            user_id_list.append(obj.id)
-            result_data = {
-                "recordsFiltered": len(user_id_list),
-                "recordsTotal": len(user_id_list),
-                "data": []
-            }
             total_cover = pc_cover + wap_cover
-            # print('total_cover ---------------- >',total_cover)
+            keywords_num = obj.keywords_num
+            keywords_status = obj.get_koywords_status_display()
+            no_select_keywords_num = obj.no_select_keywords_num
+            keywords_top_page_cover_excel_path = obj.keywords_top_page_cover_excel_path
+            keywords_top_page_cover_yingxiao_excel_path = obj.keywords_top_page_cover_yingxiao_excel_path
+
+
             keywords_top_set_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(
                 client_user_id=client_user_id, is_delete=False)
-            keywords_num = keywords_top_set_objs.count()
-            no_select_keywords_num = keywords_top_set_objs.filter(status=1).count()
-
             keywords_top_set_obj = keywords_top_set_objs[0]
-            keywords_top_page_cover_excel_path = keywords_top_set_obj.client_user.keywords_top_page_cover_excel_path
-            keywords_top_page_cover_yingxiao_excel_path = keywords_top_set_obj.client_user.keywords_top_page_cover_yingxiao_excel_path
-            # print('keywords_top_set_obj -------- >',keywords_top_set_obj)
-            # print('keywords_top_page_cover_excel_path -------- >',keywords_top_page_cover_excel_path)
-            # print('keywords_top_page_cover_yingxiao_excel_path -------- >',keywords_top_page_cover_yingxiao_excel_path)
-            if no_select_keywords_num > 0:
-                keywords_status = "查询中"
-            else:
-
-                keywords_status = "已查询"
 
             keywords_num_str = "{keywords_num} / {no_select_keywords_num}".format(
                 keywords_num=keywords_num,
@@ -125,10 +112,10 @@ def init_data(role_id=None, q=Q(), start=0, length=-1):
                 
             """.format(client_user_id=client_user_id)
 
-            # if role_id and ("测试" in username or role_id == 1):
-            #     oper += """
-            #         / <a class="clearKeywords" uid="{client_user_id}" href="#">清空关键词</a>
-            #     """.format(client_user_id=client_user_id)
+            if role_id and ("测试" in username or role_id == 1):
+                oper += """
+                    / <a class="clearKeywords" uid="{client_user_id}" href="#">清空关键词</a>
+                """.format(client_user_id=client_user_id)
 
             # 如果该用户老问答没有优先,则显示优先处理的功能
             if not keywords_top_set_obj.client_user.laowenda_youxian:
@@ -136,21 +123,19 @@ def init_data(role_id=None, q=Q(), start=0, length=-1):
                     / <a class="laowendaYouxian" uid="{client_user_id}" href="#">老问答优先处理</a>
                 """.format(client_user_id=client_user_id)
             else:
-                span_username = '<span style="color: red">{username} (老问答优先)</span>'.format(username=username)
+                username = '<span style="color: red">{username} (老问答优先)</span>'.format(username=username)
 
                 oper += """
                     / <a class="laowendaYouxianQuxiao" uid="{client_user_id}" href="#">取消优先处理</a>
                 """.format(client_user_id=client_user_id)
-            print('type()= =============>',type(username))
             result_data["data"].append(
                 [
                     index, username, keywords_status, keywords_num_str,
                     total_cover, pc_cover, wap_cover, baobiao_download, oper, client_user_id
                 ]
             )
-            print('result_data -------- >',result_data)
 
-    return result_data
+        return result_data
 
 
 # 指定首页关键词
@@ -162,12 +147,13 @@ def keywords_top_set(request):
     if "type" in request.GET and request.GET["type"] == "ajax_json":
         length = int(request.GET.get("length"))
         start = int(request.GET.get("start"))
-
+        client_user_id = request.GET.get('client_user_id')
+        print('client_user_id ---------- > ',client_user_id)
         # 排序
         column_list = [
-             "client_user_id",
+             "client_user_id","client_user_type"
             # "id","keyword", "top_page_cover",
-            # "create_date", "oper_user_id", "oper", "client_user_type"
+            # "create_date", "oper_user_id", "oper",
         ]
         order_column = request.GET.get('order[0][column]', 1)  # 第几列排序
         order = request.GET.get('order[0][dir]')  # 正序还是倒序
@@ -188,7 +174,7 @@ def keywords_top_set(request):
                     elif request.GET.get(field) == "2":  # 测试 用户
                         q.add(Q(**{"username__username" + "__contains": "测试"}), Q.AND)
                 elif field == "client_user_id":
-                    q.add(Q(**{"keyword__client_user_id": request.GET[field]}), Q.AND)
+                    q.add(Q(**{"username_id": request.GET[field]}), Q.AND)
                 else:
                     q.add(Q(**{field: request.GET[field]}), Q.AND)
                 # q.add(Q(**{field + "__contains": request.GET[field]}), Q.AND)
@@ -234,8 +220,8 @@ def keywords_top_set(request):
         #     result_data["recordsFiltered"] = len(data)
         #     result_data["recordsTotal"] = len(data)
 
-
         result_data = init_data(role_id, q, start, length)
+        # print('result_data---=-=-=-=-=-=-==-=-=-=-=-=-=-=-=> ',result_data)
         print("4--> ", datetime.datetime.now())
         return HttpResponse(json.dumps(result_data))
 

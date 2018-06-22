@@ -87,6 +87,8 @@ urlpatterns = [
     # 五十个关键词 获取关键词
     url(r'api/fifty_guanjianci_fabu', api.fifty_guanjianci_fabu),
 
+    # 指定关键词-优化-协助调用查询数据库
+    url(r'api/keywords_select_models', api.keywords_select_models),
     # #################### 问答 ####################
 
     # 问答机器人
