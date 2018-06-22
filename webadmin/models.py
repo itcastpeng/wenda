@@ -805,6 +805,27 @@ class GuanJianCiFifty(models.Model):
     # create_time = models.DateField(verbose_name='创建时间', null=True, blank=True)
 
 
+# 指定关键词--优化
+class KeyWords_YouHua(models.Model):
+    username = models.ForeignKey(to='UserProfile',verbose_name='用户名',null=True,blank=True)
+    status_choices = {
+        (1,"查询中"),
+        (2,"已查询")
+    }
+    koywords_status = models.SmallIntegerField(verbose_name='关键词状态',choices=status_choices,null=True,blank=True)
+    keywords_num = models.IntegerField(verbose_name='关键词总数',null=True,blank=True)
+    total_cover = models.IntegerField(verbose_name='总覆盖',null=True,blank=True)
+    pc_cover = models.IntegerField(verbose_name='移动端覆盖',null=True,blank=True)
+    wap_cover = models.IntegerField(verbose_name='移动端覆盖',null=True,blank=True)
+
+
+
+
+
+
+
+
+
 
 
 
