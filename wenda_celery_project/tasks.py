@@ -854,21 +854,34 @@ def cover_reports_generate_excel(file_name, data_list, debug, url_list=None):
         ws.cell(row=1, column=7, value="类型")
         ws.cell(row=1, column=8, value="发布时间")
         ws.cell(row=1, column=9, value="问答类型")
-
+    if url_list:
+        ws.cell(row=1, column=10, value="链接占比")
+        ws.cell(row=1, column=11, value="覆盖占比")
     if url_list:  # 如果有url_list 则表示需要填写新问答和老问答所占的百分比
-        xinbi = len(set(url_list['xin']))
-        laobi = len(set(url_list['lao']))
-        count_baifenbi = xinbi + laobi
-        print('新问答 -- - -- -- ->', xinbi)
-        print('老问答 -- -- -- -- ->', laobi)
-        print('总数  - - - - --  > ', count_baifenbi)
-        xinbaifenbi = float((xinbi + .0) / count_baifenbi) * 100
-        laobaifenbi = float((laobi + .0) / count_baifenbi) * 100
+        xinfugai_count, laofugai_count = 0, 0
+        xinlianjie = len(set(url_list['xinlianjie']))
+        laolianjie = len(set(url_list['laolianjie']))
+        xinfugais = url_list['xinfugai']
+        laofugais = url_list['laofugai']
+        for xinfugai in xinfugais:
+            xinfugai_count += xinfugai
+        for laofugai in laofugais:
+            laofugai_count += laofugai
+        count_fugailiang = xinfugai_count + laofugai_count
+        count_baifenbi = xinlianjie + laolianjie
+
+        xinbaifenbi = float((xinlianjie + .0) / count_baifenbi) * 100
+        laobaifenbi = float((laolianjie + .0) / count_baifenbi) * 100
+        xinfugai = float((xinfugai_count + .0) / count_fugailiang) * 100
+        laofugai = float((laofugai_count + .0) / count_fugailiang) * 100
         yunsuanxin = round(xinbaifenbi)
         yunsuanlao = round(laobaifenbi)
-        print('运算结果 - - -- - 》', yunsuanxin, yunsuanlao)
+        xinfugaiyunsuan = round(xinfugai)
+        laofugaiyunsuan = round(laofugai)
         ws.cell(row=2, column=10, value="新问答占比:" + str(yunsuanxin) + '%')
         ws.cell(row=2, column=11, value="老问答占比:" + str(yunsuanlao) + '%')
+        ws.cell(row=2, column=11, value="老覆盖:" + str(xinfugaiyunsuan) + '%')
+        ws.cell(row=3, column=11, value="老覆盖:" + str(laofugaiyunsuan) + '%')
 
     for row, i in enumerate(data_list, start=2):
         try:
@@ -950,13 +963,16 @@ def userprofile_keywords_cover(debug=False):
             continue
 
         url_list = {
-            'xin': [],
-            'lao': []
+            'xinlianjie': [],
+            'laolianjie': [],
+            'xinfugai': [],
+            'laofugai': []
         }
 
         data_day_list = []
         for search_obj in search_objs:
             if search_obj:
+                fugai_count = search_obj.keywords.top_page_cover
                 print('search_obj - - - > ', search_obj.id)
                 url = search_obj.url
                 print('url_', url)
@@ -969,21 +985,17 @@ def userprofile_keywords_cover(debug=False):
                 print('objs - -- - =--==- > ', objs)
                 if objs:
                     if objs[0].wenda_type in [1, 10]:
-                        url_list['xin'].append(url)
+                        url_list['xinlianjie'].append(url)
+                        url_list['xinfugai'].append(fugai_count)
                     if objs[0].wenda_type == 2:
-                        url_list['lao'].append(url)
+                        url_list['laolianjie'].append(url)
+                        url_list['laofugai'].append(fugai_count)
                     robotaccountlog_objs = objs[0].robotaccountlog_set.all()
                     if robotaccountlog_objs:
                         create_time = robotaccountlog_objs.last().create_date.strftime("%Y-%m-%d")
-
-                        print('create_time -- >', create_time)
-                    print('url - - - - -- -  - - - -> ', url)
-
                     is_zhedie = "0"
-
                     if search_obj.is_zhedie:
                         is_zhedie = "1"
-
                     wenda_index, wenda_type = objs[0].wenda_type, objs[0].get_wenda_type_display()
 
                     # data_day_list.append({
