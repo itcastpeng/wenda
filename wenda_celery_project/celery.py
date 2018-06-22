@@ -150,7 +150,7 @@ app.conf.beat_schedule = {
             'schedule': crontab('*/5', '*', '*', '*', '*'),
         },
 
-    # 指定关键词-优化-协助调用查询数据库
+    # 指定关键词-优化-协助调用查询数据库/每五分钟刷新一次
     'keywords_select_models': {
         'task': 'wenda_celery_project.tasks.keywords_select_models',
         'schedule': crontab('*/5', '*', '*', '*', '*'),

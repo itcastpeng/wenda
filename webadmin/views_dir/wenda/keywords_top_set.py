@@ -26,39 +26,7 @@ from wenda_celery_project import tasks
 
 # 生成表格中显示的数据
 def init_data(role_id=None, q=Q(), start=0, length=-1):
-    # print(start, length)
-    # print(q)
-    # data_objs = models.KeywordsTopInfo.objects.filter(keyword__client_user__is_delete=False).filter(q).values(
-    #     'keyword__client_user',
-    #     'keyword__client_user__username',
-    #     'keyword__client_user__laowenda_youxian',
-    #     'page_type'
-    # ).annotate(cover=Count("keyword__client_user")).order_by('-keyword__client_user__laowenda_youxian',
-    #     '-keyword__client_user__create_date')
-    #
-    # print("2--> ", datetime.datetime.now())
-    # # data_objs = models.KeyWords_YouHua.objects.filter(q).values()
-    # user_id_list = []
-    # user_data = {}
-    # for obj in data_objs:
-    #     client_user_id = obj["keyword__client_user"]
-    #     username = obj["keyword__client_user__username"]
-    #     page_type = obj["page_type"]
-    #     cover = obj["cover"]
-    #     # print(client_user_id, username)
-    #     if client_user_id in user_id_list:
-    #         user_data[client_user_id][page_type] = cover
-    #     else:
-    #         user_id_list.append(client_user_id)
-    #         user_data[client_user_id] = {
-    #             page_type: cover,
-    #             "username": username,
-    #             "user_id": client_user_id
-    #         }
-    #
-
-    #
-    # print("3--> ", datetime.datetime.now())
+    print("3--> ", datetime.datetime.now())
     objs = models.KeyWords_YouHua.objects.filter(q)
     obj_count = objs.count()
     # print('obj_count ----------》',obj_count)
@@ -79,7 +47,6 @@ def init_data(role_id=None, q=Q(), start=0, length=-1):
             no_select_keywords_num = obj.no_select_keywords_num
             keywords_top_page_cover_excel_path = obj.keywords_top_page_cover_excel_path
             keywords_top_page_cover_yingxiao_excel_path = obj.keywords_top_page_cover_yingxiao_excel_path
-
 
             keywords_top_set_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(
                 client_user_id=client_user_id, is_delete=False)
@@ -352,6 +319,7 @@ def keywords_top_set_oper(request, oper_type, o_id):
 
         elif oper_type == "shengchengbaobiao":
             print('o_id -->', o_id)
+            tasks.keywords_select_models.delay()
             tasks.keywords_top_page_cover_excel.delay(o_id)
             response.status = True
             response.message = "报表生成中,请稍后查看"
