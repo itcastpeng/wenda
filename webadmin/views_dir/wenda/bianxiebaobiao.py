@@ -76,7 +76,7 @@ def bianxiebaobiao(request):
             "option": []
         }
         # user_data = models.UserProfile.objects.filter(is_delete=False, role_id__in=[6, 7]).values_list('username')
-        user_data = models.UserProfile.objects.filter(is_delete=False).values_list('username')
+        user_data = models.UserProfile.objects.filter(is_delete=False,status=1).values_list('username')
         user_data = [i[0] for i in user_data]
 
         xiangmu_data = ["总数据"]
