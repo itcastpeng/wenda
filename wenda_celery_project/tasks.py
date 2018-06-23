@@ -879,7 +879,7 @@ def cover_reports_generate_excel(file_name, data_list, debug, url_list=None):
         xinfugaiyunsuan = round(xinfugai)
         laofugaiyunsuan = round(laofugai)
         ws.cell(row=2, column=10, value="新问答占比:" + str(yunsuanxin) + '%')
-        ws.cell(row=2, column=10, value="老问答占比:" + str(yunsuanlao) + '%')
+        ws.cell(row=3, column=10, value="老问答占比:" + str(yunsuanlao) + '%')
         ws.cell(row=2, column=11, value="老覆盖:" + str(xinfugaiyunsuan) + '%')
         ws.cell(row=3, column=11, value="老覆盖:" + str(laofugaiyunsuan) + '%')
 
