@@ -22,24 +22,19 @@ import django
 
 django.setup()
 import requests
-import xlrd
-import time
+import xlrd,time
 from django.db.utils import IntegrityError
 from webadmin.modules import RedisOper
-import sys
-import datetime
-import os
+import sys ,datetime ,os ,django, json
 from django.db.models import Q, Count
 project_dir = os.path.dirname(os.getcwd())
 sys.path.append(project_dir)
 print(project_dir)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'wenda.settings'
-import django
-import json
 django.setup()
 from webadmin import models
 from webadmin.modules.WeChat import WeChatPublicSendMsg
-
+from time import sleep
 
 # 客户首次创建任务的时候,将客户提交的 excel 表格的数据取出来然后写入到新的 excel 表格中, 在第一列新增 问答地址链接
 @app.task
@@ -879,7 +874,7 @@ def cover_reports_generate_excel(file_name, data_list, debug, url_list=None):
         xinfugaiyunsuan = round(xinfugai)
         laofugaiyunsuan = round(laofugai)
         ws.cell(row=2, column=10, value="新问答占比:" + str(yunsuanxin) + '%')
-        ws.cell(row=2, column=10, value="老问答占比:" + str(yunsuanlao) + '%')
+        ws.cell(row=3, column=10, value="老问答占比:" + str(yunsuanlao) + '%')
         ws.cell(row=2, column=11, value="老覆盖:" + str(xinfugaiyunsuan) + '%')
         ws.cell(row=3, column=11, value="老覆盖:" + str(laofugaiyunsuan) + '%')
 
@@ -1856,6 +1851,7 @@ def keywords_select_models():
     }
     user_id_list, user_data = [], {}
     ret = requests.post(url, data=data)
+    sleep(1)
     data_objs = ret.text
     json_data_objs = json.loads(data_objs)
     data_objs = json_data_objs['data']['data_objs_list']
@@ -1890,6 +1886,7 @@ def keywords_select_models():
             'user_id': client_user_id
         }
         ret = requests.post(url, data=data)
+        sleep(1)
         data_str = json.loads(ret.text)['data']
         keywords_num = data_str['keywords_num']
         no_select_keywords_num = data_str['no_select_keywords_num']
@@ -1904,6 +1901,7 @@ def keywords_select_models():
             'user_id': client_user_id
         }
         ret = requests.post(url, data=data)
+        sleep(1)
         user_obj_id = json.loads(ret.text)['data']['user_obj']
         data_temp = {
             'username_id': user_obj_id,
