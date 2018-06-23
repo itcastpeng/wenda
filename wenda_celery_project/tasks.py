@@ -1915,7 +1915,7 @@ def keywords_select_models():
     #         'keywords_top_page_cover_yingxiao_excel_path': keywords_top_page_cover_yingxiao_excel_path
     #     }
     #     requests.post(url, data=data_temp)
-    url= 'http://api.zhugeyingxiao.com/api/keywords_select_models'
+    url= 'http://wenda.zhugeyingxiao.com/api/keywords_select_models'
     ret = requests.get(url)
     print(ret.text)
 
