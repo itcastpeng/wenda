@@ -134,7 +134,7 @@ app.conf.beat_schedule = {
 
     # 查询每日覆盖量微信推送
     'fugailiangtixing': {
-        'task': 'wenda_celery_project.tasks.fugailiangtixing',
+        'task': 'wenda_celery_project.tasks.weixin_meiri_fugai_tuisong',
         'schedule': crontab('*', '1', '*', '*', '*'),
     },
 
