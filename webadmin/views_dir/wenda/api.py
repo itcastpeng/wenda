@@ -1415,10 +1415,11 @@ def fifty_guanjianci_fabu(request):
         if canshu:
             print('删除=========')
             keyword = request.POST.get('keyword')
+            print(keyword)
             objs = models.GuanJianCiFifty.objects.get(guanjianci=keyword)
             if objs:
                 print('确认删除')
-                objs.is_delete=True
+                objs.is_delete=1
                 objs.save()
         else:
             keyword = request.POST.get('keyword')

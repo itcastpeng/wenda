@@ -176,7 +176,7 @@ class GuanJianCi:
                                 print('---链接对--答案不对---')
                                 url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
                                 data = {
-                                    'keyword':self.data,
+                                    'keyword':keyword,
                                     'canshu':1
                                 }
                                 requests.post(url,data=data)
@@ -184,7 +184,7 @@ class GuanJianCi:
                             print('--为知道链接---链接不对---')
                             url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
                             data = {
-                                'keyword': self.data,
+                                'keyword': keyword,
                                 'canshu': 1
                             }
                             requests.post(url, data=data)
