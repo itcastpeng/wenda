@@ -1844,79 +1844,80 @@ def xinwenda_wancheng_budahui():
 # 指定关键词-优化-协助调用查询数据库
 @app.task
 def keywords_select_models():
-    url = 'http://api.zhugeyingxiao.com/api/keywords_select_models'
-    # url = 'http://127.0.0.1:8006/api/keywords_select_models'
-    data = {
-        'canshu': 'KeywordsTopInfo'
-    }
-    user_id_list, user_data = [], {}
-    ret = requests.post(url, data=data)
-    sleep(1)
-    data_objs = ret.text
-    json_data_objs = json.loads(data_objs)
-    data_objs = json_data_objs['data']['data_objs_list']
-
-    for obj in data_objs:
-        client_user_id = int(obj["keyword__client_user"])
-        username = obj["keyword__client_user__username"]
-        page_type = obj["page_type"]
-        cover = obj["cover"]
-
-        if client_user_id in user_id_list:
-            user_data[client_user_id][page_type] = cover
-        else:
-            user_id_list.append(client_user_id)
-            user_data[client_user_id] = {
-                page_type: cover,
-                "username": username,
-                "user_id": client_user_id
-            }
-    for index, user_id in enumerate(user_id_list):
-        client_user_id = user_data[user_id]["user_id"]
-        username = user_data[user_id]["username"]
-        pc_cover = 0
-        wap_cover = 0
-        if 1 in user_data[user_id]:
-            pc_cover = user_data[user_id][1]
-        if 3 in user_data[user_id]:
-            wap_cover = user_data[user_id][3]
-        total_cover = pc_cover + wap_cover
-        data = {
-            'canshu': 'KeywordsTopSet',
-            'user_id': client_user_id
-        }
-        ret = requests.post(url, data=data)
-        sleep(1)
-        data_str = json.loads(ret.text)['data']
-        keywords_num = data_str['keywords_num']
-        no_select_keywords_num = data_str['no_select_keywords_num']
-        keywords_top_page_cover_excel_path = data_str['keywords_top_page_cover_excel_path']
-        keywords_top_page_cover_yingxiao_excel_path = data_str['keywords_top_page_cover_yingxiao_excel_path']
-        if no_select_keywords_num > 0:
-            keywords_status = '1'
-        else:
-            keywords_status = '2'
-        data = {
-            'canshu': 'UserProfile',
-            'user_id': client_user_id
-        }
-        ret = requests.post(url, data=data)
-        sleep(1)
-        user_obj_id = json.loads(ret.text)['data']['user_obj']
-        data_temp = {
-            'username_id': user_obj_id,
-            'koywords_status': keywords_status,
-            'keywords_num': keywords_num,
-            'total_cover': total_cover,
-            'pc_cover': pc_cover,
-            'wap_cover': wap_cover,
-            'no_select_keywords_num': no_select_keywords_num,
-            'keywords_top_page_cover_excel_path': keywords_top_page_cover_excel_path,
-            'keywords_top_page_cover_yingxiao_excel_path': keywords_top_page_cover_yingxiao_excel_path
-        }
-        requests.post(url, data=data_temp)
-
-
+    # url = 'http://api.zhugeyingxiao.com/api/keywords_select_models'
+    # # url = 'http://127.0.0.1:8006/api/keywords_select_models'
+    # data = {
+    #     'canshu': 'KeywordsTopInfo'
+    # }
+    # user_id_list, user_data = [], {}
+    # ret = requests.post(url, data=data)
+    # sleep(1)
+    # data_objs = ret.text
+    # json_data_objs = json.loads(data_objs)
+    # data_objs = json_data_objs['data']['data_objs_list']
+    #
+    # for obj in data_objs:
+    #     client_user_id = int(obj["keyword__client_user"])
+    #     username = obj["keyword__client_user__username"]
+    #     page_type = obj["page_type"]
+    #     cover = obj["cover"]
+    #
+    #     if client_user_id in user_id_list:
+    #         user_data[client_user_id][page_type] = cover
+    #     else:
+    #         user_id_list.append(client_user_id)
+    #         user_data[client_user_id] = {
+    #             page_type: cover,
+    #             "username": username,
+    #             "user_id": client_user_id
+    #         }
+    # for index, user_id in enumerate(user_id_list):
+    #     client_user_id = user_data[user_id]["user_id"]
+    #     username = user_data[user_id]["username"]
+    #     pc_cover = 0
+    #     wap_cover = 0
+    #     if 1 in user_data[user_id]:
+    #         pc_cover = user_data[user_id][1]
+    #     if 3 in user_data[user_id]:
+    #         wap_cover = user_data[user_id][3]
+    #     total_cover = pc_cover + wap_cover
+    #     data = {
+    #         'canshu': 'KeywordsTopSet',
+    #         'user_id': client_user_id
+    #     }
+    #     ret = requests.post(url, data=data)
+    #     sleep(1)
+    #     data_str = json.loads(ret.text)['data']
+    #     keywords_num = data_str['keywords_num']
+    #     no_select_keywords_num = data_str['no_select_keywords_num']
+    #     keywords_top_page_cover_excel_path = data_str['keywords_top_page_cover_excel_path']
+    #     keywords_top_page_cover_yingxiao_excel_path = data_str['keywords_top_page_cover_yingxiao_excel_path']
+    #     if no_select_keywords_num > 0:
+    #         keywords_status = '1'
+    #     else:
+    #         keywords_status = '2'
+    #     data = {
+    #         'canshu': 'UserProfile',
+    #         'user_id': client_user_id
+    #     }
+    #     ret = requests.post(url, data=data)
+    #     sleep(1)
+    #     user_obj_id = json.loads(ret.text)['data']['user_obj']
+    #     data_temp = {
+    #         'username_id': user_obj_id,
+    #         'koywords_status': keywords_status,
+    #         'keywords_num': keywords_num,
+    #         'total_cover': total_cover,
+    #         'pc_cover': pc_cover,
+    #         'wap_cover': wap_cover,
+    #         'no_select_keywords_num': no_select_keywords_num,
+    #         'keywords_top_page_cover_excel_path': keywords_top_page_cover_excel_path,
+    #         'keywords_top_page_cover_yingxiao_excel_path': keywords_top_page_cover_yingxiao_excel_path
+    #     }
+    #     requests.post(url, data=data_temp)
+    url= 'http://wenda.zhugeyingxiao.com/api/keywords_select_models'
+    ret = requests.get(url)
+    print(ret.text)
 
 
 

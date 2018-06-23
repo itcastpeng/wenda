@@ -1461,59 +1461,83 @@ def fifty_guanjianci_fabu(request):
 
     return JsonResponse(response.__dict__)
 
+
 # 指定关键词-优化-协助调用查询数据库
 @csrf_exempt
 def keywords_select_models(request):
     response = pub.BaseResponse()
-    canshu = request.POST.get('canshu')
-    data_objs_list = []
-    client_user_id = request.POST.get('user_id')
-    if canshu == 'KeywordsTopInfo':
-        data_objs = models.KeywordsTopInfo.objects.filter(keyword__client_user__is_delete=False).values(
-            'keyword__client_user',
-            'keyword__client_user__username',
-            'keyword__client_user__laowenda_youxian',
-            'page_type',
-        ).annotate(cover=Count("keyword__client_user")).order_by('-keyword__client_user__laowenda_youxian',
-            '-keyword__client_user__create_date')
-        for obj in data_objs:
-            data_objs_list.append(obj)
-        response.data = {
-            'data_objs_list':data_objs_list
-        }
-    if canshu == 'KeywordsTopSet':
+    data_objs = models.KeywordsTopInfo.objects.filter(keyword__client_user__is_delete=False).values(
+        'keyword__client_user',
+        'keyword__client_user__username',
+        'keyword__client_user__laowenda_youxian',
+        'page_type',
+    ).annotate(cover=Count("keyword__client_user")).order_by('-keyword__client_user__laowenda_youxian',
+        '-keyword__client_user__create_date')
+
+    user_id_list, user_data = [], {}
+    for obj in data_objs:
+        client_user_id = int(obj["keyword__client_user"])
+        username = obj["keyword__client_user__username"]
+        page_type = obj["page_type"]
+        cover = obj["cover"]
+
+        if client_user_id in user_id_list:
+            user_data[client_user_id][page_type] = cover
+        else:
+            user_id_list.append(client_user_id)
+            user_data[client_user_id] = {
+                page_type: cover,
+                "username": username,
+                "user_id": client_user_id
+            }
+    for index, user_id in enumerate(user_id_list):
+        client_user_id = user_data[user_id]["user_id"]
+        username = user_data[user_id]["username"]
+        pc_cover = 0
+        wap_cover = 0
+        if 1 in user_data[user_id]:
+            pc_cover = user_data[user_id][1]
+        if 3 in user_data[user_id]:
+            wap_cover = user_data[user_id][3]
+        total_cover = pc_cover + wap_cover
+
         keywords_top_set_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(
         client_user_id=client_user_id, is_delete=False)
+        keywords_num = keywords_top_set_objs.count()
+        no_select_keywords_num = keywords_top_set_objs.filter(status=1).count()
         keywords_top_set_obj = keywords_top_set_objs[0]
-
-        response.data = {
-            'keywords_num': keywords_top_set_objs.count(),
-            'no_select_keywords_num': keywords_top_set_objs.filter(status=1).count(),
-            'keywords_top_page_cover_excel_path': keywords_top_set_obj.client_user.keywords_top_page_cover_excel_path,
-            'keywords_top_page_cover_yingxiao_excel_path': keywords_top_set_obj.client_user.keywords_top_page_cover_yingxiao_excel_path,
+        keywords_top_page_cover_excel_path = keywords_top_set_obj.client_user.keywords_top_page_cover_excel_path
+        keywords_top_page_cover_yingxiao_excel_path = keywords_top_set_obj.client_user.keywords_top_page_cover_yingxiao_excel_path
+        if no_select_keywords_num > 0:
+            keywords_status = '1'
+        else:
+            keywords_status = '2'
+        data_temp = {
+            'username_id': client_user_id,
+            'koywords_status': keywords_status,
+            'keywords_num': keywords_num,
+            'total_cover': total_cover,
+            'pc_cover': pc_cover,
+            'wap_cover': wap_cover,
+            'no_select_keywords_num': no_select_keywords_num,
+            'keywords_top_page_cover_excel_path': keywords_top_page_cover_excel_path,
+            'keywords_top_page_cover_yingxiao_excel_path': keywords_top_page_cover_yingxiao_excel_path
         }
-    if canshu == 'UserProfile':
+
         user_obj = models.UserProfile.objects.filter(id=client_user_id)
         response.data = {
             'user_obj':user_obj[0].id
         }
-    if canshu == 'KeyWords_YouHua':
-        data_temp = {
-        'username_id' : request.POST.get('username_id'),
-        'koywords_status' : request.POST.get('koywords_status'),
-        'keywords_num' : request.POST.get('keywords_num'),
-        'total_cover' : request.POST.get('total_cover'),
-        'pc_cover' : request.POST.get('pc_cover'),
-        'wap_cover' : request.POST.get('wap_cover'),
-        'no_select_keywords_num' : request.POST.get('no_select_keywords_num'),
-        'keywords_top_page_cover_excel_path' : request.POST.get('keywords_top_page_cover_excel_path'),
-        'keywords_top_page_cover_yingxiao_excel_path' : request.POST.get('keywords_top_page_cover_yingxiao_excel_path'),
-        }
-        youhua_objs = models.KeyWords_YouHua.objects.filter(username_id=data_temp['username_id'])
+
+        youhua_objs = models.KeyWords_YouHua.objects.filter(username_id=client_user_id)
         if youhua_objs:
             youhua_objs.update(**data_temp)
+            response.status = True
+            response.message = '完成缓存'
         else:
             youhua_objs.create(**data_temp)
+            response.status = True
+            response.message = '完成缓存'
 
     return JsonResponse(response.__dict__)
 
