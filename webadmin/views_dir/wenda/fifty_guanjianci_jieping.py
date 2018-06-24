@@ -115,7 +115,7 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
                     response.message='数据库大于50条,请删除部分关键词'
                 elif len_guanjianci > 50:
                     response.status=False
-                    response.message='关键字总数超出50条,请检查!'
+                    response.message='关键字超出50条,请检查!'
                 else:
                     obj = models.UserProfile.objects.filter(id=yonghu_id)
                     if obj:
