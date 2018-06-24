@@ -116,7 +116,11 @@ def guwen_duijie(request):
             if neibiao_obj:
                 if neibiao_obj[0].jifeishijian_stop >= datetime.date.today():
                     kehu_name = '<span style="color: red">{username}</span>'.format(username=kehu_name)
-
+            if obj.guwen_duijie_bianji:
+                # bianji = obj.guwen_duijie_bianji
+                bianji_obj = obj.guwen_duijie_bianji.all().values('username')
+                bianji = ",".join([i['username'] for i in bianji_obj])
+                print('bianji =========== > ',bianji)
             # print('xiaoshou --- - >',xiaoshou)
             # print('-------> ',user_id,tingbiao,kaishi_jifei,daozhang,kehu_name,user_id,index,daokuan_time,fugai_count,xiaoshou)
 
@@ -139,7 +143,7 @@ def guwen_duijie(request):
                 'daokuan_time':daokuan_time,
                 'fugai_count':fugai_count
             })
-
+            print('bianji --------- > ',bianji)
         return HttpResponse(json.dumps(result_data))
     if "_pjax" in request.GET:
         return render(request, 'wenda/guwen_Docking_table/guwen_duijie_biao_pjax.html', locals())
