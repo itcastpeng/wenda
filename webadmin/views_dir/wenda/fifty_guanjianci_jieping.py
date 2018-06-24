@@ -66,8 +66,11 @@ def guanjianci_jieping(request):
             oper += "----<a href='update_guanjianci/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>修改</a>".format(user_id=obj.id)
             oper += "----<a href='delete_guanjianci/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>删除</a>".format(user_id=obj.id)
             jieping_time = ''
+            create_time = ''
             if obj.jieping_time:
                 jieping_time = obj.jieping_time.strftime('%Y-%m-%d %H:%M:%Ss %p')
+            if obj.create_time:
+                create_time = obj.create_time.strftime('%Y-%m-%d')
             result_data['data'].append({
                 'oper':oper,
                 'kehu_name':obj.yonghu_user.username,
@@ -75,6 +78,7 @@ def guanjianci_jieping(request):
                 'guanjianci':obj.guanjianci,
                 'jieping_time':jieping_time,
                 'index':index + 1,
+                'create_time':create_time
             })
         return HttpResponse(json.dumps(result_data))
     if "_pjax" in request.GET:
@@ -165,8 +169,8 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
                 response.status = False
                 response.message = '删除失败'
 
-        # 查看关键词截屏
-        elif oper_type == 'guanjianci_jieping':
+        # 批量删除
+        # elif oper_type == 'delete_in_batches':
             pass
 
         return JsonResponse(response.__dict__)
@@ -202,6 +206,15 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
                 data_list.append(picture)
             response.data = data_list
             return JsonResponse(response.__dict__)
+
+        # 批量删除
+        # elif oper_type == 'delete_in_batches':
+        #     data_list = []
+        #     for i in range(5):
+        #         data_list.append(i)
+        #     return render(request, 'wenda/fifty_guanjianci_jieping/fifty_delete_in_batches.html', locals())
+
+
 
 
 

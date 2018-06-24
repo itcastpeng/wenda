@@ -802,7 +802,8 @@ class GuanJianCiFifty(models.Model):
     guanjianci = models.TextField(verbose_name='五十个关键词',null=True, blank=True)
     yonghu_user = models.ForeignKey(to='UserProfile',verbose_name='归属哪个用户')
     jieping_time = models.DateTimeField(auto_now_add=True ,verbose_name='截屏时间', null=True, blank=True)
-    # create_time = models.DateField(verbose_name='创建时间', null=True, blank=True)
+    create_time = models.DateField(verbose_name='创建时间', null=True, blank=True)
+    is_delete =  models.BooleanField(verbose_name='逻辑删除',default=False)
 
 
 # 指定关键词--优化

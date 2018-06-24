@@ -94,11 +94,14 @@
 {#                                class="btn btn-info pull-right margin-right-5" >#}
 {#                            <i  aria-hidden="true"></i> 修改词#}
 {#                        </button>#}
-
                         <button type="button" href="create_guanjianci/0/" data-toggle="modal" data-target="#exampleFormModal"
-                                class="btn btn-info pull-right margin-right-5" id="create_guanjianci">
+                                class="btn btn-info pull-right margin-right-5 "  id="create_guanjianci">
                             <i  aria-hidden="true"></i> 添加关键词
                         </button>
+{#                        <button type="button" href="delete_in_batches/0/" data-toggle="modal" data-target="#exampleFormModal"#}
+{#                                class="btn btn-info pull-right margin-right-5" id="delete_in_batches">#}
+{#                            <i  aria-hidden="true"></i> 批量删除#}
+{#                        </button>#}
                 </div>
                 <table class="table table-bordered table-hover dataTable table-striped width-full text-nowrap"
                        id="dataTable" data-scroll-x="True">
@@ -109,6 +112,7 @@
                         <th>客户名称</th>
                         <th>关键词</th>
                         <th>截屏时间</th>
+                        <th>创建时间</th>
                         <th>操作</th>
                         </tr>
                     </thead>
@@ -120,8 +124,8 @@
     </div>
 </div>
 
-<script src="http://cdn.admui.com/demo/pjax/1.3.0/vendor/magnific-popup/jquery.magnific-popup.min.js" data-name="popup"></script>
-<script src="http://cdn.admui.com/demo/pjax/1.3.0/js/examples/components/advanced/lightbox.js" data-deps="popup"></script>
+{#<script src="http://cdn.admui.com/demo/pjax/1.3.0/vendor/magnific-popup/jquery.magnific-popup.min.js" data-name="popup"></script>#}
+{#<script src="http://cdn.admui.com/demo/pjax/1.3.0/js/examples/components/advanced/lightbox.js" data-deps="popup"></script>#}
 
 
 <script>
@@ -173,6 +177,7 @@ var table = $('#dataTable').DataTable({
         {"data": "guanjianci",
         "orderable": false},
         {"data": "jieping_time"},
+        {"data": "create_time"},
         {"data": "oper",
         "orderable": false},
 
