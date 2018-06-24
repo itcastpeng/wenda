@@ -792,13 +792,13 @@ class YingXiaoGuWen_NeiBiao(models.Model):
     guishu = models.ForeignKey(to='YingXiaoGuWen_DuiJie',verbose_name='外键ID',null=True, blank=True)
 
 # 关键词截屏  --  保存图片路径
-class GetKeywordsJiePing(models.Model):
+class Fifty_GetKeywordsJiePing(models.Model):
     picture_path = models.TextField(verbose_name='图片路径',null=True,blank=True)
-    guanjianci = models.ForeignKey(to='GuanJianCiFifty',verbose_name='属于哪个关键词')
+    guanjianci = models.ForeignKey(to='Fifty_GuanJianCi',verbose_name='属于哪个关键词')
 
 
 # 关键词截屏  --  保存50个关键词
-class GuanJianCiFifty(models.Model):
+class Fifty_GuanJianCi(models.Model):
     guanjianci = models.TextField(verbose_name='五十个关键词',null=True, blank=True)
     yonghu_user = models.ForeignKey(to='UserProfile',verbose_name='归属哪个用户')
     jieping_time = models.DateTimeField(verbose_name='截屏时间', null=True, blank=True)

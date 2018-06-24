@@ -52,9 +52,9 @@ def guanjianci_jieping(request):
         client_user = request.GET.get('client_user')
         print('client_user  == == == > ',client_user)
         if client_user:
-            objs = models.GuanJianCiFifty.objects.filter(q).filter(yonghu_user=client_user).order_by(order_column)
+            objs = models.Fifty_GuanJianCi.objects.filter(q).filter(yonghu_user=client_user).order_by(order_column)
         else:
-            objs = models.GuanJianCiFifty.objects.filter(q).all().order_by(order_column)
+            objs = models.Fifty_GuanJianCi.objects.filter(q).all().order_by(order_column)
         result_data = {'data': []}
         result_data = {
             "recordsFiltered": objs.count(),
@@ -102,7 +102,7 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
             print('guanjianci_create =  == = == = >',guanjianci_create )
             guanjianci_list = set(guanjianci_create.splitlines())
             # 数据库查询条数
-            objs = models.GuanJianCiFifty.objects.filter(yonghu_user=yonghu_id).values('yonghu_user_id').annotate(Count('id'))
+            objs = models.Fifty_GuanJianCi.objects.filter(yonghu_user=yonghu_id).values('yonghu_user_id').annotate(Count('id'))
             # 输入的条数
             # now_date_time = datetime.date.today()
             if objs:
@@ -115,7 +115,7 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
                     response.message='数据库大于50条,请删除部分关键词'
                 elif len_guanjianci > 50:
                     response.status=False
-                    response.message='关键字超出50条,请检查!'
+                    response.message='关键字总数超出50条,请检查!'
                 else:
                     obj = models.UserProfile.objects.filter(id=yonghu_id)
                     if obj:
@@ -123,7 +123,7 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
                         for guanjianci in guanjianci_list:
                             # print('关键词入库 -- -- - - 》',  guanjianci)
                             # print('用户id ------ 》 ',yonghu_id    )
-                            models.GuanJianCiFifty.objects.create(
+                            models.Fifty_GuanJianCi.objects.create(
                                 guanjianci=guanjianci,
                                 yonghu_user=obj[0],
                             )
@@ -133,12 +133,12 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
                 len_guanjianci = len(guanjianci_list)
                 if len_guanjianci > 50:
                     response.status = False
-                    response.message = '关键字超出50条,请检查!'
+                    response.message = '关键字总数超出50条,请检查!'
                 else:
                     obj = models.UserProfile.objects.filter(id=yonghu_id)
                     if obj:
                         for guanjianci in guanjianci_list:
-                            models.GuanJianCiFifty.objects.create(
+                            models.Fifty_GuanJianCi.objects.create(
                                 guanjianci=guanjianci,
                                 yonghu_user=obj[0],
                             )
@@ -150,7 +150,7 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
             guanjianci = request.POST.get('guanjianci')
             print('guanjianci  - -- -  >',guanjianci )
             if guanjianci:
-                objs = models.GuanJianCiFifty.objects.filter(id=o_id)
+                objs = models.Fifty_GuanJianCi.objects.filter(id=o_id)
                 if objs:
                     objs.update(
                         guanjianci=guanjianci
@@ -164,7 +164,7 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
         # 删除关键词
         elif oper_type == 'delete_guanjianci':
             print('o_id - - -> ',o_id)
-            obj = models.GuanJianCiFifty.objects.get(id=o_id)
+            obj = models.Fifty_GuanJianCi.objects.get(id=o_id)
             if obj:
                 obj.delete()
                 response.status = True
@@ -189,20 +189,20 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
         # 修改关键词
         elif oper_type == 'update_guanjianci':
             client_objs = models.UserProfile.objects.filter(is_delete=False,role_id=5)
-            obj = models.GuanJianCiFifty.objects.get(id=o_id)
+            obj = models.Fifty_GuanJianCi.objects.get(id=o_id)
             guanjianci_name = obj.guanjianci
             guanjianci_id = obj.id
             return render(request, 'wenda/fifty_guanjianci_jieping/fifty_guanjianci_update.html/',locals())
 
         # 删除关键词
         elif oper_type == 'delete_guanjianci':
-            obj = models.GuanJianCiFifty.objects.get(id=o_id)
+            obj = models.Fifty_GuanJianCi.objects.get(id=o_id)
             guanjianci = obj.guanjianci
             return render(request, 'wenda/fifty_guanjianci_jieping/fifty_guanjianci_delete.html',locals())
 
         # 查看关键词截屏
         elif oper_type == 'guanjianci_jieping_select':
-            objs = models.GetKeywordsJiePing.objects.filter(guanjianci_id=o_id)
+            objs = models.Fifty_GetKeywordsJiePing.objects.filter(guanjianci_id=o_id)
             data_list = []
             for obj in objs:
                 picture = obj.picture_path
