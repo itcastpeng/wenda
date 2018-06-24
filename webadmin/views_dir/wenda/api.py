@@ -1435,8 +1435,8 @@ def fifty_guanjianci_fabu(request):
             jieping_3 = request.POST.get('jieping_3')
             jieping_3 = base64.b64decode(jieping_3)
             open('statics/picture/' + keyword + '--3--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num),'wb').write(jieping_3)
-            picture_path_one = '/' + 'statics/picture/' + keyword + '--1--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num)
-            picture_path_two = '/' + 'statics/picture/' + keyword + '--2--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num)
+            picture_path_one =  '/' + 'statics/picture/' + keyword + '--1--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num)
+            picture_path_two =  '/' + 'statics/picture/' + keyword + '--2--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num)
             picture_path_three = '/' + 'statics/picture/' + keyword + '--3--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num)
 
             q = Q()
@@ -1465,14 +1465,16 @@ def fifty_guanjianci_fabu(request):
                 jieping_time__isnull=True,
                 have_not_capture=2
             ).order_by('create_time')
-            guanjianci = objs[0].guanjianci
-            user_id = objs[0].yonghu_user_id
-            guanjianci_id = objs[0].id
-            response.data = {
-                'guanjianci': guanjianci,
-                'user_id': user_id,
-                'guanjianci_id': guanjianci_id
-            }
+            if objs:
+                user_id = objs[0].yonghu_user_id
+                guanjianci = objs[0].guanjianci
+                guanjianci_id = objs[0].id
+                response.data = {
+                    'guanjianci': guanjianci,
+                    'user_id': user_id,
+                    'guanjianci_id': guanjianci_id
+                }
+            response.status=False
         else:
             print('进入 ------------ 取数据 GET')
             # 如果 没被截过屏 取出最小创建时间的关键词(优先)

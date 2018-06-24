@@ -62,7 +62,7 @@ def guanjianci_jieping(request):
             "data": []}
         for index,obj in enumerate(objs[start: (start + length)], start=0):
             oper = ''
-            oper += "<span url='guanjianci_jieping/{user_id}/' class='chakan_jieping'>查看截屏</span>".format(user_id=obj.id)
+            oper += "<span url='guanjianci_jieping_select/{user_id}/' class='chakan_jieping'>查看截屏</span>".format(user_id=obj.id)
             oper += "----<a href='update_guanjianci/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>修改</a>".format(user_id=obj.id)
             oper += "----<a href='delete_guanjianci/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>删除</a>".format(user_id=obj.id)
             jieping_time = ''
@@ -201,13 +201,13 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
             return render(request, 'wenda/fifty_guanjianci_jieping/fifty_guanjianci_delete.html',locals())
 
         # 查看关键词截屏
-        elif oper_type == 'guanjianci_jieping':
+        elif oper_type == 'guanjianci_jieping_select':
             objs = models.GetKeywordsJiePing.objects.filter(guanjianci_id=o_id)
             data_list = []
             for obj in objs:
                 picture = obj.picture_path
                 print('picture- - -> ', picture)
-                data_list.append(picture)
+                data_list.append(str(picture))
             response.data = data_list
             return JsonResponse(response.__dict__)
 

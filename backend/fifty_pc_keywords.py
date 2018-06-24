@@ -239,12 +239,13 @@ def huoqu_guanjianci():
             # url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu?canshu=2'
             url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu?canshu=2"
             ret = requests.get(url)
-            json_ret = ret.content.decode()
-            str_ret = json.loads(json_ret)
-            print('str_ret  - ->', str_ret)
-            if str_ret['data']:
-                ret_data = str_ret['data']
-                GuanJianCi(ret_data).run()
+            if ret:
+                json_ret = ret.content.decode()
+                str_ret = json.loads(json_ret)
+                print('str_ret  - ->', str_ret)
+                if str_ret['data']:
+                    ret_data = str_ret['data']
+                    GuanJianCi(ret_data).run()
             sleep_time = 60 * 5
             sleep(sleep_time)
             print('===重新执行===')
