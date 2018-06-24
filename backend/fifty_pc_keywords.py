@@ -40,8 +40,8 @@ class GuanJianCi:
         # self.browser.maximize_window()  # 全屏
         self.url = 'https://m.baidu.com'
         # 判断是否为自己的链接 url
-        self.panduan_url = 'http://wenda.zhugeyingxiao.com/api/check_zhidao_url'
-        # self.panduan_url = 'http://127.0.0.1:8006/api/check_zhidao_url'
+        # self.panduan_url = 'http://wenda.zhugeyingxiao.com/api/check_zhidao_url'
+        self.panduan_url = 'http://127.0.0.1:8006/api/check_zhidao_url'
 
     # 随机数 增加装饰器 该函数有self属性
     # @property
@@ -63,6 +63,8 @@ class GuanJianCi:
         soup = BeautifulSoup(self.browser.page_source, 'lxml')
         self.timesleep()
         results = soup.find('div', class_='results')
+        cuowu_url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
+        # cuowu_url = "http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu"
         for result in results:
             try:
                 lianjie = result['data-log']
@@ -80,7 +82,9 @@ class GuanJianCi:
                     zhidao_url = dict_lianjie['mu']
                     # 判断以zhidao开头的链接 ---判断是否为百度知道链接---
                     if zhidao_url.startswith('https://zhidao.baidu') or zhidao_url.startswith('http://zhidao.baidu'):
+                        print('zhidao_url ============= > ',zhidao_url)
                         # 获取当前url
+                        # print('urser_id ======== > ',user_id)
                         data_temp = {
                             'client_user_id': user_id,
                             'is_pause': 0,
@@ -88,8 +92,8 @@ class GuanJianCi:
                         }
                         ret_panduan = requests.post(self.panduan_url, data=data_temp)
                         # 如果是自己的链接 判断答案
+                        # print('ret_panduan ========== > ',ret_panduan)
                         if ret_panduan:
-                            print('ret_panduan ========== > ',ret_panduan)
                             ret_json = ret_panduan.content.decode()
                             str_ret = json.loads(ret_json)
                             daan_list = []
@@ -174,20 +178,18 @@ class GuanJianCi:
                                     guanjianci_num += 2
                             else:
                                 print('---链接对--答案不对---')
-                                url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
                                 data = {
                                     'keyword':keyword,
                                     'canshu':1
                                 }
-                                requests.post(url,data=data)
+                                requests.post(cuowu_url,data=data)
                         else:
                             print('--为知道链接---链接不对---')
-                            url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
                             data = {
                                 'keyword': keyword,
                                 'canshu': 1
                             }
-                            requests.post(url, data=data)
+                            requests.post(cuowu_url, data=data)
                 else:
                     continue
             except Exception as e:
@@ -234,6 +236,15 @@ def huoqu_guanjianci():
             sleep(2)
         else:
             print('====当前无任务====')
+            # url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu?canshu=2'
+            url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu?canshu=2"
+            ret = requests.get(url)
+            json_ret = ret.content.decode()
+            str_ret = json.loads(json_ret)
+            print('str_ret  - ->', str_ret)
+            if str_ret['data']:
+                ret_data = str_ret['data']
+                GuanJianCi(ret_data).run()
             sleep_time = 60 * 5
             sleep(sleep_time)
             print('===重新执行===')

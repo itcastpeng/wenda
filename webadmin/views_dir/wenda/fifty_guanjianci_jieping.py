@@ -71,6 +71,9 @@ def guanjianci_jieping(request):
                 jieping_time = obj.jieping_time.strftime('%Y-%m-%d %H:%M:%Ss %p')
             if obj.create_time:
                 create_time = obj.create_time.strftime('%Y-%m-%d')
+            have_not_capture = ''
+            if obj.have_not_capture:
+                have_not_capture = obj.get_have_not_capture_display()
             result_data['data'].append({
                 'oper':oper,
                 'kehu_name':obj.yonghu_user.username,
@@ -78,7 +81,8 @@ def guanjianci_jieping(request):
                 'guanjianci':obj.guanjianci,
                 'jieping_time':jieping_time,
                 'index':index + 1,
-                'create_time':create_time
+                'create_time':create_time,
+                'have_not_capture':have_not_capture,
             })
         return HttpResponse(json.dumps(result_data))
     if "_pjax" in request.GET:

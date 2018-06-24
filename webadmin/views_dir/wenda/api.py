@@ -1418,8 +1418,8 @@ def fifty_guanjianci_fabu(request):
             print(keyword)
             objs = models.GuanJianCiFifty.objects.get(guanjianci=keyword)
             if objs:
-                print('确认删除')
-                objs.is_delete=1
+                print('本关键词--无截屏 ============ ')
+                objs.have_not_capture=2
                 objs.save()
         else:
             keyword = request.POST.get('keyword')
@@ -1447,6 +1447,7 @@ def fifty_guanjianci_fabu(request):
             else:
                 obj = models.GuanJianCiFifty.objects.get(guanjianci=keyword)
                 obj.jieping_time = now_time
+                obj.have_not_capture=1
                 obj.save()
                 print('else -- else -- else -- else ')
                 one_obj = models.GetKeywordsJiePing(picture_path=picture_path_one, guanjianci_id=guanjianci_id)
@@ -1456,15 +1457,14 @@ def fifty_guanjianci_fabu(request):
                 three_obj = models.GetKeywordsJiePing(picture_path=picture_path_three, guanjianci_id=guanjianci_id)
                 three_obj.save()
     else:
-        print('进入 ------------ 取数据 GET')
-        # 如果 没被截过屏 取出最小创建时间的关键词(优先)
-        objs = models.GuanJianCiFifty.objects.filter(
-            create_time__lte=datetime.date.today(),
-            jieping_time__isnull=True,
-            is_delete=False
-        ).order_by('create_time')
-        if objs:
-            print('没有截屏')
+        canshu = request.GET.get('canshu')
+        print('进入参数 -=------》 ',canshu)
+        if canshu:
+            objs = models.GuanJianCiFifty.objects.filter(
+                create_time__lte=datetime.date.today(),
+                jieping_time__isnull=True,
+                have_not_capture=2
+            ).order_by('create_time')
             guanjianci = objs[0].guanjianci
             user_id = objs[0].yonghu_user_id
             guanjianci_id = objs[0].id
@@ -1474,13 +1474,15 @@ def fifty_guanjianci_fabu(request):
                 'guanjianci_id': guanjianci_id
             }
         else:
-            print('已截屏')
+            print('进入 ------------ 取数据 GET')
+            # 如果 没被截过屏 取出最小创建时间的关键词(优先)
             objs = models.GuanJianCiFifty.objects.filter(
-                jieping_time__lt=datetime.date.today(),
-                is_delete=False,
-                create_time__isnull=False
-            ).order_by('jieping_time')
+                create_time__lte=datetime.date.today(),
+                jieping_time__isnull=True,
+                have_not_capture__isnull=True
+            ).order_by('create_time')
             if objs:
+                print('没有截屏')
                 guanjianci = objs[0].guanjianci
                 user_id = objs[0].yonghu_user_id
                 guanjianci_id = objs[0].id
@@ -1489,6 +1491,21 @@ def fifty_guanjianci_fabu(request):
                     'user_id': user_id,
                     'guanjianci_id': guanjianci_id
                 }
+            else:
+                print('已截屏')
+                objs = models.GuanJianCiFifty.objects.filter(
+                    jieping_time__lt=datetime.date.today(),
+                    create_time__isnull=False
+                ).order_by('jieping_time')
+                if objs:
+                    guanjianci = objs[0].guanjianci
+                    user_id = objs[0].yonghu_user_id
+                    guanjianci_id = objs[0].id
+                    response.data = {
+                        'guanjianci': guanjianci,
+                        'user_id': user_id,
+                        'guanjianci_id': guanjianci_id
+                    }
 
     return JsonResponse(response.__dict__)
 
