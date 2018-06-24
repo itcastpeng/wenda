@@ -47,13 +47,11 @@
 
 <div class="page animation-fade page-index page-data-tables">
     <div class="page-content">
-
          <div class="example-wrap hidden">
             <div class="example" id="exampleGallery">
 {#                <a class="inline-block" href="http://cdn.admui.com/demo/pjax/1.3.0/images/photos/view-8.jpg" title="view-7" id="tanchu">#}
 {#                <img class="img-responsive hidden" src="http://cdn.admui.com/demo/pjax/1.3.0/images/photos/view-8.jpg" alt="..." width="220">#}
 {#                </a>#}
-
             </div>
         </div>
 
@@ -113,6 +111,7 @@
                         <th>关键词</th>
                         <th>截屏时间</th>
                         <th>创建时间</th>
+                        <th>有无截屏</th>
                         <th>操作</th>
                         </tr>
                     </thead>
@@ -123,11 +122,8 @@
         </div>
     </div>
 </div>
-
-{#<script src="http://cdn.admui.com/demo/pjax/1.3.0/vendor/magnific-popup/jquery.magnific-popup.min.js" data-name="popup"></script>#}
-{#<script src="http://cdn.admui.com/demo/pjax/1.3.0/js/examples/components/advanced/lightbox.js" data-deps="popup"></script>#}
-
-
+<script src="http://cdn.admui.com/demo/pjax/1.3.0/vendor/magnific-popup/jquery.magnific-popup.min.js" data-name="popup"></script>
+<script src="http://cdn.admui.com/demo/pjax/1.3.0/js/examples/components/advanced/lightbox.js" data-deps="popup"></script>
 <script>
 
 {# 在模态对话框关闭时清空数据 #}
@@ -178,6 +174,7 @@ var table = $('#dataTable').DataTable({
         "orderable": false},
         {"data": "jieping_time"},
         {"data": "create_time"},
+        {"data": "have_not_capture"},
         {"data": "oper",
         "orderable": false},
 
@@ -194,9 +191,11 @@ var table = $('#dataTable').DataTable({
         for (let i = 0; i < result.length; i++) {
             let url = result[i];
             {# 创建数据 #}
+            {#alert(url)#}
             let a_html = '<a class="inline-block" href="' + url + '" title="view-7">' +
                         '<img class="img-responsive hidden" src="' + url + '" width="220">' +
                     '</a>';
+            {#let b_html = 'http://wenda.zhugeyingxiao.com/' + a_html;#}
             {# 添加数据 #}
             $("#exampleGallery").append(a_html)
         }
