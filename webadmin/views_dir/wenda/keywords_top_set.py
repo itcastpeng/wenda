@@ -296,9 +296,12 @@ def keywords_top_set_oper(request, oper_type, o_id):
 
         # 清空关键词
         elif oper_type == "clearKeywords":
-            print(o_id)
+            print('o_id ========>',o_id)
             models.KeywordsTopSet.objects.filter(client_user_id=o_id).delete()
-
+            obj = models.KeyWords_YouHua.objects.get(username_id=o_id)
+            obj.keywords_num = 0
+            obj.no_select_keywords_num = 0
+            obj.save()
             response.status = True
             response.message = "关键词清空成功"
 
