@@ -5,7 +5,7 @@ import time
 import hashlib
 from time import sleep
 from json import loads
-from kombu.utils import json
+import json
 from selenium import webdriver
 from bs4 import BeautifulSoup
 import requests
@@ -16,9 +16,9 @@ project_dir = os.path.dirname(os.path.dirname(os.getcwd()))
 sys.path.append(project_dir)
 print(project_dir)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'wenda.settings'
-import django
+# import django
 from selenium.webdriver.common.action_chains import ActionChains
-django.setup()
+# django.setup()
 
 from selenium.webdriver.common.keys import Keys
 class GuanJianCi:
@@ -40,8 +40,8 @@ class GuanJianCi:
         # self.browser.maximize_window()  # 全屏
         self.url = 'https://m.baidu.com'
         # 判断是否为自己的链接 url
-        # self.panduan_url = 'http://wenda.zhugeyingxiao.com/api/check_zhidao_url'
-        self.panduan_url = 'http://127.0.0.1:8006/api/check_zhidao_url'
+        self.panduan_url = 'http://wenda.zhugeyingxiao.com/api/check_zhidao_url'
+        # self.panduan_url = 'http://127.0.0.1:8006/api/check_zhidao_url'
 
     # 随机数 增加装饰器 该函数有self属性
     # @property
@@ -63,8 +63,8 @@ class GuanJianCi:
         soup = BeautifulSoup(self.browser.page_source, 'lxml')
         self.timesleep()
         results = soup.find('div', class_='results')
-        cuowu_url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
-        # cuowu_url = "http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu"
+        # cuowu_url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
+        cuowu_url = "http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu"
         for result in results:
             try:
                 lianjie = result['data-log']
@@ -150,8 +150,8 @@ class GuanJianCi:
                                         './picture/' + keyword + '--3--' + '{guanjianci_num}.png'.format(
                                             guanjianci_num=guanjianci_num))
                                     sleep(3)
-                                    # jieping_url = "http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu"
-                                    jieping_url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
+                                    jieping_url = "http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu"
+                                    # jieping_url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
                                     jieping_1 = open('./picture/' + keyword + '--1--' + '{guanjianci_num}.png'.format(
                                         guanjianci_num=guanjianci_num), 'rb').read()
 
@@ -224,20 +224,20 @@ class GuanJianCi:
 # 获取关键词调用爬虫数据
 def huoqu_guanjianci():
     while True:
-        # url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu'
-        url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
+        url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu'
+        # url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
         ret = requests.get(url)
-        json_ret = ret.content.decode()
-        str_ret = json.loads(json_ret)
-        print('str_ret  - ->', str_ret)
-        if str_ret['data']:
-            ret_data = str_ret['data']
-            GuanJianCi(ret_data).run()
-            sleep(2)
+        if ret:
+            json_ret = ret.content.decode()
+            str_ret = json.loads(json_ret)
+            print('str_ret  - ->', str_ret)
+            if str_ret['data']:
+                ret_data = str_ret['data']
+                GuanJianCi(ret_data).run()
         else:
             print('====当前无任务====')
-            # url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu?canshu=2'
-            url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu?canshu=2"
+            url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu?canshu=2'
+            # url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu?canshu=2"
             ret = requests.get(url)
             if ret:
                 json_ret = ret.content.decode()

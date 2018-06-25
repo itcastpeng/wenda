@@ -1416,7 +1416,7 @@ def fifty_guanjianci_fabu(request):
             print('删除=========')
             keyword = request.POST.get('keyword')
             print(keyword)
-            objs = models.GuanJianCiFifty.objects.get(guanjianci=keyword)
+            objs = models.Fifty_GuanJianCi.objects.get(guanjianci=keyword)
             if objs:
                 print('本关键词--无截屏 ============ ')
                 objs.have_not_capture=2
@@ -1441,26 +1441,26 @@ def fifty_guanjianci_fabu(request):
 
             q = Q()
             q.add(Q(picture_path=picture_path_one) | Q(picture_path=picture_path_two) | Q(picture_path=picture_path_three),Q.AND)
-            objs = models.GetKeywordsJiePing.objects.filter(q)
+            objs = models.Fifty_GetKeywordsJiePing.objects.filter(q)
             if objs:
                 pass
             else:
-                obj = models.GuanJianCiFifty.objects.get(guanjianci=keyword)
+                obj = models.Fifty_GuanJianCi.objects.get(guanjianci=keyword)
                 obj.jieping_time = now_time
                 obj.have_not_capture=1
                 obj.save()
                 print('else -- else -- else -- else ')
-                one_obj = models.GetKeywordsJiePing(picture_path=picture_path_one, guanjianci_id=guanjianci_id)
+                one_obj = models.Fifty_GetKeywordsJiePing(picture_path=picture_path_one, guanjianci_id=guanjianci_id)
                 one_obj.save()
-                two_obj = models.GetKeywordsJiePing(picture_path=picture_path_two, guanjianci_id=guanjianci_id)
+                two_obj = models.Fifty_GetKeywordsJiePing(picture_path=picture_path_two, guanjianci_id=guanjianci_id)
                 two_obj.save()
-                three_obj = models.GetKeywordsJiePing(picture_path=picture_path_three, guanjianci_id=guanjianci_id)
+                three_obj = models.Fifty_GetKeywordsJiePing(picture_path=picture_path_three, guanjianci_id=guanjianci_id)
                 three_obj.save()
     else:
         canshu = request.GET.get('canshu')
         print('进入参数 -=------》 ',canshu)
         if canshu:
-            objs = models.GuanJianCiFifty.objects.filter(
+            objs = models.Fifty_GuanJianCi.objects.filter(
                 create_time__lte=datetime.date.today(),
                 jieping_time__isnull=True,
                 have_not_capture=2
@@ -1478,7 +1478,7 @@ def fifty_guanjianci_fabu(request):
         else:
             print('进入 ------------ 取数据 GET')
             # 如果 没被截过屏 取出最小创建时间的关键词(优先)
-            objs = models.GuanJianCiFifty.objects.filter(
+            objs = models.Fifty_GuanJianCi.objects.filter(
                 create_time__lte=datetime.date.today(),
                 jieping_time__isnull=True,
                 have_not_capture__isnull=True
@@ -1495,7 +1495,7 @@ def fifty_guanjianci_fabu(request):
                 }
             else:
                 print('已截屏')
-                objs = models.GuanJianCiFifty.objects.filter(
+                objs = models.Fifty_GuanJianCi.objects.filter(
                     jieping_time__lt=datetime.date.today(),
                     create_time__isnull=False
                 ).order_by('jieping_time')
