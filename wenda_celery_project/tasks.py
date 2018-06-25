@@ -1617,9 +1617,65 @@ def update_EditTaskLog_dahui_cishu():
 # 微信推送到期用户
 @app.task
 def weixin_daoqi_yonghu_tuisong():
-    from wenda_celery_project.weixin_daoqi_yonghu_tuisong import guwen_weixin, xiaoshou_weixin
-    guwen_weixin()
-    xiaoshou_weixin()
+    webchat_obj = WeChatPublicSendMsg()
+    # url = 'http://127.0.0.1:8006/api/jifeidaoqitixing/null/0'
+    url = 'http://wenda.zhugeyingxiao.com/api/jifeidaoqitixing/null/0?canshu=1'
+    ret = requests.get(url)
+    ret_json = ret.content.decode()
+    json_data = json.loads(ret_json)
+    if json_data['data']:
+        print('进入============')
+        data_params = json_data['data']
+        data_list = []
+        for params in data_params:
+            # 销售 发送
+            # print('params= =======> ',params)
+            if 'xiaoshou_openid' in params:
+                data_list.append({
+                    # xiaoshou_openid = params['xiaoshou_openid'],
+                    'openid': 'o7Xw_0fq6LrmCjBbxAzDZHTbtQ3g',
+                    'this_id': params['this_id'],
+                    'stop_time': params['stop_time'],
+                    'daoqi_today': params['daoqi_today'],
+                })
+            # 顾问
+            else:
+                data_list.append({
+                    # guwen_openid = params['guwen_openid'],
+                    'openid': 'o7Xw_0fq6LrmCjBbxAzDZHTbtQ3g',
+                    'this_id': params['this_id'],
+                    'daoqi_today': params['daoqi_today'],
+                    'stop_time': params['stop_time']
+                })
+
+
+        for data in data_list:
+            print('data ============ >', data)
+            post_data = {
+                "touser": "o7Xw_0fq6LrmCjBbxAzDZHTbtQ3g.",
+                # "touser": "{openid}".format(openid=openid),
+                "template_id": "ksNf6WiqO5JEqd3bY6SUqJvWeL2-kEDqukQC4VeYVvw",
+                # "url": "http://wenda.zhugeyingxiao.com/api/jifeidaoqitixing/null/{gongyong_id}".format(gongyong_id=gongyong_id),
+                "url": "http://127.0.0.1:8006/api/jifeidaoqitixing/null/{gongyong_id}".format(
+                    gongyong_id=data['this_id']),
+                "data": {
+                    "first": {
+                        "value": "诸葛霸屏王提醒有计费到期！",
+                        "color": "#000"
+                    },
+                    "keyword1": {
+                        "value": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                        # "color": "#173177"
+                    },
+                    "keyword2": {
+                        "value": "请见详情页面",
+                    },
+                }
+            }
+            print('post_data', post_data['url'])
+            print('---------========================')
+            webchat_obj.sendTempMsg(post_data)
+
 
 
 # 微信推送每日覆盖量

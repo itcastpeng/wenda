@@ -1284,70 +1284,126 @@ def qudao_shangwutong_cunhuo(request):
 
 # 查询用户到期信息微信推送
 @csrf_exempt
-def jifeidaoqitixing(request, oper_type, p_id):
-    # print('oper_type ----',oper_type)
-    print('进入--->',p_id)
+def jifeidaoqitixing(request, oper_type, o_id):
+
+    print('进入---------------> ')
     response = pub.BaseResponse()
-    # data_list = request.GET.get('data_list')
-    # print('data_list -- -- > ',data_list)
+    now_date = datetime.datetime.today().strftime('%Y-%m-%d')
     seventime = datetime.date.today() + datetime.timedelta(days=7)
     q = Q()
-    q.add(Q(xiaoshou__isnull=False), Q.AND)
-    q.add(Q(jifei_stop_date__lte=seventime) & Q(is_delete=False) & Q(status=1) & Q(jifei_start_date__isnull=False) & Q(jifei_stop_date__isnull=False), Q.AND)
-    q.add(Q(guwen_id=p_id) | Q(xiaoshou_id=p_id), Q.AND)
+    q.add(Q(guwen__isnull=False) | Q(xiaoshou__isnull=False), Q.AND)
+    q.add(Q(jifei_stop_date__lte=seventime) & Q(is_delete=False) & Q(status=1) & Q(jifei_start_date__isnull=False) & Q(
+        jifei_stop_date__isnull=False) & Q(jifei_stop_date__gte=now_date), Q.AND)
 
-    user_objs = models.UserProfile.objects.filter(q).order_by('jifei_stop_date')
-    # enumerate 索引和值
-    # for index,user_obj in enumerate(user_objs):
-    print('user_objs -->', user_objs)
-    data_list = []
-    api_data_list = []
-
-    for user_obj in user_objs:
-        if user_obj:
-            # 用户名
-            print('user_obj -- > ', user_obj)
-            # 结束日期
-            stop_time = user_obj.jifei_stop_date
-            # print('stop--->', stop_time)
-            if user_obj.jifei_start_date:
-                jifei_start_date = user_obj.jifei_start_date.strftime('%Y-%m-%d')
-            if user_obj.jifei_stop_date:
-                jifei_stop_date = user_obj.jifei_stop_date.strftime('%Y-%m-%d')
-                now_date = datetime.datetime.now()
-                if user_obj.jifei_stop_date == datetime.date.today():
-                    data_str = '{}今天到期'.format(user_obj.username)
-                    data_list.append(data_str)
-                    api_data_list.append({
-                        'username': user_obj.username,
-                        'text': '今天到期'
+    if request.GET.get('canshu'):
+        print('进入 canshu 判断=-==========')
+        # 判断出所有符合条件用户
+        objs = models.UserProfile.objects.filter(q)
+        data_temp = {}
+        data_list_weixin = []
+        if objs:
+            data_list = []
+            for obj in objs:
+                # print('--整7天到期用户-------> ',obj.username,obj.jifei_stop_date)
+                if obj.jifei_stop_date == seventime:
+                    daoqi_days = obj.jifei_stop_date - datetime.date.today()
+                    data_list.append({
+                        'this_id': obj.id,
+                        'username': obj.username,
+                        'stop_time': obj.jifei_stop_date,
+                        'guwen_openid': obj.guwen.openid,
+                        'xiaoshou_openid': obj.xiaoshou.openid,
+                        'daoqi_today': daoqi_days.days,
+                        'xiaoshou_id': obj.xiaoshou_id,
+                        'guwen_id': obj.guwen_id
                     })
-                # 增加判断  已过期负数的  不加入列表
-                elif user_obj.jifei_stop_date < datetime.date.today():
-                    guoqishijian = user_obj.jifei_stop_date - datetime.date.today()
 
-                # 如果当前时间 大于等于 计费结束日期减去七天
+                # print('今天到期--------> ',obj.username,obj.jifei_stop_date)
+                elif obj.jifei_stop_date == datetime.date.today():
+                    daoqi_days = obj.jifei_stop_date - datetime.date.today()
+                    data_list.append({
+                        'this_id': obj.id,
+                        'username': obj.username,
+                        'stop_time': obj.jifei_stop_date,
+                        'guwen_openid': obj.guwen.openid,
+                        'xiaoshou_openid': obj.xiaoshou.openid,
+                        'daoqi_today': daoqi_days.days,
+                        'xiaoshou_id': obj.xiaoshou_id,
+                        'guwen_id': obj.guwen_id
+                    })
+
+                # print('到期时间-====》 ',obj.username,obj.jifei_stop_date,daoqi_days.days)
                 else:
-                    if now_date.strftime('%Y-%m-%d') >= (
-                            user_obj.jifei_stop_date - datetime.timedelta(days=7)).strftime(
-                        '%Y-%m-%d'):
-                        # 用结束日期减去当前日期 剩余天数
-                        data_time = user_obj.jifei_stop_date - datetime.date.today()
-                        if data_time <= datetime.timedelta(days=7):
-                            data_str = '{}还有{}天到期'.format(user_obj.username, data_time.days)
-                            data_list.append(data_str)
-                            api_data_list.append({
-                                'username': user_obj.username,
-                                'text': '{}天到期'.format(data_time.days)
-                            })
-                o_id = p_id
+                    daoqi_days = obj.jifei_stop_date - datetime.date.today()
+                    data_list.append({
+                        'this_id': obj.id,
+                        'username': obj.username,
+                        'stop_time': obj.jifei_stop_date,
+                        'guwen_openid': obj.guwen.openid,
+                        'xiaoshou_openid': obj.xiaoshou.openid,
+                        'daoqi_today': daoqi_days.days,
+                        'xiaoshou_id': obj.xiaoshou_id,
+                        'guwen_id': obj.guwen_id
+                    })
 
+            if data_list:
+                for obj in data_list:
+                    if obj['xiaoshou_openid']:
+                    # if obj['xiaoshou_id']:
+                        xiaoshou_id = obj['xiaoshou_id']
+                        stop_time = obj['stop_time']
+                        data_temp[xiaoshou_id] = {
+                            'this_id': obj['this_id'],
+                            'xiaoshou_openid': obj['xiaoshou_openid'],
+                            'username': obj['username'],
+                            'stop_time': stop_time.strftime('%Y-%m-%d'),
+                            'daoqi_today':obj['daoqi_today']
+                        }
+
+                    if obj['guwen_openid']:
+                    # if obj['guwen_id']:
+                        guwen_id = obj['guwen_id']
+                        this_id = obj['this_id']
+                        stop_time = obj['stop_time']
+                        data_temp[guwen_id] = {
+                            'this_id': obj['this_id'],
+                            'guwen_openid': obj['guwen_openid'],
+                            'username': obj['username'],
+                            'stop_time': stop_time.strftime('%Y-%m-%d'),
+                            'daoqi_today': obj['daoqi_today']
+                        }
+                for p_id, data in data_temp.items():
+                    data_list_weixin.append(data)
+
+        response.data = data_list_weixin
+        return JsonResponse(response.__dict__)
+
+    else:
+        print('else =============')
+        objs = models.UserProfile.objects.filter(
+            is_delete=False,
+            id=o_id
+        )
+        api_data_list = []
+        if objs:
+            daoqi_days = objs[0].jifei_stop_date - datetime.date.today()
+            for obj in objs:
+                if daoqi_days == 0:
+                    api_data_list.append({
+                        'username': obj.username,
+                        'text': '今天到期'})
+                else:
+                    api_data_list.append({
+                        'username': obj.username,
+                        'text': '{}天到期'.format(daoqi_days.days)})
+    print('api_data_list= =========> ',api_data_list)
     if oper_type == 'json':
         response.code = 200
         response.data = api_data_list
         return JsonResponse(response.__dict__)
     else:
         return render(request, 'api/chaxun_kehu_daoqishijian.html', locals())
+
 
 # 查询每日覆盖量微信推送
 @csrf_exempt
@@ -1591,6 +1647,4 @@ def keywords_select_models(request):
             response.message = '完成缓存'
 
     return JsonResponse(response.__dict__)
-
-
 
