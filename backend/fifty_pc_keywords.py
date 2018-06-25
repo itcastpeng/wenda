@@ -40,8 +40,8 @@ class GuanJianCi:
         # self.browser.maximize_window()  # 全屏
         self.url = 'https://m.baidu.com'
         # 判断是否为自己的链接 url
-        self.panduan_url = 'http://wenda.zhugeyingxiao.com/api/check_zhidao_url'
-        # self.panduan_url = 'http://127.0.0.1:8006/api/check_zhidao_url'
+        # self.panduan_url = 'http://wenda.zhugeyingxiao.com/api/check_zhidao_url'
+        self.panduan_url = 'http://127.0.0.1:8006/api/check_zhidao_url'
 
     # 随机数 增加装饰器 该函数有self属性
     # @property
@@ -63,8 +63,8 @@ class GuanJianCi:
         soup = BeautifulSoup(self.browser.page_source, 'lxml')
         self.timesleep()
         results = soup.find('div', class_='results')
-        # cuowu_url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
-        cuowu_url = "http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu"
+        cuowu_url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
+        # cuowu_url = "http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu"
         for result in results:
             try:
                 lianjie = result['data-log']
@@ -190,6 +190,13 @@ class GuanJianCi:
                                 'canshu': 1
                             }
                             requests.post(cuowu_url, data=data)
+                    else:
+                        print('--无百度知道链接---')
+                        data = {
+                            'keyword': keyword,
+                            'canshu': 1
+                        }
+                        requests.post(cuowu_url, data=data)
                 else:
                     continue
             except Exception as e:
@@ -224,20 +231,33 @@ class GuanJianCi:
 # 获取关键词调用爬虫数据
 def huoqu_guanjianci():
     while True:
-        url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu'
-        # url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
+        # url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu'
+        url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
+        print('=====请求任务=====')
         ret = requests.get(url)
         if ret:
             json_ret = ret.content.decode()
             str_ret = json.loads(json_ret)
-            print('str_ret  - ->', str_ret)
             if str_ret['data']:
                 ret_data = str_ret['data']
                 GuanJianCi(ret_data).run()
+            else:
+                # url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu?canshu=2'
+                url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu?canshu=2"
+                ret = requests.get(url)
+                if ret:
+                    json_ret = ret.content.decode()
+                    str_ret = json.loads(json_ret)
+                    print('str_ret  - ->', str_ret)
+                    if str_ret['data']:
+                        ret_data = str_ret['data']
+                        GuanJianCi(ret_data).run()
+                sleep_time = 60 * 5
+                sleep(sleep_time)
+                print('===重新执行===')
         else:
-            print('====当前无任务====')
-            url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu?canshu=2'
-            # url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu?canshu=2"
+            # url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu?canshu=2'
+            url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu?canshu=2"
             ret = requests.get(url)
             if ret:
                 json_ret = ret.content.decode()

@@ -1508,7 +1508,8 @@ def fifty_guanjianci_fabu(request):
                         'user_id': user_id,
                         'guanjianci_id': guanjianci_id
                     }
-
+                else:
+                    response.status = False
     return JsonResponse(response.__dict__)
 
 
