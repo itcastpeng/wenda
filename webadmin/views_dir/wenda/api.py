@@ -1465,57 +1465,59 @@ def fifty_guanjianci_fabu(request):
     response = pub.BaseResponse()
     now_time = datetime.datetime.today()
     if request.method == "POST":
-        canshu = request.POST.get('canshu')
-        print('canshu ======')
-        print('-----------进入截屏-----------')
-        if canshu:
-            print('删除=========')
-            keyword = request.POST.get('keyword')
-            print(keyword)
-            objs = models.Fifty_GuanJianCi.objects.get(guanjianci=keyword)
-            if objs:
-                print('本关键词--无截屏 ============ ')
-                if objs.is_pandaun:
-                    objs.have_not_capture = True
-                else:
-                    objs.have_not_capture = False
-                objs.save()
-        else:
-            keyword = request.POST.get('keyword')
-            guanjianci_num = request.POST.get('guanjianci_num')
-            guanjianci_id = request.POST.get('guanjianci_id')
-            # print('关键词 - - -- - - -- > ',keyword)
-            jieping_1 = request.POST.get('jieping_1')
-            jieping_1 = base64.b64decode(jieping_1)
-            open('statics/picture/' + keyword + '--1--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num),'wb').write(jieping_1)
-            jieping_2 = request.POST.get('jieping_2')
-            jieping_2 = base64.b64decode(jieping_2)
-            open('statics/picture/' + keyword + '--2--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num),'wb').write(jieping_2)
-            jieping_3 = request.POST.get('jieping_3')
-            jieping_3 = base64.b64decode(jieping_3)
-            open('statics/picture/' + keyword + '--3--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num),'wb').write(jieping_3)
-            picture_path_one =  '/' + 'statics/picture/' + keyword + '--1--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num)
-            picture_path_two =  '/' + 'statics/picture/' + keyword + '--2--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num)
-            picture_path_three = '/' + 'statics/picture/' + keyword + '--3--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num)
+        # canshu = request.POST.get('canshu')
+        # print('canshu ======')
+        # print('-----------进入截屏-----------')
+        # if canshu:
+        #     print('删除=========')
+        #     keyword = request.POST.get('keyword')
+        #     print(keyword)
+        #     objs = models.Fifty_GuanJianCi.objects.get(guanjianci=keyword)
+        #     if objs:
+        #         print('本关键词--无截屏 ============ ')
+        #         if objs.is_pandaun:
+        #             objs.have_not_capture = True
+        #         else:
+        #             objs.have_not_capture = False
+        #         objs.save()
+        # else:
+        keyword = request.POST.get('keyword')
+        guanjianci_num = request.POST.get('guanjianci_num')
+        guanjianci_id = request.POST.get('guanjianci_id')
+        # print('关键词 - - -- - - -- > ',keyword)
+        jieping_1 = request.POST.get('jieping_1')
+        jieping_1 = base64.b64decode(jieping_1)
+        open('statics/picture/' + keyword + '--1--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num),'wb').write(jieping_1)
+        jieping_2 = request.POST.get('jieping_2')
+        jieping_2 = base64.b64decode(jieping_2)
+        open('statics/picture/' + keyword + '--2--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num),'wb').write(jieping_2)
+        jieping_3 = request.POST.get('jieping_3')
+        jieping_3 = base64.b64decode(jieping_3)
+        open('statics/picture/' + keyword + '--3--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num),'wb').write(jieping_3)
+        picture_path_one =  '/' + 'statics/picture/' + keyword + '--1--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num)
+        picture_path_two =  '/' + 'statics/picture/' + keyword + '--2--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num)
+        picture_path_three = '/' + 'statics/picture/' + keyword + '--3--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num)
 
-            # q = Q()
-            # q.add(Q(picture_path=picture_path_one) | Q(picture_path=picture_path_two) | Q(picture_path=picture_path_three),Q.AND)
-            # objs = models.Fifty_GetKeywordsJiePing.objects.filter(q)
-            # if objs:
-            #     pass
-            # else:
-            obj = models.Fifty_GuanJianCi.objects.get(guanjianci=keyword)
-            obj.jieping_time = now_time
-            obj.have_not_capture=1
-            obj.is_pandaun = True
-            obj.save()
-            print('截屏入库  更改状态 ------- ')
-            one_obj = models.Fifty_GetKeywordsJiePing(picture_path=picture_path_one, guanjianci_id=guanjianci_id)
-            one_obj.save()
-            two_obj = models.Fifty_GetKeywordsJiePing(picture_path=picture_path_two, guanjianci_id=guanjianci_id)
-            two_obj.save()
-            three_obj = models.Fifty_GetKeywordsJiePing(picture_path=picture_path_three, guanjianci_id=guanjianci_id)
-            three_obj.save()
+        q = Q()
+        q.add(Q(picture_path=picture_path_one) | Q(picture_path=picture_path_two) | Q(picture_path=picture_path_three),Q.AND)
+        objs = models.Fifty_GetKeywordsJiePing.objects.filter(q)
+        # if objs:
+        #     pass
+        # else:
+        obj = models.Fifty_GuanJianCi.objects.get(guanjianci=keyword)
+        obj.jieping_time = now_time
+        obj.save()
+        obj.have_not_capture=1
+        obj.save()
+        obj.is_pandaun = True
+        obj.save()
+        print('截屏入库  更改状态 ------- ')
+        one_obj = models.Fifty_GetKeywordsJiePing(picture_path=picture_path_one, guanjianci_id=guanjianci_id)
+        one_obj.save()
+        two_obj = models.Fifty_GetKeywordsJiePing(picture_path=picture_path_two, guanjianci_id=guanjianci_id)
+        two_obj.save()
+        three_obj = models.Fifty_GetKeywordsJiePing(picture_path=picture_path_three, guanjianci_id=guanjianci_id)
+        three_obj.save()
 
     # 取关键词
     else:

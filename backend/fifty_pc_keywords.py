@@ -16,9 +16,7 @@ project_dir = os.path.dirname(os.path.dirname(os.getcwd()))
 sys.path.append(project_dir)
 print(project_dir)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'wenda.settings'
-# import django
-from selenium.webdriver.common.action_chains import ActionChains
-# django.setup()
+
 
 from selenium.webdriver.common.keys import Keys
 class GuanJianCi:
@@ -139,8 +137,6 @@ class GuanJianCi:
                                         './picture/' + keyword + '--3--' + '{guanjianci_num}.png'.format(
                                             guanjianci_num=guanjianci_num))
                                     sleep(3)
-                                    jieping_url = "http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu"
-                                    # jieping_url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
                                     jieping_1 = open('./picture/' + keyword + '--1--' + '{guanjianci_num}.png'.format(
                                         guanjianci_num=guanjianci_num), 'rb').read()
 
@@ -161,31 +157,34 @@ class GuanJianCi:
                                         "jieping_2": base64_tupian2,
                                         "jieping_3": base64_tupian3
                                     }
+
+                                    jieping_url = "http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu"
+                                    # jieping_url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
                                     requests.post(jieping_url, data=data_temp)
                                     sleep(2)
                                     self.browser.back()
                                     guanjianci_num += 2
                             else:
                                 print('---链接对--答案不对---')
-                                data = {
-                                    'keyword':keyword,
-                                    'canshu':1
-                                }
-                                requests.post(cuowu_url,data=data)
+                                # data = {
+                                #     'keyword':keyword,
+                                #     'canshu':1
+                                # }
+                                # requests.post(cuowu_url,data=data)
                         else:
                             print('--为知道链接---链接不对---')
-                            data = {
-                                'keyword': keyword,
-                                'canshu': 1
-                            }
-                            requests.post(cuowu_url, data=data)
+                            # data = {
+                            #     'keyword': keyword,
+                            #     'canshu': 1
+                            # }
+                            # requests.post(cuowu_url, data=data)
                     else:
                         print('--无百度知道链接---')
-                        data = {
-                            'keyword': keyword,
-                            'canshu': 1
-                        }
-                        requests.post(cuowu_url, data=data)
+                        # data = {
+                        #     'keyword': keyword,
+                        #     'canshu': 1
+                        # }
+                        # requests.post(cuowu_url, data=data)
                 else:
                     continue
             except Exception as e:
