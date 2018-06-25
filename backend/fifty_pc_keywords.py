@@ -25,15 +25,9 @@ class GuanJianCi:
 
     # 初始化文件
     def __init__(self, data):
-        print('进入爬虫接口==================================')
-        # self.dr = webdriver.Chrome('./chromedriver_2.36.exe')
+        print('-----------进入爬虫-----------')
         self.data = data
         self.options = webdriver.ChromeOptions()
-        # 设置中文
-        # self.options.add_argument('lang=zh_CN.UTF-8')
-        # # 更换头部
-        # self.options.add_argument(
-        #     'user-agent=Mozilla/5.0 (iPhone; CPU iPhone OS 9_3_4 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Mobile/13G35 QQ/6.5.3.410 V1_IPH_SQ_6.5.3_1_APP_A Pixel/750 Core/UIWebView NetType/2G Mem/117')
         mobileEmulation = {'deviceName': 'iPhone 6'}
         self.options.add_experimental_option('mobileEmulation', mobileEmulation)
         self.browser = webdriver.Chrome('./chromedriver_2.36.exe', chrome_options=self.options)
@@ -43,16 +37,13 @@ class GuanJianCi:
         self.panduan_url = 'http://wenda.zhugeyingxiao.com/api/check_zhidao_url'
         # self.panduan_url = 'http://127.0.0.1:8006/api/check_zhidao_url'
 
-    # 随机数 增加装饰器 该函数有self属性
-    # @property
-    # def rand(self):
-    #     return random.randint(1, 5)
+    # 随机数
     def timesleep(self):
         time.sleep(random.randint(2, 5))
     # 获取输入框  输入关键词 查询
     def data_url(self, user_id, keyword, guanjianci_id):
         # 获取输入框  输入 关键词 并查询
-        print('-----------输入数据-----------')
+        print('-----------输入数据-----',keyword)
         self.browser.get(self.url)
         self.browser.find_element_by_id('index-kw').send_keys(keyword)
         self.timesleep()
@@ -82,9 +73,8 @@ class GuanJianCi:
                     zhidao_url = dict_lianjie['mu']
                     # 判断以zhidao开头的链接 ---判断是否为百度知道链接---
                     if zhidao_url.startswith('https://zhidao.baidu') or zhidao_url.startswith('http://zhidao.baidu'):
-                        print('zhidao_url ============= > ',zhidao_url)
+                        print('获取到的_知道url ============= > ',zhidao_url)
                         # 获取当前url
-                        # print('urser_id ======== > ',user_id)
                         data_temp = {
                             'client_user_id': user_id,
                             'is_pause': 0,
@@ -92,7 +82,6 @@ class GuanJianCi:
                         }
                         ret_panduan = requests.post(self.panduan_url, data=data_temp)
                         # 如果是自己的链接 判断答案
-                        # print('ret_panduan ========== > ',ret_panduan)
                         if ret_panduan:
                             ret_json = ret_panduan.content.decode()
                             str_ret = json.loads(ret_json)
@@ -102,6 +91,7 @@ class GuanJianCi:
                                 ret = requests.get(zhidao_url)
                                 ret.encoding = 'gbk'
                                 soup = BeautifulSoup(ret.text, 'lxml')
+                                self.timesleep()
                                 div_tag = soup.find('div', class_='layout-wrap')
                                 div_line = div_tag.find('div', class_='line content')
                                 zhidao_daan = div_line.find('pre').get_text().strip()
@@ -117,7 +107,6 @@ class GuanJianCi:
                                 if daan_str[0] in daan_list:
                                     # # 获取坐标 js下拉
                                     print('---下拉--截第一张屏---')
-                                    # """  //*[@id="results"]/div[1] """
                                     if order == '1':
                                         div_tag = self.browser.find_element_by_xpath('//*[@id="results"]')
                                     else:
@@ -150,8 +139,8 @@ class GuanJianCi:
                                         './picture/' + keyword + '--3--' + '{guanjianci_num}.png'.format(
                                             guanjianci_num=guanjianci_num))
                                     sleep(3)
-                                    # jieping_url = "http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu"
-                                    jieping_url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
+                                    jieping_url = "http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu"
+                                    # jieping_url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
                                     jieping_1 = open('./picture/' + keyword + '--1--' + '{guanjianci_num}.png'.format(
                                         guanjianci_num=guanjianci_num), 'rb').read()
 
@@ -203,7 +192,7 @@ class GuanJianCi:
                 print('错误----> ', e)
 
     def __del__(self):
-        sleep(3)
+        self.timesleep()
         self.browser.close()
 
         # 定位窗口句柄
@@ -224,7 +213,6 @@ class GuanJianCi:
         keyword = self.data['guanjianci']
         guanjianci_id = self.data['guanjianci_id']
         # print('user_id --- guanjianci --> ', user_id, keyword, guanjianci_id)
-
         self.data_url(user_id, keyword, guanjianci_id)
 
 
@@ -256,8 +244,8 @@ def huoqu_guanjianci():
                 sleep(sleep_time)
                 print('===重新执行===')
         else:
-            # url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu?canshu=2'
-            url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu?canshu=2"
+            url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu?canshu=2'
+            # url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu?canshu=2"
             ret = requests.get(url)
             if ret:
                 json_ret = ret.content.decode()

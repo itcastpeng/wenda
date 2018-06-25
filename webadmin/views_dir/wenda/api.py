@@ -1475,7 +1475,10 @@ def fifty_guanjianci_fabu(request):
             objs = models.Fifty_GuanJianCi.objects.get(guanjianci=keyword)
             if objs:
                 print('本关键词--无截屏 ============ ')
-                objs.have_not_capture=2
+                if objs.is_pandaun:
+                    objs.have_not_capture = True
+                else:
+                    objs.have_not_capture = False
                 objs.save()
         else:
             keyword = request.POST.get('keyword')
@@ -1495,26 +1498,30 @@ def fifty_guanjianci_fabu(request):
             picture_path_two =  '/' + 'statics/picture/' + keyword + '--2--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num)
             picture_path_three = '/' + 'statics/picture/' + keyword + '--3--' + '{guanjianci_num}.png'.format(guanjianci_num=guanjianci_num)
 
-            q = Q()
-            q.add(Q(picture_path=picture_path_one) | Q(picture_path=picture_path_two) | Q(picture_path=picture_path_three),Q.AND)
-            objs = models.Fifty_GetKeywordsJiePing.objects.filter(q)
-            if objs:
-                pass
-            else:
-                obj = models.Fifty_GuanJianCi.objects.get(guanjianci=keyword)
-                obj.jieping_time = now_time
-                obj.have_not_capture=1
-                obj.save()
-                print('else -- else -- else -- else ')
-                one_obj = models.Fifty_GetKeywordsJiePing(picture_path=picture_path_one, guanjianci_id=guanjianci_id)
-                one_obj.save()
-                two_obj = models.Fifty_GetKeywordsJiePing(picture_path=picture_path_two, guanjianci_id=guanjianci_id)
-                two_obj.save()
-                three_obj = models.Fifty_GetKeywordsJiePing(picture_path=picture_path_three, guanjianci_id=guanjianci_id)
-                three_obj.save()
+            # q = Q()
+            # q.add(Q(picture_path=picture_path_one) | Q(picture_path=picture_path_two) | Q(picture_path=picture_path_three),Q.AND)
+            # objs = models.Fifty_GetKeywordsJiePing.objects.filter(q)
+            # if objs:
+            #     pass
+            # else:
+            obj = models.Fifty_GuanJianCi.objects.get(guanjianci=keyword)
+            obj.jieping_time = now_time
+            obj.have_not_capture=1
+            obj.is_pandaun = True
+            obj.save()
+            print('截屏入库  更改状态 ------- ')
+            one_obj = models.Fifty_GetKeywordsJiePing(picture_path=picture_path_one, guanjianci_id=guanjianci_id)
+            one_obj.save()
+            two_obj = models.Fifty_GetKeywordsJiePing(picture_path=picture_path_two, guanjianci_id=guanjianci_id)
+            two_obj.save()
+            three_obj = models.Fifty_GetKeywordsJiePing(picture_path=picture_path_three, guanjianci_id=guanjianci_id)
+            three_obj.save()
+
+    # 取关键词
     else:
         canshu = request.GET.get('canshu')
         print('进入参数 -=------》 ',canshu)
+        # 如果有参数 取 已以取过无截屏的数据
         if canshu:
             objs = models.Fifty_GuanJianCi.objects.filter(
                 create_time__lte=datetime.date.today(),
@@ -1531,6 +1538,7 @@ def fifty_guanjianci_fabu(request):
                     'guanjianci_id': guanjianci_id
                 }
             response.status=False
+        # 如果没参数 取没取过的数据
         else:
             print('进入 ------------ 取数据 GET')
             # 如果 没被截过屏 取出最小创建时间的关键词(优先)

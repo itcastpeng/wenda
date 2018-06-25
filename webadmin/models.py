@@ -803,7 +803,7 @@ class Fifty_GuanJianCi(models.Model):
     yonghu_user = models.ForeignKey(to='UserProfile',verbose_name='归属哪个用户')
     jieping_time = models.DateTimeField(verbose_name='截屏时间', null=True, blank=True)
     create_time = models.DateField(auto_now_add=True,verbose_name='创建时间', null=True, blank=True)
-    # is_delete =  models.BooleanField(verbose_name='逻辑删除',default=False)
+    is_pandaun =  models.BooleanField(verbose_name='判断是否有截屏',default=False)
     capture_status = {
         (1,'有截屏'),
         (2,'无截屏'),
