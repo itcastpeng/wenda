@@ -27,82 +27,87 @@ from wenda_celery_project import tasks
 # 生成表格中显示的数据
 def init_data(role_id=None, q=Q(), start=0, length=-1):
     print("3--> ", datetime.datetime.now())
-    objs = models.KeyWords_YouHua.objects.filter(q)
-    obj_count = objs.count()
-    # print('obj_count ----------》',obj_count)
-    result_data = {
-        "recordsFiltered": obj_count,
-        "recordsTotal": obj_count,
-        "data": []
-    }
+    objs = models.KeyWords_YouHua.objects.filter(q).filter(username__is_delete=False)
+    print('objs ========== >',objs)
     if objs:
-        for index, obj in enumerate(objs[start: (start + (length - 1))], start=1):
-            client_user_id = obj.username.id
-            username = str(obj.username)
-            pc_cover = obj.pc_cover
-            wap_cover = obj.wap_cover
-            total_cover = pc_cover + wap_cover
-            keywords_num = obj.keywords_num
-            keywords_status = obj.get_koywords_status_display()
-            no_select_keywords_num = obj.no_select_keywords_num
-            keywords_top_page_cover_excel_path = obj.keywords_top_page_cover_excel_path
-            keywords_top_page_cover_yingxiao_excel_path = obj.keywords_top_page_cover_yingxiao_excel_path
+        obj_count = objs.count()
+        # print('obj_count ----------》',obj_count)
+        result_data = {
+            "recordsFiltered": obj_count,
+            "recordsTotal": obj_count,
+            "data": []
+        }
+        if objs:
+            for index, obj in enumerate(objs[start: (start + (length - 1))], start=1):
+                client_user_id = obj.username.id
+                username = str(obj.username)
+                pc_cover = obj.pc_cover
+                wap_cover = obj.wap_cover
+                total_cover = pc_cover + wap_cover
+                keywords_num = obj.keywords_num
+                keywords_status = obj.get_koywords_status_display()
+                no_select_keywords_num = obj.no_select_keywords_num
+                keywords_top_page_cover_excel_path = obj.keywords_top_page_cover_excel_path
+                keywords_top_page_cover_yingxiao_excel_path = obj.keywords_top_page_cover_yingxiao_excel_path
 
-            keywords_top_set_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(
-                client_user_id=client_user_id, is_delete=False)
-            keywords_top_set_obj = keywords_top_set_objs[0]
+                # keywords_top_set_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(
+                #     client_user_id=client_user_id, is_delete=False)
+                # keywords_top_set_obj = keywords_top_set_objs[0]
 
-            keywords_num_str = "{keywords_num} / {no_select_keywords_num}".format(
-                keywords_num=keywords_num,
-                no_select_keywords_num=no_select_keywords_num
-            )
-
-            baobiao_download = """<a class="shengchengbaobiao" uid="{client_user_id}" href="#">生成报表</a>""".format(
-                client_user_id=client_user_id)
-            if keywords_top_page_cover_excel_path:
-                baobiao_download += """
-                /
-                <a download="/{keywords_top_page_cover_excel_path}" href="/{keywords_top_page_cover_excel_path}">普通</a>
-                /
-                <a download="/{keywords_top_page_cover_yingxiao_excel_path}" href="/{keywords_top_page_cover_yingxiao_excel_path}">营销</a>
-                """.format(
-                    keywords_top_page_cover_excel_path=keywords_top_page_cover_excel_path,
-                    keywords_top_page_cover_yingxiao_excel_path=keywords_top_page_cover_yingxiao_excel_path,
+                keywords_num_str = "{keywords_num} / {no_select_keywords_num}".format(
+                    keywords_num=keywords_num,
+                    no_select_keywords_num=no_select_keywords_num
                 )
 
-            oper = """
-                <a class="download_keyword" uid="{client_user_id}" href="#">关键词下载</a>
-                /
-                <a class="chongcha" uid="{client_user_id}" href="#">重查</a>
-                /
-                <a class="shanchuhuifuyichang" uid="{client_user_id}" href="#">删除回复异常</a>
-                
-            """.format(client_user_id=client_user_id)
+                baobiao_download = """<a class="shengchengbaobiao" uid="{client_user_id}" href="#">生成报表</a>""".format(
+                    client_user_id=client_user_id)
+                if keywords_top_page_cover_excel_path:
+                    baobiao_download += """
+                    /
+                    <a download="/{keywords_top_page_cover_excel_path}" href="/{keywords_top_page_cover_excel_path}">普通</a>
+                    /
+                    <a download="/{keywords_top_page_cover_yingxiao_excel_path}" href="/{keywords_top_page_cover_yingxiao_excel_path}">营销</a>
+                    """.format(
+                        keywords_top_page_cover_excel_path=keywords_top_page_cover_excel_path,
+                        keywords_top_page_cover_yingxiao_excel_path=keywords_top_page_cover_yingxiao_excel_path,
+                    )
 
-            if role_id and ("测试" in username or role_id == 1):
-                oper += """
-                    / <a class="clearKeywords" uid="{client_user_id}" href="#">清空关键词</a>
+                oper = """
+                    <a class="download_keyword" uid="{client_user_id}" href="#">关键词下载</a>
+                    /
+                    <a class="chongcha" uid="{client_user_id}" href="#">重查</a>
+                    /
+                    <a class="shanchuhuifuyichang" uid="{client_user_id}" href="#">删除回复异常</a>
+                    
                 """.format(client_user_id=client_user_id)
 
-            # 如果该用户老问答没有优先,则显示优先处理的功能
-            if not keywords_top_set_obj.client_user.laowenda_youxian:
-                oper += """
-                    / <a class="laowendaYouxian" uid="{client_user_id}" href="#">老问答优先处理</a>
-                """.format(client_user_id=client_user_id)
-            else:
-                username = '<span style="color: red">{username} (老问答优先)</span>'.format(username=username)
+                if role_id and ("测试" in username or role_id == 1):
+                    oper += """
+                        / <a class="clearKeywords" uid="{client_user_id}" href="#">清空关键词</a>
+                    """.format(client_user_id=client_user_id)
 
-                oper += """
-                    / <a class="laowendaYouxianQuxiao" uid="{client_user_id}" href="#">取消优先处理</a>
-                """.format(client_user_id=client_user_id)
-            result_data["data"].append(
-                [
-                    index, username, keywords_status, keywords_num_str,
-                    total_cover, pc_cover, wap_cover, baobiao_download, oper, client_user_id
-                ]
-            )
+                # 如果该用户老问答没有优先,则显示优先处理的功能
+                if not obj.username.laowenda_youxian:
+                    oper += """
+                        / <a class="laowendaYouxian" uid="{client_user_id}" href="#">老问答优先处理</a>
+                    """.format(client_user_id=client_user_id)
+                else:
+                    username = '<span style="color: red">{username} (老问答优先)</span>'.format(username=username)
 
-        return result_data
+                    oper += """
+                        / <a class="laowendaYouxianQuxiao" uid="{client_user_id}" href="#">取消优先处理</a>
+                    """.format(client_user_id=client_user_id)
+                result_data["data"].append(
+                    [
+                        index, username, keywords_status, keywords_num_str,
+                        total_cover, pc_cover, wap_cover, baobiao_download, oper, client_user_id
+                    ]
+                )
+    else:
+        result_data = {
+
+        }
+    return result_data
 
 
 # 指定首页关键词
