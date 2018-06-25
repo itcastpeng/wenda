@@ -135,7 +135,7 @@ app.conf.beat_schedule = {
     # 查询每日覆盖量微信推送
     'weixin_meiri_fugai_tuisong': {
         'task': 'wenda_celery_project.tasks.weixin_meiri_fugai_tuisong',
-        'schedule': crontab('*', '1', '*', '*', '*'),
+        'schedule': crontab('0', '1', '*', '*', '*'),
     },
 
     # 宕机微信推送提醒

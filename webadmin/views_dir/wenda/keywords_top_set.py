@@ -135,7 +135,6 @@ def keywords_top_set(request):
         for index, field in enumerate(column_list):
             if field in request.GET and request.GET.get(field):  # 如果该字段存在并且不为空
                 if field == "client_user_type":
-                    pass
                     if request.GET.get(field) == "1":  # 正式用户
                         q.add(~Q(**{"username__username" + "__contains": "测试"}), Q.AND)
                     elif request.GET.get(field) == "2":  # 测试 用户
