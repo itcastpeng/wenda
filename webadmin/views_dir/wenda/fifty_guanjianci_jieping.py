@@ -173,10 +173,20 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
                 response.status = False
                 response.message = '删除失败'
 
-        # 批量删除
-        # elif oper_type == 'delete_in_batches':
-            pass
 
+        #删除单个用户所有关键词
+        elif oper_type == 'delete_in_batches':
+            yonghuming = request.POST.get('yonghuming')
+            print('yonghuming ============ > ',yonghuming)
+            if yonghuming:
+                objs = models.Fifty_GuanJianCi.objects.filter(yonghu_user_id=yonghuming)
+                if objs:
+                    objs.delete()
+                    response.status = True
+                    response.message = '删除成功'
+            else:
+                response.status = False
+                response.message = '删除失败'
         return JsonResponse(response.__dict__)
 
 
@@ -211,12 +221,22 @@ def guanjianci_jieping_oper(request, oper_type, o_id):
             response.data = data_list
             return JsonResponse(response.__dict__)
 
-        # 批量删除
-        # elif oper_type == 'delete_in_batches':
-        #     data_list = []
-        #     for i in range(5):
-        #         data_list.append(i)
-        #     return render(request, 'wenda/fifty_guanjianci_jieping/fifty_delete_in_batches.html', locals())
+        # 删除单个用户所有关键词
+        elif oper_type == 'delete_in_batches':
+            client_objs = {}
+            objs = models.Fifty_GuanJianCi.objects.filter(yonghu_user__isnull=False)
+            for obj in objs:
+                username = obj.yonghu_user.username
+                p_id = obj.yonghu_user_id
+                client_objs[p_id] = {
+                    'username':username,
+                    'p_id':p_id
+                }
+            client_obj = []
+            for p_id,data in client_objs.items():
+                client_obj.append(data)
+            print(client_obj)
+            return render(request, 'wenda/fifty_guanjianci_jieping/fifty_delete_in_batches.html', locals())
 
 
 
