@@ -837,7 +837,7 @@ def tongji_kehu_shiyong():
 @app.task
 def cover_reports_generate_excel(file_name, data_list, debug, url_list=None):
     # 生成客户查看的覆盖报表
-    print('生成客户查看的覆盖报表 -->')
+    print('生成客户查看的覆盖报表 -->', len(data_list))
     wb = Workbook()
     ws = wb.active
     ws.cell(row=1, column=1, value="客户名称")
@@ -878,7 +878,7 @@ def cover_reports_generate_excel(file_name, data_list, debug, url_list=None):
         ws.cell(row=3, column=10, value="老问答占比:" + str(yunsuanlao) + '%')
         ws.cell(row=2, column=11, value="新覆盖:" + str(xinfugaiyunsuan) + '%')
         ws.cell(row=3, column=11, value="老覆盖:" + str(laofugaiyunsuan) + '%')
-
+    print('开始写入数据')
     for row, i in enumerate(data_list, start=2):
         try:
             ws.cell(row=row, column=1, value=i["username"])
@@ -902,7 +902,7 @@ def cover_reports_generate_excel(file_name, data_list, debug, url_list=None):
             row += 1
         except IllegalCharacterError:
             print("error -->", i)
-
+    print('写入完毕')
     wb.save(file_name)
 
 
