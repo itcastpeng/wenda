@@ -1493,8 +1493,8 @@ def fifty_guanjianci_fabu(request):
         obj.save()
         obj.have_not_capture=1
         obj.save()
-        obj.is_pandaun = True
-        obj.save()
+        # obj.is_pandaun = True
+        # obj.save()
         print('--------- 截屏入库 ----- 更改状态 --------- ')
         one_obj = models.Fifty_GetKeywordsJiePing(picture_path=picture_path_one, guanjianci_id=guanjianci_id)
         one_obj.save()
@@ -1507,7 +1507,7 @@ def fifty_guanjianci_fabu(request):
     else:
         canshu = request.GET.get('canshu')
         print('进入参数 -=------》 ',canshu)
-        # 如果有参数 取 已以取过无截屏的数据
+        # 如果有参数 取 以取过无截屏的数据
         if canshu:
             objs = models.Fifty_GuanJianCi.objects.filter(
                 create_time__lte=datetime.date.today(),
@@ -1531,13 +1531,16 @@ def fifty_guanjianci_fabu(request):
             objs = models.Fifty_GuanJianCi.objects.filter(
                 create_time__lte=datetime.date.today(),
                 jieping_time__isnull=True,
-                have_not_capture__isnull=True
+                is_pandaun=False
             ).order_by('create_time')
             if objs:
                 print('没有截屏')
                 guanjianci = objs[0].guanjianci
                 user_id = objs[0].yonghu_user_id
                 guanjianci_id = objs[0].id
+                data_obj = models.Fifty_GuanJianCi.objects.get(guanjianci=guanjianci)
+                data_obj.is_pandaun=True
+                data_obj.save()
                 response.data = {
                     'guanjianci': guanjianci,
                     'user_id': user_id,
@@ -1547,7 +1550,8 @@ def fifty_guanjianci_fabu(request):
                 print('已截屏')
                 objs = models.Fifty_GuanJianCi.objects.filter(
                     jieping_time__lt=datetime.date.today(),
-                    create_time__isnull=False
+                    create_time__isnull=False,
+                    is_pandaun=True
                 ).order_by('jieping_time')
                 if objs:
                     guanjianci = objs[0].guanjianci

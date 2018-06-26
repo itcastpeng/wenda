@@ -52,8 +52,6 @@ class GuanJianCi:
         soup = BeautifulSoup(self.browser.page_source, 'lxml')
         self.timesleep()
         results = soup.find('div', class_='results')
-        cuowu_url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
-        # cuowu_url = "http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu"
         for result in results:
             try:
                 lianjie = result['data-log']
@@ -81,12 +79,14 @@ class GuanJianCi:
                         ret_panduan = requests.post(self.panduan_url, data=data_temp)
                         # 如果是自己的链接 判断答案
                         if ret_panduan:
+                            self.timesleep()
                             ret_json = ret_panduan.content.decode()
                             str_ret = json.loads(ret_json)
                             daan_list = []
                             if str_ret['status']:
                                 daan_str = str_ret['data']['content']
                                 ret = requests.get(zhidao_url)
+                                self.timesleep()
                                 ret.encoding = 'gbk'
                                 soup = BeautifulSoup(ret.text, 'lxml')
                                 self.timesleep()
@@ -220,17 +220,20 @@ def huoqu_guanjianci():
     while True:
         # url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu'
         url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
-        print('=====请求任务=====')
         ret = requests.get(url)
         if ret:
+            print('=====请求任务=====')
             json_ret = ret.content.decode()
             str_ret = json.loads(json_ret)
+            print('str_ret ============ >',str_ret)
             if str_ret['data']:
                 ret_data = str_ret['data']
                 GuanJianCi(ret_data).run()
+
             else:
                 # url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu?canshu=2'
                 url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu?canshu=2"
+                print('===== canshu=2 =====')
                 ret = requests.get(url)
                 if ret:
                     json_ret = ret.content.decode()
@@ -245,6 +248,7 @@ def huoqu_guanjianci():
         else:
             # url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu?canshu=2'
             url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu?canshu=2"
+            print('===== canshu=2 else =====')
             ret = requests.get(url)
             if ret:
                 json_ret = ret.content.decode()
