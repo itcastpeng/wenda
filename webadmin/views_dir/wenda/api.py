@@ -325,6 +325,7 @@ def get_wenda_task(request):
         token = request.GET.get("token")
         area = request.GET.get("area")
         is_test = request.GET.get("is_test", False)
+        new_wenda = request.GET.get("new_wenda")
 
         user_objs = models.UserProfile.objects.filter(token=token, token__isnull=False, is_delete=False)
         if user_objs:
@@ -339,17 +340,27 @@ def get_wenda_task(request):
                     status__in=status_list
                 ).order_by('?')[:5]
             else:
-                print("获取正式任务")
+                print("获取新问答")
+                wenda_robot_task_objs = None
+                if new_wenda:
+                    wenda_robot_task_objs = models.WendaRobotTask.objects.select_related('task__release_user').filter(
+                        status__in=status_list,
+                        next_date__lt=datetime.datetime.now(),
+                        wenda_type__in=[1, 10],
+                        task__is_test=False
+                    ).order_by('?')
+                    print('wenda_robot_task_objs -->', wenda_robot_task_objs)
 
-                # 优先处理老问答优先的问题
-                wenda_robot_task_objs = models.WendaRobotTask.objects.select_related('task__release_user').filter(
-                    status__in=status_list,
-                    next_date__lt=datetime.datetime.now(),
-                    wenda_type=2,
-                    task__release_user__laowenda_youxian=True,
-                    task__is_test=False
-                ).order_by('?')
-                print('wenda_robot_task_objs -->', wenda_robot_task_objs)
+                if not wenda_robot_task_objs:
+                    # 优先处理老问答优先的问题
+                    wenda_robot_task_objs = models.WendaRobotTask.objects.select_related('task__release_user').filter(
+                        status__in=status_list,
+                        next_date__lt=datetime.datetime.now(),
+                        wenda_type=2,
+                        task__release_user__laowenda_youxian=True,
+                        task__is_test=False
+                    ).order_by('?')
+                    print('wenda_robot_task_objs -->', wenda_robot_task_objs)
 
                 # 如果没有老问答优先处理的任务,则处理新问答
                 if not wenda_robot_task_objs:
