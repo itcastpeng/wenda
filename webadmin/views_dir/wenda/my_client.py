@@ -52,10 +52,10 @@ def my_client(request):
         delete_client = ''
         if role_id in [1,7]:
             # print('进入 超级管理员0----role_id-->',role_id)
-            clinet_date_objs = models.UserProfile.objects.filter(q)
+            clinet_date_objs = models.UserProfile.objects.filter(q).filter(role_id=5)
             # delete_client = "<a href='client_delete/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>删除</a>".format(user_id=user_id)
         else:
-            clinet_date_objs = models.UserProfile.objects.filter(q).filter(xiaoshou_id=obj_user_id)
+            clinet_date_objs = models.UserProfile.objects.filter(q).filter(xiaoshou_id=obj_user_id).filter(role_id=5)
         result_data = {
             "recordsFiltered": clinet_date_objs.count(),
             "recordsTotal": clinet_date_objs.count(),
