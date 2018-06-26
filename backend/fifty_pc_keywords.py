@@ -31,6 +31,7 @@ class GuanJianCi:
         # self.browser.maximize_window()  # 全屏
         self.url = 'https://m.baidu.com'
         # 判断是否为自己的链接 url
+        # self.panduan_url = 'http://wenda.zhugeyingxiao.com/test/api/check_zhidao_url'
         self.panduan_url = 'http://wenda.zhugeyingxiao.com/api/check_zhidao_url'
         # self.panduan_url = 'http://127.0.0.1:8006/api/check_zhidao_url'
 
@@ -157,8 +158,10 @@ class GuanJianCi:
                                         "jieping_3": base64_tupian3
                                     }
 
+                                    # jieping_url = "http://wenda.zhugeyingxiao.com/test/api/fifty_guanjianci_fabu"
                                     jieping_url = "http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu"
                                     # jieping_url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
+                                    print('请求数据----> ',data_temp)
                                     requests.post(jieping_url, data=data_temp)
                                     sleep(2)
                                     self.browser.back()
@@ -218,6 +221,7 @@ class GuanJianCi:
 # 获取关键词调用爬虫数据
 def huoqu_guanjianci():
     while True:
+        # url = 'http://wenda.zhugeyingxiao.com/test/api/fifty_guanjianci_fabu'
         url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu'
         # url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
         ret = requests.get(url)
@@ -231,6 +235,7 @@ def huoqu_guanjianci():
                 GuanJianCi(ret_data).run()
 
             else:
+                # url = 'http://wenda.zhugeyingxiao.com/test/api/fifty_guanjianci_fabu?canshu=2'
                 url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu?canshu=2'
                 # url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu?canshu=2"
                 print('===== canshu=2 =====')
@@ -247,6 +252,7 @@ def huoqu_guanjianci():
                 print('===重新执行===')
 
         else:
+            # url = 'http://wenda.zhugeyingxiao.com/test/api/fifty_guanjianci_fabu?canshu=2'
             url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu?canshu=2'
             # url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu?canshu=2"
             print('===== canshu=2 else =====')
