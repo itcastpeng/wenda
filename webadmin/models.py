@@ -808,7 +808,7 @@ class Fifty_GuanJianCi(models.Model):
         (1,'有截屏'),
         (2,'无截屏'),
     }
-    have_not_capture = models.SmallIntegerField(verbose_name='有无截屏',choices=capture_status,null=True,blank=True)
+    have_not_capture = models.SmallIntegerField(verbose_name='有无截屏',choices=capture_status,null=True,blank=True,default=2)
 
 # 指定关键词--优化
 class KeyWords_YouHua(models.Model):
