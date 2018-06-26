@@ -16,11 +16,10 @@ project_dir = os.path.dirname(os.path.dirname(os.getcwd()))
 sys.path.append(project_dir)
 print(project_dir)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'wenda.settings'
-
-
 from selenium.webdriver.common.keys import Keys
-class GuanJianCi:
 
+
+class GuanJianCi:
     # 初始化文件
     def __init__(self, data):
         print('-----------进入爬虫-----------')
@@ -32,8 +31,8 @@ class GuanJianCi:
         # self.browser.maximize_window()  # 全屏
         self.url = 'https://m.baidu.com'
         # 判断是否为自己的链接 url
-        # self.panduan_url = 'http://wenda.zhugeyingxiao.com/api/check_zhidao_url'
-        self.panduan_url = 'http://127.0.0.1:8006/api/check_zhidao_url'
+        self.panduan_url = 'http://wenda.zhugeyingxiao.com/api/check_zhidao_url'
+        # self.panduan_url = 'http://127.0.0.1:8006/api/check_zhidao_url'
 
     # 随机数
     def timesleep(self):
@@ -158,8 +157,8 @@ class GuanJianCi:
                                         "jieping_3": base64_tupian3
                                     }
 
-                                    # jieping_url = "http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu"
-                                    jieping_url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
+                                    jieping_url = "http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu"
+                                    # jieping_url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
                                     requests.post(jieping_url, data=data_temp)
                                     sleep(2)
                                     self.browser.back()
@@ -207,6 +206,7 @@ class GuanJianCi:
                 break
         return new_handel
 
+
     def run(self):
         user_id = self.data['user_id']
         keyword = self.data['guanjianci']
@@ -245,6 +245,7 @@ def huoqu_guanjianci():
                 sleep_time = 60 * 5
                 sleep(sleep_time)
                 print('===重新执行===')
+
         else:
             # url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu?canshu=2'
             url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu?canshu=2"
