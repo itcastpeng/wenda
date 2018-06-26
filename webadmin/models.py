@@ -826,6 +826,17 @@ class KeyWords_YouHua(models.Model):
     keywords_top_page_cover_excel_path = models.CharField(verbose_name='客户下载报表路径',max_length=256)
     keywords_top_page_cover_yingxiao_excel_path = models.CharField(verbose_name='顾问下载报表路径',max_length=256)
 
+# 我的客户
+class My_Client_User(models.Model):
+    client_user_name = models.ForeignKey(to=UserProfile,verbose_name='客户名称',null=True,blank=True)
+    create_time = models.DateField(auto_now_add=True,verbose_name='创建时间')
+    remark_beizhu = models.TextField(verbose_name='备注',null=True,blank=True)
+
+# 我的客户- - -日志表
+class My_Client_User_Log(models.Model):
+    guishu_user = models.ForeignKey(to=UserProfile,verbose_name='归属哪个用户的日志',null=True,blank=True)
+    update_time = models.DateTimeField(verbose_name='修改时间',null=True,blank=True)
+    client_log = models.CharField(verbose_name='日志',null=True,blank=True,max_length=128)
 
 
 

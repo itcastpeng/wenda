@@ -139,6 +139,7 @@ def get_left_wenda_html(access_rules, access_rules_objs):
                     {bianxiebaobiao_html}
                     {guwen_duijie_biao_html}
                     {fifty_guanjianci_jieping_html}
+                    {my_client_html}
                 </ul>
             </div>
         </div>
@@ -165,7 +166,7 @@ def get_left_wenda_html(access_rules, access_rules_objs):
     bianxiebaobiao_html = ""
     guwen_duijie_biao_html = ""
     fifty_guanjianci_jieping_html = ""
-
+    my_client_html = ""
     # 问答机器人
     access_rules_obj = access_rules_objs.filter(name="问答机器人", url_path=reverse("wenda_robot"))
     if access_rules_obj and access_rules_obj[0].id in access_rules:
@@ -464,11 +465,22 @@ def get_left_wenda_html(access_rules, access_rules_objs):
         fifty_guanjianci_jieping_html = """
                  <li class="site-menu-item">
                      <a data-pjax="" href="{cover_reports}" target="_blank">
-                         <i class="icon fa-photo" aria-hidden="true"></i>   
+                         <i class="icon fa-photo"></i>   
                          <span class="site-menu-title margin-left-5">关键词截屏</span>
                      </a> 
                  </li>
              """.format(cover_reports=reverse("guanjianci_jieping"))
+    # 我的客户
+    access_rules_obj = access_rules_objs.filter(name="我的客户", url_path=reverse("my_client"))
+    if access_rules_obj and access_rules_obj[0].id in access_rules:
+        my_client_html = """
+                  <li class="site-menu-item">
+                      <a data-pjax="" href="{cover_reports}" target="_blank">
+                          <i class="icon fa-user"></i>
+                          <span class="site-menu-title margin-left-5">我的客户</span>
+                      </a> 
+                  </li>
+              """.format(cover_reports=reverse("my_client"))
 
 
     result_html = result_html.format(
@@ -492,7 +504,8 @@ def get_left_wenda_html(access_rules, access_rules_objs):
         case_library_html=case_library_html,
         bianxiebaobiao_html=bianxiebaobiao_html,
         guwen_duijie_biao_html=guwen_duijie_biao_html,
-        fifty_guanjianci_jieping_html=fifty_guanjianci_jieping_html
+        fifty_guanjianci_jieping_html=fifty_guanjianci_jieping_html,
+        my_client_html=my_client_html
     )
     return result_html
 
