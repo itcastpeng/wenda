@@ -218,8 +218,8 @@ class GuanJianCi:
 # 获取关键词调用爬虫数据
 def huoqu_guanjianci():
     while True:
-        # url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu'
-        url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
+        url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu'
+        # url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
         ret = requests.get(url)
         if ret:
             print('=====请求任务=====')
@@ -231,8 +231,8 @@ def huoqu_guanjianci():
                 GuanJianCi(ret_data).run()
 
             else:
-                # url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu?canshu=2'
-                url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu?canshu=2"
+                url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu?canshu=2'
+                # url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu?canshu=2"
                 print('===== canshu=2 =====')
                 ret = requests.get(url)
                 if ret:
@@ -247,8 +247,8 @@ def huoqu_guanjianci():
                 print('===重新执行===')
 
         else:
-            # url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu?canshu=2'
-            url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu?canshu=2"
+            url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu?canshu=2'
+            # url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu?canshu=2"
             print('===== canshu=2 else =====')
             ret = requests.get(url)
             if ret:

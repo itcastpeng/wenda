@@ -964,7 +964,10 @@ def userprofile_keywords_cover(debug=False):
             'laofugai': []
         }
 
-        data_day_list = []
+        data_day_list = [] # 新问答
+        data_list1 = []  # 老问答不折叠
+        data_list2 = []  # 其他
+        temp_list = []
         for search_obj in search_objs:
             if search_obj:
                 fugai_count = search_obj.keywords.top_page_cover
@@ -991,8 +994,8 @@ def userprofile_keywords_cover(debug=False):
                     is_zhedie = "0"
                     if search_obj.is_zhedie:
                         is_zhedie = "1"
-                    wenda_index, wenda_type = objs[0].wenda_type, objs[0].get_wenda_type_display()
-
+                    wenda_type_index, wenda_type = objs[0].wenda_type, objs[0].get_wenda_type_display()
+                    # data_list.append([is_zhedie,search_obj.url])
                     # data_day_list.append({
                     #     "username": username,
                     #     "keywords": search_obj.keywords.keyword,
@@ -1005,30 +1008,33 @@ def userprofile_keywords_cover(debug=False):
                     #     'wenda_type': wenda_type
                     # })
 
-                    if wenda_index in [1, 10]:
-                        data_day_list.insert(0, {
-                            "username": username,
-                            "keywords": search_obj.keywords.keyword,
-                            "page_type": search_obj.get_page_type_display(),
-                            "rank": search_obj.rank,
-                            "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
-                            "link": search_obj.url,
-                            "is_zhedie": is_zhedie,
-                            'create_time': create_time,
-                            'wenda_type': wenda_type
-                        })
+                    line_data = {
+                        "username": username,
+                        "keywords": search_obj.keywords.keyword,
+                        "page_type": search_obj.get_page_type_display(),
+                        "rank": search_obj.rank,
+                        "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
+                        "link": search_obj.url,
+                        "is_zhedie": is_zhedie,
+                        'create_time': create_time,
+                        'wenda_type': wenda_type
+                    }
+
+                    # 新问答数据
+                    if wenda_type_index in [1, 10]:
+                        data_day_list.append(line_data)
+
+                    # 老问答数据
                     else:
-                        data_day_list.append({
-                            "username": username,
-                            "keywords": search_obj.keywords.keyword,
-                            "page_type": search_obj.get_page_type_display(),
-                            "rank": search_obj.rank,
-                            "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
-                            "link": search_obj.url,
-                            "is_zhedie": is_zhedie,
-                            'create_time': create_time,
-                            'wenda_type': wenda_type
-                        })
+                        # 老问答未折叠
+                        if is_zhedie == '0' and [search_obj.url, wenda_type] not in temp_list:
+                            data_list1.append(line_data)
+                            temp_list.append([search_obj.url, wenda_type])
+                        else:
+                            data_list2.append(line_data)
+
+                    data_day_list.extend(data_list1)
+                    data_day_list.extend(data_list2)
 
         # 客户查看报表的名称
         file_name = "{username}_{date}.xlsx".format(
