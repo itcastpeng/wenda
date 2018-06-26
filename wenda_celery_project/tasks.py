@@ -965,6 +965,8 @@ def userprofile_keywords_cover(debug=False):
         }
 
         data_day_list = []
+        data_list = []
+        data_temp = {}
         for search_obj in search_objs:
             if search_obj:
                 fugai_count = search_obj.keywords.top_page_cover
@@ -992,7 +994,8 @@ def userprofile_keywords_cover(debug=False):
                     if search_obj.is_zhedie:
                         is_zhedie = "1"
                     wenda_index, wenda_type = objs[0].wenda_type, objs[0].get_wenda_type_display()
-
+                    data_list.append([is_zhedie,search_obj.url])
+                    new_data_list = [list(t) for t in set(tuple(_) for _ in data_list)]
                     # data_day_list.append({
                     #     "username": username,
                     #     "keywords": search_obj.keywords.keyword,
@@ -1017,6 +1020,25 @@ def userprofile_keywords_cover(debug=False):
                             'create_time': create_time,
                             'wenda_type': wenda_type
                         })
+
+                    elif wenda_index in [2] and is_zhedie == '0':
+                        is_zhedie = ''
+                        link = ''
+                        for data in new_data_list:
+                            is_zhedie = data[0]
+                            link = data[1]
+                        data_day_list.append({
+                            "username": username,
+                            "keywords": search_obj.keywords.keyword,
+                            "page_type": search_obj.get_page_type_display(),
+                            "rank": search_obj.rank,
+                            "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
+                            "link":link,
+                            "is_zhedie": is_zhedie,
+                            'create_time': create_time,
+                            'wenda_type': wenda_type
+                        })
+
                     else:
                         data_day_list.append({
                             "username": username,
