@@ -1034,8 +1034,8 @@ def userprofile_keywords_cover(debug=False):
                         else:
                             data_list2.append(line_data)
 
-                    data_day_list.extend(data_list1)
-                    data_day_list.extend(data_list2)
+        data_day_list.extend(data_list1)
+        data_day_list.extend(data_list2)
 
         # 客户查看报表的名称
         file_name = "{username}_{date}.xlsx".format(
