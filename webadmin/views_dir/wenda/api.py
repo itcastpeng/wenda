@@ -338,6 +338,8 @@ def get_wenda_task(request):
                     # next_date__lt=datetime.datetime.now(),
                     task__is_test=True,
                     status__in=status_list
+                ).exclude(
+                    task__release_user_id=235
                 ).order_by('?')[:5]
             else:
                 print("获取新问答")
