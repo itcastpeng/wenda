@@ -1056,6 +1056,7 @@ def userprofile_keywords_cover(debug=False):
 
         url_num = search_objs.values('url').distinct().count()
 
+        print("生成报表 -->>")
         models.UserprofileKeywordsCover.objects.create(
             client_user_id=user_id,
             create_date=date,
