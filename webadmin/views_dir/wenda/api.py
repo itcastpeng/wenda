@@ -982,6 +982,9 @@ def keywords_cover(request):
                 add_map=1,
                 wenda_url=url
             )
+
+            models.EditPublickTaskManagement.objects.filter(run_task_id=wenda_robot_task_objs[0].id).update(status=3)
+
             if wenda_robot_task_objs:
                 task_type = 2
             else:
