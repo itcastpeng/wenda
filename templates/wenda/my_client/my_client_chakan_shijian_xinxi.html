@@ -1,0 +1,81 @@
+
+
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h3 class="modal-title">事件信息</h3>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal" id="modal_beizhu" onsubmit="return false">
+        {% csrf_token %}
+{#        宣传要求#}
+        <div class="form-group">
+{#            <label class="col-md-2 control-label" for="remark">备注<span class="form-span-active">*</span></label>#}
+            <div class="col-md-12">
+                <span  id="xianshuju" style="color: #0b0b0b;">操作前数据:</span>
+              <br>
+                <span>{{ yuanshuju }}</span>
+            </div>
+              <div class="col-md-12">
+                <span  id="xianshuju" style="color: #0b0b0b;">操作后数据:</span>
+              <br>
+                <span>{{ xianshuju }}</span>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    {#    function init() {#}
+    {#       $panduan = $('#xinwenda');#}
+    {#        if($('#panduan_xinwenda').attr('checked')){#}
+    {#            $panduan.show()#}
+    {#        }else {#}
+    {#            $panduan.hide()#}
+    {##}
+    {#        }#}
+    {#    };#}
+    {#        init();#}
+    {#    $('#panduan_xinwenda').on({'click':function(){#}
+    {#        $panduan = $('#xinwenda');#}
+    {#        $panduan.toggle(300);#}
+    {#        if(this.attr('checked',true))#}
+    {#        {#}
+    {#             $panduan.show()#}
+    {#        }else{#}
+    {#             $panduan.hide()#}
+    {#        }#}
+    {#  }});#}
+    {#$('#xinwenda').on({#}
+    {#    'click':function(e){#}
+    {#        var src = e.target;#}
+    {#        if(src.id && src.id === ''){#}
+    {#            $panduan.hide()#}
+    {#        }else{#}
+    {#            return false#}
+    {#      }#}
+    {#     }#}
+    {#  });#}
+    {##}
+    {##}
+    {#$("#exampleFormModal .modal-dialog").css("width", "700px");#}
+    {#$('#inputRadiosChecked').on('change',function(){#}
+    {#});#}
+    {#$("#create_button").on('click', function () {#}
+    {#    var data = $("#modal_beizhu").serialize();#}
+    {#    var url = '{% url "my_client" %}marker_client/{{ o_id }}/';#}
+    {#    $.post(url, data, function (result) {#}
+    {#        if(!result['status']){#}
+    {#            toastr['error'](result['message']);#}
+    {#        }else{#}
+    {#            toastr['success'](result['message']);#}
+    {#            $('.modal').modal("hide");#}
+    {#            table.ajax.reload();#}
+    {#        }#}
+    {#        }, 'json')#}
+    {##}
+    {#});#}
+
+
+</script>
