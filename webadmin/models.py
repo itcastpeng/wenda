@@ -837,7 +837,8 @@ class My_Client_User_Log(models.Model):
     guishu_user = models.ForeignKey(to=UserProfile,verbose_name='归属哪个用户的日志',null=True,blank=True)
     update_time = models.DateTimeField(verbose_name='修改时间',null=True,blank=True)
     client_log = models.CharField(verbose_name='日志',null=True,blank=True,max_length=128)
-
+    shijian_xinxi_yuan = models.TextField(verbose_name='事件信息原数据',null=True,blank=True)
+    shijian_xinxi_xian = models.TextField(verbose_name='事件信息现数据',null=True,blank=True)
 
 
 
