@@ -979,13 +979,12 @@ def keywords_cover(request):
             )
             wenda_robot_task_objs = models.WendaRobotTask.objects.filter(
                 task__release_user_id=keywords_top_set_objs[0].client_user.id,
-                add_map=1,
                 wenda_url=url
             )
 
             models.EditPublickTaskManagement.objects.filter(run_task_id=wenda_robot_task_objs[0].id).update(status=3)
 
-            if wenda_robot_task_objs:
+            if wenda_robot_task_objs[0].add_map == 1:
                 task_type = 2
             else:
                 task_type = 1
