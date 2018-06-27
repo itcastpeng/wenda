@@ -121,6 +121,7 @@ def get_left_wenda_html(access_rules, access_rules_objs):
                     {wenda_robot_html}
                     {my_task_html}
                     {task_list_html}
+                    {my_client_html}
                     {search_rank_html}
                     {personal_center_html}
                     {hospital_information_html}
@@ -139,7 +140,6 @@ def get_left_wenda_html(access_rules, access_rules_objs):
                     {bianxiebaobiao_html}
                     {guwen_duijie_biao_html}
                     {fifty_guanjianci_jieping_html}
-                    {my_client_html}
                 </ul>
             </div>
         </div>
