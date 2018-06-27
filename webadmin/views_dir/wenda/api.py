@@ -350,7 +350,7 @@ def get_wenda_task(request):
                         task__is_test=False
                     ).exclude(
                         task__release_user_id=235
-                    ).order_by('?')
+                    ).order_by('-status')
                     print('wenda_robot_task_objs -->', wenda_robot_task_objs)
 
                 if not wenda_robot_task_objs:
