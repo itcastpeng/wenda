@@ -26,6 +26,8 @@ from webadmin.modules.WeChat import WeChatPublicSendMsg
 import base64
 from webadmin.modules import RedisOper
 
+redis_host = ''
+
 
 # 登录
 @csrf_exempt
@@ -1006,7 +1008,6 @@ def keywords_cover(request):
         area = request.GET.get('area')
         print('area -=-=>', area)
         print("--->1: ", datetime.datetime.now())
-        redis_host = '192.168.100.20'
         rc = redis.StrictRedis(host=redis_host, port=6379,db=8, password='', decode_responses=True)
         # 建立连接
         redis_data = rc.rpop('data')
@@ -1642,7 +1643,6 @@ def keywords_select_models(request):
 # 查询关键词覆盖(覆盖模式)优化 -- 供task查询数据库
 @csrf_exempt
 def keywords_cover_select_models(request):
-    redis_host = '192.168.100.20'
     rc = redis.StrictRedis(host=redis_host, port=6379,db=8, decode_responses=True)
 
     now_date = datetime.datetime.now().strftime("%Y-%m-%d")
