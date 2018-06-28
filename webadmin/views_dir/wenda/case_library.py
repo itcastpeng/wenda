@@ -80,7 +80,10 @@ def case_library(request):
         print("objss -->", objss.count())
 
         # 成都美尔贝不显示
-        objs = models.KeywordsCover.objects.select_related('keywords', 'keywords__client_user').filter(q).exclude(keywords__client_user_id=175)
+        objs = models.KeywordsCover.objects.select_related('keywords', 'keywords__client_user').filter(q).exclude(
+            keywords__client_user_id=175,
+            keywords__client_user_id__xinlaowenda_status=1
+        )
         print('objs   ----->',objs)
         if role_id == 12:
             objs = objs.exclude(keywords__client_user__username__contains='YZ-')

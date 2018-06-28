@@ -130,7 +130,7 @@ def user_management_oper(request, oper_type, o_id):
                 )
             else:
                 response.status = False
-                for i in ["username", "password", "role_id", "guwen_id", "xiaoshou_id"]:
+                for i in ["username", "password", "role_id", "guwen_id", "xiaoshou_id",'xinlaowenda_status']:
                     if i in form_obj.errors:
                         response.message = form_obj.errors[i]
                         break
@@ -174,7 +174,7 @@ def user_management_oper(request, oper_type, o_id):
             else:
                 response.status = False
                 print(form_obj.errors)
-                for i in ["username", "password", "role_id", "guwen_id", "xiaoshou_id", "xie_wenda_money", "fa_wenda_money"]:
+                for i in ["username", "password", "role_id", "guwen_id", "xiaoshou_id", "xie_wenda_money", "fa_wenda_money",'xinlaowenda_status']:
                     if i in form_obj.errors:
                         response.message = form_obj.errors[i]
                         break
@@ -243,7 +243,6 @@ def user_management_oper(request, oper_type, o_id):
         if oper_type == "create":
             guwen_objs = models.UserProfile.objects.filter(role_id=7, is_delete=False)
             xiaoshou_objs = models.UserProfile.objects.filter(role_id=12, is_delete=False)
-
             return render(request, 'myadmin/user_management/user_management_modal_create.html', locals())
 
         # 修改用户
@@ -251,11 +250,18 @@ def user_management_oper(request, oper_type, o_id):
             user_profile_obj = models.UserProfile.objects.select_related("role").get(id=o_id)
             guwen_objs = models.UserProfile.objects.filter(role_id=7, is_delete=False)
             xiaoshou_objs = models.UserProfile.objects.filter(role_id=12, is_delete=False)
-
+            xinlaowenda = models.UserProfile.objects.filter(id=o_id)
+            wenda_status = xinlaowenda[0].get_xinlaowenda_status_display()
             # 问答编辑、问答渠道、兼职发帖角色的id
             print(user_profile_obj.role.id)
             shouyi_role_ids = [8, 9, 6]
-
+            print('wenda_status ============ >',wenda_status)
+            print('models.UserProfile.xinlaowenda_status_choices--》',models.UserProfile.xinlaowenda_status_choices)
+            if wenda_status == '新问答':
+                xinlaowenda_status = models.UserProfile.xinlaowenda_status_choices[1]
+            else:
+                xinlaowenda_status = models.UserProfile.xinlaowenda_status_choices[0]
+            print('xinlaowenda_status ============ >',xinlaowenda_status)
             department_objs = models.Department.objects.all()
             hospital_infomation_objs = models.HospitalInformation.objects.filter(user_id=o_id)
             if hospital_infomation_objs:

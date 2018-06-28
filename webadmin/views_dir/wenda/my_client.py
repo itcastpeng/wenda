@@ -17,13 +17,16 @@ def my_client(request):
     client_data = models.UserProfile.objects.filter(is_delete=False, role_id=5).values('username', 'id')
     role_id = request.session.get("role_id")
     obj_user_id = request.session.get("user_id")
+    qiyong_status = models.UserProfile.status_choices
+    xinlaowenda_status = models.UserProfile.xinlaowenda_status_choices
+    print('qiyong_status ========= >', qiyong_status)
     print('role_id ====== user_id =========>',role_id , obj_user_id )
     if "type" in request.GET and request.GET["type"] == "ajax_json":
         length = int(request.GET.get("length"))
         start = int(request.GET.get("start"))
         # print('request -- >',request.GET)
         # 排序
-        column_list = ['client_user']
+        column_list = ['client_user','qiyong_status','xinlaowenda_status']
 
         order_column = request.GET.get('order[0][column]', 1)  # 第几列排序
         order = request.GET.get('order[0][dir]')  # 正序还是倒序
@@ -42,7 +45,12 @@ def my_client(request):
             if field in request.GET and request.GET.get(field):  # 如果该字段存在并且不为空
                 if field =='client_user':
                     q.add(Q(**{'id': request.GET[field]}), Q.AND)
-                else:
+                elif field == 'qiyong_status':
+                    q.add(Q(**{'status':request.GET[field]}) ,Q.AND)
+                elif field == 'xinlaowenda_status':
+                    print(request.GET[field])
+                    q.add(Q(**{'xinlaowenda_status':request.GET[field]}) ,Q.AND)
+                else:   
                     q.add(Q(**{field + "__contains": request.GET[field]}), Q.AND)
 
         user_profile_objs = ''
@@ -50,9 +58,11 @@ def my_client(request):
         result_data = {'data':[]}
         clinet_date_objs = ''
         delete_client = ''
+
         if role_id in [1,7]:
             # print('进入 超级管理员0----role_id-->',role_id)
             clinet_date_objs = models.UserProfile.objects.filter(q).filter(role_id=5,is_delete=False)
+            # clinet_date_objs = models.UserProfile.objects
             # delete_client = "<a href='client_delete/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>删除</a>".format(user_id=user_id)
         else:
             clinet_date_objs = models.UserProfile.objects.filter(q).filter(xiaoshou_id=obj_user_id).filter(role_id=5,is_delete=False)
