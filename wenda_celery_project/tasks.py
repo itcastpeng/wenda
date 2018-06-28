@@ -1191,11 +1191,14 @@ def cache_keywords_top_set_init_data():
 # 定时更新覆盖报表中的数据
 @app.task
 def update_client_covering_data():
+    now_date = datetime.datetime.now().strftime("%Y-%m-%d")
     data_objs = models.KeywordsCover.objects.select_related(
-        "keywords__client_user",
+        # "keywords__client_user",
         "keywords",
+    ).filter(
+        create_date__gte=now_date
     ).values(
-        "keywords__client_user__username",
+        # "keywords__client_user__username",
         "keywords__client_user_id",
     ).annotate(Count('id'))
 
