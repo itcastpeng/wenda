@@ -101,6 +101,13 @@ class UserProfile(models.Model):
     )
     fugai_youxian = models.SmallIntegerField(verbose_name="覆盖优先查", choices=fugai_youxian_choices, default=1)
 
+    xinlaowenda_status_choices = (
+        (1,'新问答'),
+        (2,'老问答')
+    )
+
+    xinlaowenda_status = models.SmallIntegerField(verbose_name='用户为_新老问答',choices=xinlaowenda_status_choices,default=2)
+
     def __str__(self):
         return self.username
 

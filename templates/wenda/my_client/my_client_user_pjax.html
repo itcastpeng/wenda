@@ -53,6 +53,24 @@
                             {% endfor %}
                         </select>
 
+                        <label for="qiyong_status">是否启用：</label>
+                        <select class="form-control select2-hidden-accessible" data-plugin="select2" tabindex="-1"
+                                aria-hidden="true" id="qiyong_status" name="qiyong_status">
+                            <option value="">全部</option>
+                            {% for i in qiyong_status %}
+                                <option value="{{ i.0 }}">{{ i.1 }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label for="xinlaowenda_status">新老问答：</label>
+                        <select class="form-control select2-hidden-accessible" data-plugin="select2" tabindex="-1"
+                                aria-hidden="true" id="xinlaowenda_status" name="xinlaowenda_status">
+                            <option value="">全部</option>
+                            {% for i in xinlaowenda_status %}
+                                <option value="{{ i.0 }}">{{ i.1 }}</option>
+                            {% endfor %}
+                        </select>
+
                 </div>
 
                 <div style="position: absolute; bottom:0; right: 20px;">
