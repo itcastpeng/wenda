@@ -6,7 +6,7 @@
 
 from django.shortcuts import render, HttpResponse, redirect, HttpResponsePermanentRedirect
 from webadmin.views_dir import pub
-
+import redis
 from webadmin import models
 from django.http import JsonResponse
 
@@ -1002,87 +1002,53 @@ def keywords_cover(request):
         response.message = "添加成功"
 
     else:
+        now_date = datetime.datetime.now().strftime("%Y-%m-%d")
         area = request.GET.get('area')
         print('area -=-=>', area)
         print("--->1: ", datetime.datetime.now())
-        now_date = datetime.datetime.now().strftime("%Y-%m-%d")
-
-        # q = Q(Q(client_user_id=25) & Q(is_delete=False) & (Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date)))
-
-        # keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).filter(client_user=25).order_by('?')
-
-        # 判断含有老问答的客户优先查覆盖
-        user_data = models.WendaRobotTask.objects.filter(
-            wenda_type=2,
-            status__gte=6
-        ).values("task__release_user_id").annotate(Count("id"))
-        user_list_id = [i["task__release_user_id"] for i in user_data]
-        print("--->2: ", datetime.datetime.now())
-        # user_list_id = [214]
-        print('user_list_id -->', user_list_id)
-        get_select_date = datetime.datetime.now() - datetime.timedelta(minutes=5)
-        q = Q(
-                Q(client_user_id__in=user_list_id) &
-                Q(is_delete=False) &
-                Q(Q(get_select_date__isnull=True) | Q(get_select_date__lt=get_select_date)) &
-                Q(Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date))
-        )
-
-        # q = Q(Q(is_delete=False) & Q(Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date)))
-        print('q -->', q)
-        keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).exclude(area=area).order_by(
-            '?'
-        )[0:10].values('id', 'keyword', 'client_user_id')
-        # keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).order_by('?')[0:10]
-        # keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').get(q).order_by('client_user')
-        print("--->3: ", datetime.datetime.now())
-
-        # 如果查询覆盖的词查完,则查询指定关键词中未查询的词
-        if not keywords_objs:
-            q = Q(Q(status=1) & Q(is_delete=False) & Q(
-                Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date)))
-            keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).exclude(area=area).order_by(
-                '?')[0:10].values('id', 'keyword', 'client_user_id')
-
-        print('keywords_objs -->', keywords_objs)
-        if keywords_objs:
-            obj = keywords_objs[0]
-            updateData = {
-                'update_select_cover_date': datetime.datetime.now(),
-                'status': 3,
-                'area': area,
-                'get_select_date': datetime.datetime.now()
-            }
-
-            # 当日查询次数
-            search_count = models.KeywordsSearchLog.objects.filter(
-                create_date__gt=now_date,
-                keyword_id=obj['id']
-            ).count()
-            if search_count < 2:   # 如果今日查询次数小于2次，则在查询一次
-                del updateData['update_select_cover_date']
-
-            models.KeywordsTopSet.objects.filter(id=obj['id']).update(**updateData)
-            # KeywordsSearchLog
-            print(obj)
-            models.KeywordsSearchLog.objects.create(
-                keyword_id=obj['id'],
-                area=area
-            )
-
-            print("--->4: ", datetime.datetime.now())
-
-            data = {
-                "kid": obj['id'],  # 关键词id
-                "keyword": obj['keyword'],  # 关键词
-                "client_user_id": obj['client_user_id'],  # 客户id
-            }
-
-            response.status = True
-            response.data = data
+        redis_host = '192.168.100.20'
+        r = redis.Redis(host=redis_host, port=6379,db=8, decode_responses=True)
+        # 建立连接
+        rc = redis.Redis(connection_pool=r)
+        redis_data = rc.rpop('data')
+        result_date = redis_data['area']
+        if result_date == area:
+            rc.lpush(result_date)
         else:
-            response.status = False
-            response.message = "当前无任务"
+            if result_date:
+                updateData = {
+                    'update_select_cover_date': datetime.datetime.now(),
+                    'status': 3,
+                    'area': area,
+                    'get_select_date': datetime.datetime.now()
+                }
+
+                # 当日查询次数
+                search_count = models.KeywordsSearchLog.objects.filter(create_date__gt=now_date).count()
+                if search_count < 2:   # 如果今日查询次数小于2次，则在查询一次
+                    del updateData['update_select_cover_date']
+
+
+                models.KeywordsTopSet.objects.filter(id=redis_data[0]['keyword_id']).update(**updateData)
+                # KeywordsSearchLog
+                models.KeywordsSearchLog.objects.create(
+                    keyword_id=redis_data[0]['keyword_id'],
+                    area=area
+                )
+
+                print("--->4: ", datetime.datetime.now())
+
+                data = {
+                    "kid": redis_data[0]['keyword_id'],  # 关键词id
+                    "keyword": redis_data[0]['keyword'],  # 关键词
+                    "client_user_id": redis_data[0]['client_user_id'],  # 客户id
+                }
+
+                response.status = True
+                response.data = data
+            else:
+                response.status = False
+                response.message = "当前无任务"
 
     return JsonResponse(response.__dict__)
 
@@ -1664,3 +1630,52 @@ def keywords_select_models(request):
 
     return JsonResponse(response.__dict__)
 
+# 查询关键词覆盖(覆盖模式)优化 -- 供task查询数据库
+@csrf_exempt
+def keywords_cover_select_models(request):
+    redis_host = '192.168.100.20'
+    r = redis.Redis(host=redis_host, port=6379,db=8, decode_responses=True)
+    rc = redis.Redis(connection_pool=r)
+
+    now_date = datetime.datetime.now().strftime("%Y-%m-%d")
+    # 判断含有老问答的客户优先查覆盖
+    user_data = models.WendaRobotTask.objects.filter(
+        wenda_type=2,
+        status__gte=6
+    ).values("task__release_user_id").annotate(Count("id"))
+    user_list_id = [i["task__release_user_id"] for i in user_data]
+
+    get_select_date = datetime.datetime.now() - datetime.timedelta(minutes=5)
+    q = Q(
+        Q(client_user_id__in=user_list_id) &
+        Q(is_delete=False) &
+        Q(Q(get_select_date__isnull=True) | Q(get_select_date__lt=get_select_date)) &
+        Q(Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date))
+    )
+
+    keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).order_by(
+        '?'
+    )[0:10].values('id', 'keyword', 'client_user_id', 'area')
+
+    # 如果查询覆盖的词查完,则查询指定关键词中未查询的词
+    if not keywords_objs:
+        q = Q(Q(status=1) & Q(is_delete=False) & Q(
+            Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date)))
+        keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).order_by(
+            '?')[0:10].values('id', 'keyword', 'client_user_id')
+
+    print('keywords_objs -->', keywords_objs)
+    redis_data_list = {'data': []}
+    if keywords_objs:
+        for keywords_obj in keywords_objs:
+            keyword = keywords_obj['keyword']
+            client_user_id = keywords_obj['client_user_id']
+            keyword_id = keywords_obj['id']
+            area = keywords_obj['area']
+            redis_data_list['data'].append({
+                'keyword': keyword,
+                'client_user_id': client_user_id,
+                'keyword_id': keyword_id,
+                'area': area
+            })
+            rc.lpush(redis_data_list)

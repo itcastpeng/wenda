@@ -284,6 +284,11 @@ def RobotTaskToTask():
         if (wenda_robot_task_objs.count() and wenda_robot_task_objs.filter(
                 status=6).count() == wenda_robot_task_objs.count()) or task_obj.fabu_date < five_days_ago:
             if task_obj.create_date < five_days_ago:
+                status_objs = wenda_robot_task_objs.exclude(status=5)
+                if status_objs:
+                    wenda_robot_task_objs.update(status=6)
+                if wenda_robot_task_objs.filter(status=5):
+                    continue
                 wenda_robot_task_objs.update(status=6)
                 models.EditPublickTaskManagement.objects.filter(task__task__task=task_obj).update(status=3)
 
@@ -1984,9 +1989,11 @@ def keywords_select_models():
     print(ret.text)
 
 
-
-
-
+# 调用查询关键词覆盖(覆盖模式)优化 -- 供task查询数据库
+@app.task
+def keywords_cover_select_models():
+    url = 'http://wenda.zhugeyingxiao.com/api/keywords_cover_select_models'
+    requests.get(url)
 
 
 
