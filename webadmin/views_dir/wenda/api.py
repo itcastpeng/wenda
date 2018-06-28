@@ -1007,48 +1007,57 @@ def keywords_cover(request):
         print('area -=-=>', area)
         print("--->1: ", datetime.datetime.now())
         redis_host = '192.168.100.20'
-        r = redis.Redis(host=redis_host, port=6379,db=8, decode_responses=True)
+        rc = redis.StrictRedis(host=redis_host, port=6379,db=8, password='', decode_responses=True)
         # 建立连接
-        rc = redis.Redis(connection_pool=r)
         redis_data = rc.rpop('data')
+        redis_len = rc.llen('data')
+        if redis_len < 500:
+            tasks.keywords_cover_select_models.delay()
         result_date = redis_data['area']
-        if result_date == area:
-            rc.lpush(result_date)
-        else:
-            if result_date:
-                updateData = {
-                    'update_select_cover_date': datetime.datetime.now(),
-                    'status': 3,
-                    'area': area,
-                    'get_select_date': datetime.datetime.now()
-                }
-
-                # 当日查询次数
-                search_count = models.KeywordsSearchLog.objects.filter(create_date__gt=now_date).count()
-                if search_count < 2:   # 如果今日查询次数小于2次，则在查询一次
-                    del updateData['update_select_cover_date']
-
-
-                models.KeywordsTopSet.objects.filter(id=redis_data[0]['keyword_id']).update(**updateData)
-                # KeywordsSearchLog
-                models.KeywordsSearchLog.objects.create(
-                    keyword_id=redis_data[0]['keyword_id'],
-                    area=area
-                )
-
-                print("--->4: ", datetime.datetime.now())
-
-                data = {
-                    "kid": redis_data[0]['keyword_id'],  # 关键词id
-                    "keyword": redis_data[0]['keyword'],  # 关键词
-                    "client_user_id": redis_data[0]['client_user_id'],  # 客户id
-                }
-
-                response.status = True
-                response.data = data
+        flag = True
+        while True:
+            if not redis_data:
+                flag = False
+                break
             else:
-                response.status = False
-                response.message = "当前无任务"
+                if result_date == area:
+                    rc.lpush(redis_data)
+
+        if flag:
+            updateData = {
+                'update_select_cover_date': datetime.datetime.now(),
+                'status': 3,
+                'area': area,
+                'get_select_date': datetime.datetime.now()
+            }
+
+            # 当日查询次数
+            search_count = models.KeywordsSearchLog.objects.filter(create_date__gt=now_date).count()
+            if search_count < 2:   # 如果今日查询次数小于2次，则在查询一次
+                del updateData['update_select_cover_date']
+
+
+            models.KeywordsTopSet.objects.filter(id=redis_data[0]['keyword_id']).update(**updateData)
+            # KeywordsSearchLog
+            models.KeywordsSearchLog.objects.create(
+                keyword_id=redis_data[0]['keyword_id'],
+                area=area
+            )
+
+            print("--->4: ", datetime.datetime.now())
+
+            data = {
+                "kid": redis_data[0]['keyword_id'],  # 关键词id
+                "keyword": redis_data[0]['keyword'],  # 关键词
+                "client_user_id": redis_data[0]['client_user_id'],  # 客户id
+            }
+
+            response.status = True
+            response.data = data
+
+        else:
+            response.status = False
+            response.message = "当前无任务"
 
     return JsonResponse(response.__dict__)
 
@@ -1634,8 +1643,7 @@ def keywords_select_models(request):
 @csrf_exempt
 def keywords_cover_select_models(request):
     redis_host = '192.168.100.20'
-    r = redis.Redis(host=redis_host, port=6379,db=8, decode_responses=True)
-    rc = redis.Redis(connection_pool=r)
+    rc = redis.StrictRedis(host=redis_host, port=6379,db=8, decode_responses=True)
 
     now_date = datetime.datetime.now().strftime("%Y-%m-%d")
     # 判断含有老问答的客户优先查覆盖
