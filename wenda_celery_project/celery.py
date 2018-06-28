@@ -155,6 +155,13 @@ app.conf.beat_schedule = {
         'task': 'wenda_celery_project.tasks.keywords_select_models',
         'schedule': crontab('*/5', '*', '*', '*', '*'),
     },
+
+    # 调用查询关键词覆盖(覆盖模式)优化 -- 供task查询数据库
+    'keywords_cover_select_models':{
+        'task': 'wenda_celery_project.tasks.keywords_cover_select_models',
+        'schedule': crontab('*/5', '*', '*', '*', '*'),
+    },
+
 }
 
 

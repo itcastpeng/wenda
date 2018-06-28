@@ -1989,9 +1989,11 @@ def keywords_select_models():
     print(ret.text)
 
 
-
-
-
+# 调用查询关键词覆盖(覆盖模式)优化 -- 供task查询数据库
+@app.task
+def keywords_cover_select_models():
+    url = 'http://wenda.zhugeyingxiao.com/api/keywords_cover_select_models'
+    requests.get(url)
 
 
 
