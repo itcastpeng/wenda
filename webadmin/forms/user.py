@@ -36,6 +36,9 @@ class UserProfileCreateForm(Form):
     guwen_id = fields.CharField(
         required=False
     )
+    xinlaowenda_status = fields.IntegerField(
+        required=False,
+    )
 
     def clean_username(self):
         username = self.data["username"]
@@ -109,6 +112,9 @@ class UserProfileUpdateForm(Form):
     )
 
     shangwutong_url = fields.CharField(
+        required=False,
+    )
+    xinlaowenda_status = fields.IntegerField(
         required=False,
     )
 

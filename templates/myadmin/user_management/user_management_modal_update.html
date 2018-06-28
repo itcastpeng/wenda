@@ -49,6 +49,16 @@
                 </select>
             </div>
         </div>
+         <div class="form-group">
+            <label class="col-md-3 control-label" for="xinlaowenda_status">新老问答</label>
+            <div class="col-md-6">
+
+                <select id="status" class="form-control" name="xinlaowenda_status">
+                    <option value="{{ xinlaowenda.0.xinlaowenda_status }}">{{ wenda_status }}</option>
+                    <option value="{{ xinlaowenda_status.0 }}">{{ xinlaowenda_status.1 }}</option>
+                </select>
+            </div>
+        </div>
 
         {% if user_profile_obj.role.id == 5 %}
         <div class="form-group">
