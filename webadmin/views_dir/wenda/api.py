@@ -979,13 +979,12 @@ def keywords_cover(request):
             )
             wenda_robot_task_objs = models.WendaRobotTask.objects.filter(
                 task__release_user_id=keywords_top_set_objs[0].client_user.id,
-                add_map=1,
                 wenda_url=url
             )
 
             models.EditPublickTaskManagement.objects.filter(run_task_id=wenda_robot_task_objs[0].id).update(status=3)
 
-            if wenda_robot_task_objs:
+            if wenda_robot_task_objs[0].add_map == 1:
                 task_type = 2
             else:
                 task_type = 1
@@ -1029,12 +1028,40 @@ def keywords_cover(request):
                 if search_count < 2:   # 如果今日查询次数小于2次，则在查询一次
                     del updateData['update_select_cover_date']
 
+<<<<<<< HEAD
                 models.KeywordsTopSet.objects.filter(id=redis_data[0]['keyword_id']).update(**updateData)
                 # KeywordsSearchLog
                 models.KeywordsSearchLog.objects.create(
                     keyword_id=redis_data[0]['keyword_id'],
                     area=area
                 )
+=======
+        print('keywords_objs -->', keywords_objs)
+        if keywords_objs:
+            obj = keywords_objs[0]
+            updateData = {
+                'update_select_cover_date': datetime.datetime.now(),
+                'status': 3,
+                'area': area,
+                'get_select_date': datetime.datetime.now()
+            }
+
+            # 当日查询次数
+            search_count = models.KeywordsSearchLog.objects.filter(
+                create_date__gt=now_date,
+                keyword_id=obj['id']
+            ).count()
+            if search_count < 2:   # 如果今日查询次数小于2次，则在查询一次
+                del updateData['update_select_cover_date']
+
+            models.KeywordsTopSet.objects.filter(id=obj['id']).update(**updateData)
+            # KeywordsSearchLog
+            print(obj)
+            models.KeywordsSearchLog.objects.create(
+                keyword_id=obj['id'],
+                area=area
+            )
+>>>>>>> upstream/master
 
                 print("--->4: ", datetime.datetime.now())
 
