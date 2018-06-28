@@ -263,8 +263,8 @@ def guwen_duijie_oper(request, oper_type, o_id):
                     if bianji_list:
                         obj[0].guwen_duijie_bianji=bianji_list
 
-                        response.status = True
-                        response.message = '修改成功'
+                    response.status = True
+                    response.message = '修改成功'
             else:
                 print('cuowu --',forms_obj.errors)
                 response.status = False

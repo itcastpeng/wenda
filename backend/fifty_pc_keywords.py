@@ -69,7 +69,6 @@ class GuanJianCi:
                     zhidao_url = dict_lianjie['mu']
                     # 判断以zhidao开头的链接 ---判断是否为百度知道链接---
                     if zhidao_url.startswith('https://zhidao.baidu') or zhidao_url.startswith('http://zhidao.baidu'):
-                        print('获取到的_知道url ============= > ',zhidao_url)
                         # 获取当前url
                         data_temp = {
                             'client_user_id': user_id,
@@ -79,6 +78,7 @@ class GuanJianCi:
                         ret_panduan = requests.post(self.panduan_url, data=data_temp)
                         # 如果是自己的链接 判断答案
                         if ret_panduan:
+                            print('与自己链接匹配的知道url 与order============= > ', zhidao_url, order)
                             self.timesleep()
                             ret_json = ret_panduan.content.decode()
                             str_ret = json.loads(ret_json)
@@ -148,7 +148,7 @@ class GuanJianCi:
                                     base64_tupian1 = base64.b64encode(jieping_1)
                                     base64_tupian2 = base64.b64encode(jieping_2)
                                     base64_tupian3 = base64.b64encode(jieping_3)
-                                    print('len(b64encode) - ->', len(base64_tupian1))
+                                    # print('len(b64encode) - ->', len(base64_tupian1))
                                     data_temp = {
                                         "keyword": keyword,
                                         "guanjianci_num": guanjianci_num,
@@ -167,31 +167,20 @@ class GuanJianCi:
                                     self.browser.back()
                                     guanjianci_num += 2
                             else:
-                                print('---链接对--答案不对---')
-                                # data = {
-                                #     'keyword':keyword,
-                                #     'canshu':1
-                                # }
-                                # requests.post(cuowu_url,data=data)
+                                # print('---链接对--答案不对---')
+                                pass
                         else:
-                            print('--为知道链接---链接不对---')
-                            # data = {
-                            #     'keyword': keyword,
-                            #     'canshu': 1
-                            # }
-                            # requests.post(cuowu_url, data=data)
+                            # print('--为知道链接---链接不对---')
+                            pass
                     else:
-                        print('--无百度知道链接---')
-                        # data = {
-                        #     'keyword': keyword,
-                        #     'canshu': 1
-                        # }
-                        # requests.post(cuowu_url, data=data)
+                        # print('--无百度知道链接---')
+                        pass
                 else:
                     continue
             except Exception as e:
-                print('错误----> ', e)
-
+                # print('错误----> ', e)
+                pass
+    #
     def __del__(self):
         self.timesleep()
         self.browser.quit()
@@ -224,43 +213,40 @@ def huoqu_guanjianci():
         # url = 'http://wenda.zhugeyingxiao.com/test/api/fifty_guanjianci_fabu'
         # url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu'
         url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu"
+        # url = 'http://wenda.zhugeyingxiao.com/test/api/fifty_guanjianci_fabu?canshu=2'
+        # url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu?canshu=2'
+        canshu_url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu?canshu=2"
         ret = requests.get(url)
         if ret:
             print('=====请求任务=====')
             json_ret = ret.content.decode()
             str_ret = json.loads(json_ret)
-            print('str_ret ============ >',str_ret)
+            # print('str_ret ============ >',str_ret)
             if str_ret['data']:
                 ret_data = str_ret['data']
                 GuanJianCi(ret_data).run()
 
             else:
-                # url = 'http://wenda.zhugeyingxiao.com/test/api/fifty_guanjianci_fabu?canshu=2'
-                # url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu?canshu=2'
-                url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu?canshu=2"
-                print('===== canshu=2 =====')
-                ret = requests.get(url)
+                # print('===== canshu=2 =====')
+                ret = requests.get(canshu_url)
                 if ret:
                     json_ret = ret.content.decode()
                     str_ret = json.loads(json_ret)
-                    print('str_ret  - ->', str_ret)
+                    # print('str_ret  - ->', str_ret)
                     if str_ret['data']:
                         ret_data = str_ret['data']
                         GuanJianCi(ret_data).run()
                 sleep_time = 60 * 5
                 sleep(sleep_time)
-                print('===重新执行===')
+                # print('===重新执行===')
 
         else:
-            # url = 'http://wenda.zhugeyingxiao.com/test/api/fifty_guanjianci_fabu?canshu=2'
-            # url = 'http://wenda.zhugeyingxiao.com/api/fifty_guanjianci_fabu?canshu=2'
-            url = "http://127.0.0.1:8006/api/fifty_guanjianci_fabu?canshu=2"
-            print('===== canshu=2 else =====')
-            ret = requests.get(url)
+            # print('===== canshu=2 =====')
+            ret = requests.get(canshu_url)
             if ret:
                 json_ret = ret.content.decode()
                 str_ret = json.loads(json_ret)
-                print('str_ret  - ->', str_ret)
+                # print('str_ret  - ->', str_ret)
                 if str_ret['data']:
                     ret_data = str_ret['data']
                     GuanJianCi(ret_data).run()
