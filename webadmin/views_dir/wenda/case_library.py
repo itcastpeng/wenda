@@ -38,7 +38,7 @@ def case_library(request):
         # 排序
         column_list = [
             "index", "keywords__client_user__username", "keywords__keyword", "title",
-            "page_type", "rank", "create_date", 'keywords__client_user_id', 'search_keyword', 'task_type'
+            "page_type", "rank", "create_date", 'keywords__client_user_id', 'search_keyword', 'task_type','keywords__client_user__status','shangwutong'
         ]
         order_column = request.GET.get('order[0][column]', 1)  # 第几列排序
         order = request.GET.get('order[0][dir]')  # 正序还是倒序
@@ -58,6 +58,10 @@ def case_library(request):
 
                 elif field == "search_keyword":
                     q.add(Q(**{"keywords__keyword__contains": request.GET[field]}), Q.AND)
+                elif field == 'keywords__client_user__status':
+                    q.add(Q(**{'keywords__client_user__status':request.GET[field]}),Q.AND)
+                elif field == 'shangwutong':
+                    q.add(Q(**{'keywords__is_shangwutong':request.GET[field]}),Q.AND)
                 else:
                     q.add(Q(**{field: request.GET[field]}), Q.AND)
 
@@ -66,6 +70,7 @@ def case_library(request):
 
         if request.GET.get("department_id"):
             department_id = request.GET.get("department_id")
+            print('department_id= ==========> ',department_id)
             user_id_list = [i[0] for i in models.HospitalInformation.objects.filter(
                 department_id=department_id,
                 # user__status=1,
@@ -80,6 +85,7 @@ def case_library(request):
         print('q -->', q)
 
         # 成都美尔贝不显示
+        # objs = models.KeywordsCover.objects.select_related('keywords', 'keywords__client_user').exclude(keywords__client_user_id=175)
         objs = models.KeywordsCover.objects.select_related('keywords', 'keywords__client_user').filter(q).exclude(keywords__client_user_id=175)
         if role_id == 12:
             objs = objs.exclude(keywords__client_user__username__contains='YZ-')
@@ -104,10 +110,20 @@ def case_library(request):
             else:
                 create_date = ""
 
-            if obj.task_type == 1:
-                keyword = "<a href='{url}' target='_blank'>{keyword}</a>"
-            else:   # obj.task_type == 2
-                keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>地图</span></a>"
+            # if obj.task_type == 1:
+            #     keyword = "<a href='{url}' target='_blank'>{keyword}</a>"
+            # else:   # obj.task_type == 2
+            #     keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>地图</span></a>"
+
+            if obj.task_type == 2 and obj.keywords.is_shangwutong:
+                keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>地图</span> <span class='badge badge-warning'>商务通</span></a>"
+            else:
+                if obj.task_type == 2:
+                    keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>地图</span></a>"
+                elif obj.keywords.is_shangwutong:
+                    keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>商务通</span></a>"
+                else:
+                    keyword = "<a href='{url}' target='_blank'>{keyword}</a>"
 
             if obj.page_type == 1:  # pc
                 url = 'https://www.baidu.com/s?wd={keyword}'.format(keyword=obj.keywords.keyword)
@@ -116,8 +132,8 @@ def case_library(request):
             keyword = keyword.format(url=url, keyword=obj.keywords.keyword)
 
             wenda_robot_task_objs = models.WendaRobotTask.objects.filter(wenda_url=obj.url, task__release_user_id=obj.keywords.client_user.id)
-            title = wenda_robot_task_objs[0].title
-
+            # title = wenda_robot_task_objs[0].title
+            title = '测试'
             # ["index", "keywords__client_user_id", "keywords__keywords", "page_type", "rank", "create_date", "oper"]
             result_data["data"].append([
                 index, obj.keywords.client_user.username, keyword, title,
@@ -128,6 +144,7 @@ def case_library(request):
 
     page_type_choices = models.KeywordsCover.page_type_choices
     task_type_choices = models.KeywordsCover.task_type_choices
+    qiyong_status = models.UserProfile.status_choices
     user_objs = models.UserProfile.objects.filter(
         role_id=5,
         # status=1,
