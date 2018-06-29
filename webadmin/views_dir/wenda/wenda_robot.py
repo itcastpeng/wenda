@@ -159,6 +159,7 @@ def wenda_robot(request):
 
             result_data["data"].append(obj_data)
 
+
         return HttpResponse(json.dumps(result_data))
 
     user_data = models.WendaRobotTask.objects.filter(task__release_user__is_delete=False).values(
