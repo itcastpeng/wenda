@@ -1701,6 +1701,6 @@ def keywords_cover_select_models(request):
                 'keyword_id': keyword_id,
                 'area': area
             }
-            rc.lpush('data', redis_data_list)
+            rc.lpush('data', json.dumps(redis_data_list))
 
     return HttpResponse('缓存数据到redis中')
