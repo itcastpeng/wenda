@@ -93,7 +93,6 @@ class GuanJianCi:
                             if order == '1':
                                 div_tag = self.browser.find_element_by_xpath('//*[@id="results"]')
                             else:
-
                                 div_tag = self.browser.find_element_by_xpath('// *[ @ id = "results"] / div[%d]' % int(order))
 
                             print('---下拉--截第一张屏---')
@@ -119,7 +118,6 @@ class GuanJianCi:
 
                             self.browser.get(zhidao_url)
                             ret = self.browser.title
-                            # Action.tap()
                             print('---截第三张截图---')
                             js = """$(".best-answer-container").css({"border":"3px solid red"})"""
                             self.browser.execute_script(js)
