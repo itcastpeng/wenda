@@ -38,9 +38,7 @@ def case_library(request):
         # 排序
         column_list = [
             "index", "keywords__client_user__username", "keywords__keyword", "title",
-            "page_type", "rank", "create_date", 'keywords__client_user_id', 'search_keyword', 'task_type',
-            'shangwutong'
-            # ,'keywords__client_user__status'
+            "page_type", "rank", "create_date", 'keywords__client_user_id', 'search_keyword', 'task_type'
         ]
         order_column = request.GET.get('order[0][column]', 1)  # 第几列排序
         order = request.GET.get('order[0][dir]')  # 正序还是倒序
@@ -57,17 +55,12 @@ def case_library(request):
                     tomorrow_dt = datetime.datetime.strptime(request.GET[field], "%Y-%m-%d") + datetime.timedelta(days=1)
                     q.add(Q(**{field + "__gte": request.GET[field]}), Q.AND)
                     q.add(Q(**{field + "__lt": tomorrow_dt}), Q.AND)
+
                 elif field == "search_keyword":
                     q.add(Q(**{"keywords__keyword__contains": request.GET[field]}), Q.AND)
-                elif field == 'shangwutong':
-                    if request.GET[field] == '1':
-                        q.add(Q(**{'keywords__is_shangwutong':True}),Q.AND)
-                    else:
-                        q.add(Q(**{'keywords__is_shangwutong':False}),Q.AND)
                 else:
                     q.add(Q(**{field: request.GET[field]}), Q.AND)
-                print('field == = =>', field)
-        print('q= = = = => ',q)
+
         if not request.GET.get('create_date'):
             q.add(Q(**{"create_date__gte": now_date}), Q.AND)
 
@@ -79,23 +72,20 @@ def case_library(request):
                 user__is_delete=False,
                 user__role_id=5
             ).values_list('user_id')]
-            # print('user_id_list -->', user_id_list)
+            print('user_id_list -->', user_id_list)
             q.add(Q(**{'keywords__client_user_id__in': user_id_list}), Q.AND)
 
         objss = models.KeywordsCover.objects.filter(keywords__client_user_id__in=[37, 63, 66, 80, 104, 112, 113, 127])
-        # print("objss -->", objss.count())
+        print("objss -->", objss.count())
+        print('q -->', q)
 
         # 成都美尔贝不显示
-        # objs = models.KeywordsCover.objects.select_relatwed('keywords', 'keywords__client_user').filter(q).exclude(
-        objs = models.KeywordsCover.objects.select_related('keywords', 'keywords__client_user').exclude(
-            keywords__client_user_id=175,
-            keywords__client_user_id__xinlaowenda_status=1
-        )[0:10]
-        print('objs   ----->',objs)
+        objs = models.KeywordsCover.objects.select_related('keywords', 'keywords__client_user').filter(q).exclude(keywords__client_user_id=175)
         if role_id == 12:
             objs = objs.exclude(keywords__client_user__username__contains='YZ-')
 
-        # objs = objs.order_by(order_column)
+        objs = objs.order_by(order_column)
+        print("01-->", datetime.datetime.now())
         count = objs.count()
         print(objs.query)
         print("0-->", datetime.datetime.now())
@@ -108,31 +98,16 @@ def case_library(request):
 
         print("1-->", datetime.datetime.now())
         for index, obj in enumerate(objs[start: (start + length)], start=1):
-            # print('obj.is_shangwutong ================ > ',obj.is_shangwutong)
-            # print('obj.task_type ================ > ',obj.task_type)
             # 创建时间
             if obj.create_date:
                 create_date = obj.create_date.strftime("%Y-%m-%d")
             else:
                 create_date = ""
-            # if obj.task_type == 1:
-            #     keyword = "<a href='{url}' target='_blank'>{keyword}</a>"
-            # else:  # obj.task_type == 2
-            #     keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>地图</span></a>"
-            p = 1
-            m = 1
-            # if obj.task_type == 2 and obj.keywords.is_shangwutong:
-            if p ==1 and m == 1:
-                keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>地图</span> <span class='badge badge-warning'>商务通</span></a>"
-            else:
-                # if obj.task_type == 2:
-                if p == 1:
-                    keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>地图</span></a>"
-                # elif obj.keywords.is_shangwutong:
-                elif m == 1:
-                    keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>商务通</span></a>"
-                else:
-                    keyword = "<a href='{url}' target='_blank'>{keyword}</a>"
+
+            if obj.task_type == 1:
+                keyword = "<a href='{url}' target='_blank'>{keyword}</a>"
+            else:   # obj.task_type == 2
+                keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>地图</span></a>"
 
             if obj.page_type == 1:  # pc
                 url = 'https://www.baidu.com/s?wd={keyword}'.format(keyword=obj.keywords.keyword)
@@ -140,27 +115,24 @@ def case_library(request):
                 url = 'https://m.baidu.com/s?word={keyword}'.format(keyword=obj.keywords.keyword)
             keyword = keyword.format(url=url, keyword=obj.keywords.keyword)
 
+            wenda_robot_task_objs = models.WendaRobotTask.objects.filter(wenda_url=obj.url, task__release_user_id=obj.keywords.client_user.id)
+            title = wenda_robot_task_objs[0].title
 
-            # wenda_robot_task_objs = models.WendaRobotTask.objects.filter(wenda_url=obj.url, task__release_user_id=obj.keywords.client_user.id)
-            # title = wenda_robot_task_objs[0].title
-            title = '测试'
             # ["index", "keywords__client_user_id", "keywords__keywords", "page_type", "rank", "create_date", "oper"]
             result_data["data"].append([
                 index, obj.keywords.client_user.username, keyword, title,
                 obj.get_page_type_display(), obj.rank, create_date
             ])
-            # print('result  ------ > ',result_data)
-        # print("2-->", datetime.datetime.now())
+        print("2-->", datetime.datetime.now())
         return HttpResponse(json.dumps(result_data))
-    qiyong_status = models.UserProfile.status_choices
+
     page_type_choices = models.KeywordsCover.page_type_choices
     task_type_choices = models.KeywordsCover.task_type_choices
     user_objs = models.UserProfile.objects.filter(
         role_id=5,
         # status=1,
         is_delete=False
-     # ).exclude(status=2).exclude(username__contains='测试')
-     ).exclude(username__contains='测试')
+     )
     if role_id == 12:
         user_objs = user_objs.exclude(username__contains='YZ-')
 
