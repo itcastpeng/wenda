@@ -61,9 +61,9 @@ def case_library(request):
                     q.add(Q(**{"keywords__keyword__contains": request.GET[field]}), Q.AND)
                 elif field == 'shangwutong':
                     if request.GET[field] == '1':
-                        q.add(Q(**{'is_shangwutong':True}),Q.AND)
+                        q.add(Q(**{'keywords__is_shangwutong':True}),Q.AND)
                     else:
-                        q.add(Q(**{'is_shangwutong':False}),Q.AND)
+                        q.add(Q(**{'keywords__is_shangwutong':False}),Q.AND)
                 else:
                     q.add(Q(**{field: request.GET[field]}), Q.AND)
                 print('field == = =>', field)
@@ -86,7 +86,7 @@ def case_library(request):
         # print("objss -->", objss.count())
 
         # 成都美尔贝不显示
-        objs = models.KeywordsCover.objects.select_related('keywords', 'keywords__client_user').filter(q).exclude(
+        objs = models.KeywordsCover.objects.select_relatwed('keywords', 'keywords__client_user').filter(q).exclude(
         # objs = models.KeywordsCover.objects.select_related('keywords', 'keywords__client_user').filter(is_shangwutong=True).exclude(
             keywords__client_user_id=175,
             keywords__client_user_id__xinlaowenda_status=1
@@ -115,21 +115,24 @@ def case_library(request):
                 create_date = obj.create_date.strftime("%Y-%m-%d")
             else:
                 create_date = ""
-
+            if obj.task_type == 1:
+                keyword = "<a href='{url}' target='_blank'>{keyword}</a>"
+            else:  # obj.task_type == 2
+                keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>地图</span></a>"
             # p = 2
             # m = 1
-            if obj.task_type ==2 and obj.is_shangwutong:
+            # # if obj.task_type ==2 and obj.is_shangwutong:
             # if p ==1 and m == 1:
-                keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>地图</span> <span class='badge badge-warning'>商务通</span></a>"
-            else:
-                if obj.task_type == 2:
-                # if p == 1:
-                    keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>地图</span></a>"
-                elif obj.is_shangwutong:
-                # elif m == 1:
-                    keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>商务通</span></a>"
-                else:
-                    keyword = "<a href='{url}' target='_blank'>{keyword}</a>"
+            #     keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>地图</span> <span class='badge badge-warning'>商务通</span></a>"
+            # else:
+            #     # if obj.task_type == 2:
+            #     if p == 1:
+            #         keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>地图</span></a>"
+            #     # elif obj.is_shangwutong:
+            #     elif m == 1:
+            #         keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>商务通</span></a>"
+            #     else:
+            #         keyword = "<a href='{url}' target='_blank'>{keyword}</a>"
 
             if obj.page_type == 1:  # pc
                 url = 'https://www.baidu.com/s?wd={keyword}'.format(keyword=obj.keywords.keyword)

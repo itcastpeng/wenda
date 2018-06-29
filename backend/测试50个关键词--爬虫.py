@@ -52,6 +52,7 @@ class GuanJianCi:
         soup = BeautifulSoup(self.browser.page_source, 'lxml')
         self.timesleep()
         results = soup.find('div', class_='results')
+        print('-----------------')
         for result in results:
             try:
                 lianjie = result['data-log']
@@ -116,8 +117,9 @@ class GuanJianCi:
                                     guanjianci_num=guanjianci_num))
 
 
-                            self.browser.get(zhidao_url)
-                            ret = self.browser.title
+                            ret = self.browser.get(zhidao_url)
+                            print('ret ====== > ',ret)
+                            # BeautifulSoup()
                             print('---截第三张截图---')
                             js = """$(".best-answer-container").css({"border":"3px solid red"})"""
                             self.browser.execute_script(js)
