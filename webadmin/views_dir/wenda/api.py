@@ -1702,9 +1702,7 @@ def keywords_cover_select_models(request):
                 'area': area
             }
             rc.lpush('data', json.dumps(redis_data_list))
-
-        keywords_objs.update(get_select_date=datetime.datetime.now())
-            # keywords_obj.get_select_date = datetime.datetime.now()
-            # keywords_obj.save()
+            keywords_obj.get_select_date = datetime.datetime.now()
+            keywords_obj.save()
 
     return HttpResponse('缓存数据到redis中')
