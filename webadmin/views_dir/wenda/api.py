@@ -1016,7 +1016,7 @@ def keywords_cover(request):
         while True:
             redis_data = rc.rpop('data')
             redis_len = rc.llen('data')
-            print('redis_len --->', redis_len, redis_data, type(redis_data))
+            print('redis_len --->', redis_len, type(redis_len), redis_data, type(redis_data))
             if redis_len < 500:
                 tasks.keywords_cover_select_models.delay()
 
