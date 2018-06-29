@@ -1674,19 +1674,19 @@ def keywords_cover_select_models(request):
         client_user__status=1
     ).order_by(
         '?'
-    )[0:2000]
+    )[0:500]
 
     if not keywords_objs:  # 如果启用的查询完了，则查询未启用的用户的关键词覆盖
         keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).order_by(
             '?'
-        )[0:2000]
+        )[0:500]
 
     # 如果查询覆盖的词查完,则查询指定关键词中未查询的词
     if not keywords_objs:
         q = Q(Q(status=1) & Q(is_delete=False) & Q(
             Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date)))
         keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).order_by(
-            '?')[0:2000]
+            '?')[0:500]
 
     print('keywords_objs -->', keywords_objs)
     if keywords_objs:
