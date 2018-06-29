@@ -1682,17 +1682,16 @@ def keywords_cover_select_models(request):
             '?')[0:2000].values('id', 'keyword', 'client_user_id')
 
     print('keywords_objs -->', keywords_objs)
-    redis_data_list = {'data': []}
     if keywords_objs:
         for keywords_obj in keywords_objs:
             keyword = keywords_obj['keyword']
             client_user_id = keywords_obj['client_user_id']
             keyword_id = keywords_obj['id']
             area = keywords_obj['area']
-            redis_data_list['data'].append({
+            redis_data_list = {
                 'keyword': keyword,
                 'client_user_id': client_user_id,
                 'keyword_id': keyword_id,
                 'area': area
-            })
-            rc.lpush(redis_data_list)
+            }
+            rc.lpush('data', redis_data_list)
