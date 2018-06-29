@@ -1032,7 +1032,7 @@ def keywords_cover(request):
                     continue
                 break
 
-        if flag:
+        if flag or not area:
             updateData = {
                 'update_select_cover_date': datetime.datetime.now(),
                 'status': 3,
