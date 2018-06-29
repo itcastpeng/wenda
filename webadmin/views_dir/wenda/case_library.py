@@ -85,7 +85,6 @@ def case_library(request):
         print('q -->', q)
 
         # 成都美尔贝不显示
-        # objs = models.KeywordsCover.objects.select_related('keywords', 'keywords__client_user').exclude(keywords__client_user_id=175)
         objs = models.KeywordsCover.objects.select_related('keywords', 'keywords__client_user').filter(q).exclude(keywords__client_user_id=175)
         if role_id == 12:
             objs = objs.exclude(keywords__client_user__username__contains='YZ-')
@@ -116,12 +115,12 @@ def case_library(request):
             #     keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>地图</span></a>"
 
             if obj.task_type == 2 and obj.keywords.is_shangwutong:
-                keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>地图</span> <span class='badge badge-warning'>商务通</span></a>"
+                keyword = "<a href='{url}' target='_blank'>{keyword}<span class='badge badge-warning'>地图</span> <span class='badge badge-warning'>商务通</span></a>"
             else:
                 if obj.task_type == 2:
-                    keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>地图</span></a>"
+                    keyword = "<a href='{url}' target='_blank'>{keyword}<span class='badge badge-warning'>地图</span></a>"
                 elif obj.keywords.is_shangwutong:
-                    keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>商务通</span></a>"
+                    keyword = "<a href='{url}' target='_blank'>{keyword}<span class='badge badge-warning'>商务通</span></a>"
                 else:
                     keyword = "<a href='{url}' target='_blank'>{keyword}</a>"
 
@@ -129,11 +128,12 @@ def case_library(request):
                 url = 'https://www.baidu.com/s?wd={keyword}'.format(keyword=obj.keywords.keyword)
             else:   # 移动
                 url = 'https://m.baidu.com/s?word={keyword}'.format(keyword=obj.keywords.keyword)
+
             keyword = keyword.format(url=url, keyword=obj.keywords.keyword)
 
             wenda_robot_task_objs = models.WendaRobotTask.objects.filter(wenda_url=obj.url, task__release_user_id=obj.keywords.client_user.id)
-            title = wenda_robot_task_objs[0].title
-            # title = '测试'
+            # title = wenda_robot_task_objs[0].title
+            title = '测试'
             # ["index", "keywords__client_user_id", "keywords__keywords", "page_type", "rank", "create_date", "oper"]
             result_data["data"].append([
                 index, obj.keywords.client_user.username, keyword, title,
