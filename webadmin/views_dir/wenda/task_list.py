@@ -571,7 +571,10 @@ def task_list_oper(request, oper_type, o_id):
                         # 添加任务
                         if is_shangwutong:
                             is_shangwutong = True
-                            models.KeywordsTopSet.objects.update(is_shangwutong=True)
+                            models.KeywordsTopSet.objects.update(is_shangwutong=False)
+                            # models.KeywordsTopSet.objects.filter(
+                                # client_user_id=client_id
+                            # ).update(is_shangwutong=True)
 
 
                         if is_test:
