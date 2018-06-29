@@ -42,7 +42,10 @@ def wenda_robot(request):
         start = int(request.GET.get("start"))
 
         # 排序
-        column_list = ["id", "task__release_user_id", "task_id", "title", "content", "add_map", "wenda_type", "status", "create_date", "update_date", "next_date" "oper", "task__release_user_id", "task__is_test"]
+        column_list = ["id", "task__release_user_id", "task_id", "title", "content", "add_map",
+                       "wenda_type", "status", "create_date", "update_date",
+                       "next_date" "oper", "task__release_user_id", "task__is_test",
+                       "title_chaxun"]
         order_column = request.GET.get('order[0][column]', 1)  # 第几列排序
         order = request.GET.get('order[0][dir]')  # 正序还是倒序
         order_column = column_list[int(order_column)]
@@ -54,13 +57,13 @@ def wenda_robot(request):
         q = Q()
         for index, field in enumerate(column_list):
             if field in request.GET and request.GET.get(field):  # 如果该字段存在并且不为空
-                print('field -->', field)
                 if field == "task__is_test":
-                    print('--> task__is_test')
                     if request.GET.get(field) == "1":   # 正式任务
                         q.add(Q(**{"task__is_test": False}), Q.AND)
                     else:
                         q.add(Q(**{"task__is_test": True}), Q.AND)
+                elif field == 'title_chaxun':
+                    q.add(Q(Q(**{"title": request.GET[field]}) | Q(**{"wenda_url__contains": request.GET[field]})),Q.AND)
                 else:
                     q.add(Q(**{field: request.GET[field]}), Q.AND)
                 # if field in ["webda_type", "status", "phone_area", "phone_type"]:
@@ -70,7 +73,7 @@ def wenda_robot(request):
 
         task_objs = models.WendaRobotTask.objects.select_related('task__release_user', 'task').filter(q).order_by(order_column)
 
-        print(task_objs.query)
+        # print(task_objs.query)
 
         result_data = {
             "recordsFiltered": task_objs.count(),
@@ -78,10 +81,9 @@ def wenda_robot(request):
             "data": []
         }
         x = task_objs[start: (start + length)]
-        print(x.query)
+        # print(x.query)
         for index, obj in enumerate(task_objs[start: (start + length)], start=1):
 
-            content = obj.content
             # if obj.wenda_url and obj.status > 1:
             #     title = "<a href='{url}' target='_blank'>{title}</a>".format(url=obj.wenda_url, title=obj.title)
 
@@ -139,6 +141,17 @@ def wenda_robot(request):
                 username = "养账号任务"
                 task_name = "养账号任务"
 
+            # content = obj.content
+            content ="""
+                    <a  aria-hidden="true" href="look_content/{tid}/" data-toggle="modal" data-target="#exampleFormModal">
+                    查看答案
+                    </a>
+                    """.format(tid=obj.id)
+            oper += """
+                <a  aria-hidden="true" href="look_log/{tid}/" data-toggle="modal" data-target="#exampleFormModal">
+                查看日志        
+                </a>
+            """.format(tid=obj.id)
             title = obj.title
             if obj.wenda_type == 2:
                 title = "<a href='{href}' target='_blank'>{title}</a>".format(title=title, href=obj.wenda_url)
@@ -152,7 +165,7 @@ def wenda_robot(request):
         "task__release_user__username",
         "task__release_user_id"
     ).annotate(Count("id"))
-    print(user_data)
+    # print(user_data)
 
     if "_pjax" in request.GET:
         return render(request, 'wenda/wenda_robot/wenda_robot_pjax.html', locals())
@@ -276,6 +289,10 @@ def wenda_robot_oper(request, oper_type, o_id):
 
                 response.code = 200
                 response.data = data_list
+
+        elif oper_type == 'look_log':
+            pass
+
         return JsonResponse(response.__dict__)
 
 
@@ -336,4 +353,19 @@ def wenda_robot_oper(request, oper_type, o_id):
             response.code = 200
             response.data = data
             return render(request,'wenda/wenda_robot/wenda_robot_release_num.html',locals())
+
+        # 查看答案
+        elif oper_type == 'look_content':
+            objs = models.WendaRobotTask.objects.filter(id=o_id)
+            content = objs[0].content
+            print('content- ------------- > ',content)
+            return render(request,'wenda/wenda_robot/wenda_robot_modal_look_content.html',locals())
+
+        # 查看最近操作日志
+        elif oper_type == 'look_log':
+
+            objs = models.RobotAccountLog.objects.filter(wenda_robot_task_id=o_id).order_by('create_date')
+
+            return render(request,'wenda/wenda_robot/wenda_robot_modal_look_log.html',locals())
+
 
