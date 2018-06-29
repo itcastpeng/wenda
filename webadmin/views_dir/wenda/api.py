@@ -1018,6 +1018,7 @@ def keywords_cover(request):
             redis_len = rc.llen('data')
             print('redis_len --->', redis_len, type(redis_len), redis_data, type(redis_data))
             if redis_len < 500:
+                print('===============缓存任务到接口中======================')
                 tasks.keywords_cover_select_models.delay()
 
             if not redis_data:
@@ -1032,7 +1033,7 @@ def keywords_cover(request):
                     continue
                 break
 
-        if flag or not area:
+        if flag or area:
             updateData = {
                 'update_select_cover_date': datetime.datetime.now(),
                 'status': 3,
