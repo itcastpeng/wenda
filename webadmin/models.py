@@ -704,6 +704,7 @@ class KeywordsCover(models.Model):
         (2, "带地图")
     )
     task_type = models.SmallIntegerField(choices=task_type_choices, default=1)
+    is_shangwutong = models.BooleanField(verbose_name="是否是商务通任务", default=False)
 
 
 # 客户每天关键词覆盖数和报表

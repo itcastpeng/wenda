@@ -38,7 +38,8 @@ def case_library(request):
         # 排序
         column_list = [
             "index", "keywords__client_user__username", "keywords__keyword", "title",
-            "page_type", "rank", "create_date", 'keywords__client_user_id', 'search_keyword', 'task_type'
+            "page_type", "rank", "create_date", 'keywords__client_user_id', 'search_keyword', 'task_type',
+            'shangwutong'
             # ,'keywords__client_user__status'
         ]
         order_column = request.GET.get('order[0][column]', 1)  # 第几列排序
@@ -58,6 +59,11 @@ def case_library(request):
                     q.add(Q(**{field + "__lt": tomorrow_dt}), Q.AND)
                 elif field == "search_keyword":
                     q.add(Q(**{"keywords__keyword__contains": request.GET[field]}), Q.AND)
+                elif field == 'shangwutong':
+                    if request.GET[field] == '1':
+                        q.add(Q(**{'is_shangwutong':True}),Q.AND)
+                    else:
+                        q.add(Q(**{'is_shangwutong':False}),Q.AND)
                 else:
                     q.add(Q(**{field: request.GET[field]}), Q.AND)
                 print('field == = =>', field)
@@ -73,17 +79,18 @@ def case_library(request):
                 user__is_delete=False,
                 user__role_id=5
             ).values_list('user_id')]
-            print('user_id_list -->', user_id_list)
+            # print('user_id_list -->', user_id_list)
             q.add(Q(**{'keywords__client_user_id__in': user_id_list}), Q.AND)
 
         objss = models.KeywordsCover.objects.filter(keywords__client_user_id__in=[37, 63, 66, 80, 104, 112, 113, 127])
-        print("objss -->", objss.count())
+        # print("objss -->", objss.count())
 
         # 成都美尔贝不显示
         objs = models.KeywordsCover.objects.select_related('keywords', 'keywords__client_user').filter(q).exclude(
+        # objs = models.KeywordsCover.objects.select_related('keywords', 'keywords__client_user').filter(is_shangwutong=True).exclude(
             keywords__client_user_id=175,
             keywords__client_user_id__xinlaowenda_status=1
-        )
+        )[0:10]
         print('objs   ----->',objs)
         if role_id == 12:
             objs = objs.exclude(keywords__client_user__username__contains='YZ-')
@@ -101,22 +108,35 @@ def case_library(request):
 
         print("1-->", datetime.datetime.now())
         for index, obj in enumerate(objs[start: (start + length)], start=1):
+            # print('obj.is_shangwutong ================ > ',obj.is_shangwutong)
+            # print('obj.task_type ================ > ',obj.task_type)
             # 创建时间
             if obj.create_date:
                 create_date = obj.create_date.strftime("%Y-%m-%d")
             else:
                 create_date = ""
 
-            if obj.task_type == 1:
-                keyword = "<a href='{url}' target='_blank'>{keyword}</a>"
-            else:   # obj.task_type == 2
-                keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>地图</span></a>"
+            # p = 2
+            # m = 1
+            if obj.task_type ==2 and obj.is_shangwutong:
+            # if p ==1 and m == 1:
+                keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>地图</span> <span class='badge badge-warning'>商务通</span></a>"
+            else:
+                if obj.task_type == 2:
+                # if p == 1:
+                    keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>地图</span></a>"
+                elif obj.is_shangwutong:
+                # elif m == 1:
+                    keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>商务通</span></a>"
+                else:
+                    keyword = "<a href='{url}' target='_blank'>{keyword}</a>"
 
             if obj.page_type == 1:  # pc
                 url = 'https://www.baidu.com/s?wd={keyword}'.format(keyword=obj.keywords.keyword)
             else:   # 移动
                 url = 'https://m.baidu.com/s?word={keyword}'.format(keyword=obj.keywords.keyword)
             keyword = keyword.format(url=url, keyword=obj.keywords.keyword)
+
 
             wenda_robot_task_objs = models.WendaRobotTask.objects.filter(wenda_url=obj.url, task__release_user_id=obj.keywords.client_user.id)
             title = wenda_robot_task_objs[0].title
@@ -126,8 +146,8 @@ def case_library(request):
                 index, obj.keywords.client_user.username, keyword, title,
                 obj.get_page_type_display(), obj.rank, create_date
             ])
-            print('result  ------ > ',result_data)
-        print("2-->", datetime.datetime.now())
+            # print('result  ------ > ',result_data)
+        # print("2-->", datetime.datetime.now())
         return HttpResponse(json.dumps(result_data))
     qiyong_status = models.UserProfile.status_choices
     page_type_choices = models.KeywordsCover.page_type_choices
