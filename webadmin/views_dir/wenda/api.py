@@ -1046,19 +1046,19 @@ def keywords_cover(request):
                 del updateData['update_select_cover_date']
 
 
-            models.KeywordsTopSet.objects.filter(id=redis_data[0]['keyword_id']).update(**updateData)
+            models.KeywordsTopSet.objects.filter(id=redis_data['keyword_id']).update(**updateData)
             # KeywordsSearchLog
             models.KeywordsSearchLog.objects.create(
-                keyword_id=redis_data[0]['keyword_id'],
+                keyword_id=redis_data['keyword_id'],
                 area=area
             )
 
             print("--->4: ", datetime.datetime.now())
 
             data = {
-                "kid": redis_data[0]['keyword_id'],  # 关键词id
-                "keyword": redis_data[0]['keyword'],  # 关键词
-                "client_user_id": redis_data[0]['client_user_id'],  # 客户id
+                "kid": redis_data['keyword_id'],  # 关键词id
+                "keyword": redis_data['keyword'],  # 关键词
+                "client_user_id": redis_data['client_user_id'],  # 客户id
             }
 
             response.status = True
