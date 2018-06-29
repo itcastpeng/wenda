@@ -1,0 +1,64 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h3 class="modal-title">查看答案</h3>
+</div>
+<form class="form-horizontal modal_form" onsubmit="return false" >
+    <div class="modal-body">
+        {% csrf_token %}
+        <div class="form-group">
+{#            <label class="col-md-2 control-label" for="remark">备注<span class="form-span-active">*</span></label>#}
+            <div class="col-md-12">
+                <span>{{ content }}</span>
+            </div>
+        </div>
+
+
+        </div>
+</form>
+<script>
+    $("#exampleFormModal .modal-dialog").css("width", "700px");
+
+    $('#robotstart').bind('change',function () {
+        var start_time_str = $('#robotstart').val();
+        var start_time = new Date(start_time_str);
+        stop_time = start_time.setDate(start_time.getDate() + 10);
+        var newDate = new Date();
+        newDate.setTime(stop_time);
+        var year = newDate.getFullYear(); // 四位数字表示的年份
+        var month = newDate.getMonth() + 1; // 数字表示的月份,0-11, 0表示1月
+        var date = newDate.getDate(); // 日期,1~31
+        if(month<10) {
+            month = '0' + month
+        }
+        if(date<10) {
+            date = '0' + date
+        }
+        var date1 = year +"-"+ month +"-"+ date;
+        $('#robotstop').val(date1);
+    });
+
+    $("#update_button").on('click', function () {
+        var data = $(".modal_form").serialize();
+        var url = '{% url "wenda_robot" %}jiqirenfabutongji/{{ o_id }}/';
+        $.post(url, data, function (result) {
+            if(!result['status']){
+                toastr['error'](result['message']);
+            }else{
+                for(var i in result.data){
+                    var p_tag = '<p>'+ result.data[i].date_time + '&nbsp;&nbsp;&nbsp;&nbsp;' + result.data[i].count +'</p>';
+                    $("#fugaidata").append(p_tag);
+                }
+                {#toastr['success'](result['message']);#}
+                {#$('.modal').modal("hide");#}
+                {#table.ajax.reload();#}
+
+            }
+        }, 'json')
+    }
+);
+
+
+
+</script>
