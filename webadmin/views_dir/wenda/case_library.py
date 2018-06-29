@@ -86,8 +86,8 @@ def case_library(request):
         # print("objss -->", objss.count())
 
         # 成都美尔贝不显示
-        objs = models.KeywordsCover.objects.select_relatwed('keywords', 'keywords__client_user').filter(q).exclude(
-        # objs = models.KeywordsCover.objects.select_related('keywords', 'keywords__client_user').filter(is_shangwutong=True).exclude(
+        # objs = models.KeywordsCover.objects.select_relatwed('keywords', 'keywords__client_user').filter(q).exclude(
+        objs = models.KeywordsCover.objects.select_related('keywords', 'keywords__client_user').exclude(
             keywords__client_user_id=175,
             keywords__client_user_id__xinlaowenda_status=1
         )[0:10]
@@ -95,7 +95,7 @@ def case_library(request):
         if role_id == 12:
             objs = objs.exclude(keywords__client_user__username__contains='YZ-')
 
-        objs = objs.order_by(order_column)
+        # objs = objs.order_by(order_column)
         count = objs.count()
         print(objs.query)
         print("0-->", datetime.datetime.now())
@@ -115,24 +115,24 @@ def case_library(request):
                 create_date = obj.create_date.strftime("%Y-%m-%d")
             else:
                 create_date = ""
-            if obj.task_type == 1:
-                keyword = "<a href='{url}' target='_blank'>{keyword}</a>"
-            else:  # obj.task_type == 2
-                keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>地图</span></a>"
-            # p = 2
-            # m = 1
-            # # if obj.task_type ==2 and obj.is_shangwutong:
-            # if p ==1 and m == 1:
-            #     keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>地图</span> <span class='badge badge-warning'>商务通</span></a>"
-            # else:
-            #     # if obj.task_type == 2:
-            #     if p == 1:
-            #         keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>地图</span></a>"
-            #     # elif obj.is_shangwutong:
-            #     elif m == 1:
-            #         keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>商务通</span></a>"
-            #     else:
-            #         keyword = "<a href='{url}' target='_blank'>{keyword}</a>"
+            # if obj.task_type == 1:
+            #     keyword = "<a href='{url}' target='_blank'>{keyword}</a>"
+            # else:  # obj.task_type == 2
+            #     keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>地图</span></a>"
+            p = 1
+            m = 1
+            # if obj.task_type == 2 and obj.keywords.is_shangwutong:
+            if p ==1 and m == 1:
+                keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>地图</span> <span class='badge badge-warning'>商务通</span></a>"
+            else:
+                # if obj.task_type == 2:
+                if p == 1:
+                    keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>地图</span></a>"
+                # elif obj.keywords.is_shangwutong:
+                elif m == 1:
+                    keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>商务通</span></a>"
+                else:
+                    keyword = "<a href='{url}' target='_blank'>{keyword}</a>"
 
             if obj.page_type == 1:  # pc
                 url = 'https://www.baidu.com/s?wd={keyword}'.format(keyword=obj.keywords.keyword)
@@ -141,9 +141,9 @@ def case_library(request):
             keyword = keyword.format(url=url, keyword=obj.keywords.keyword)
 
 
-            wenda_robot_task_objs = models.WendaRobotTask.objects.filter(wenda_url=obj.url, task__release_user_id=obj.keywords.client_user.id)
-            title = wenda_robot_task_objs[0].title
-            # title = '测试'
+            # wenda_robot_task_objs = models.WendaRobotTask.objects.filter(wenda_url=obj.url, task__release_user_id=obj.keywords.client_user.id)
+            # title = wenda_robot_task_objs[0].title
+            title = '测试'
             # ["index", "keywords__client_user_id", "keywords__keywords", "page_type", "rank", "create_date", "oper"]
             result_data["data"].append([
                 index, obj.keywords.client_user.username, keyword, title,
