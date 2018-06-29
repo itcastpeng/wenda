@@ -1024,6 +1024,7 @@ def keywords_cover(request):
                 flag = False
                 break
             else:
+                redis_data = json.loads(redis_data)
                 # {'keyword_id': 139344, 'keyword': '八大处腹壁整形', 'area': '广东阳江', 'client_user_id': 165}
                 result_date = redis_data['area']
                 if result_date == area:
