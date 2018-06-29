@@ -26,7 +26,7 @@ from webadmin.modules.WeChat import WeChatPublicSendMsg
 import base64
 from webadmin.modules import RedisOper
 
-redis_host = ''
+redis_host = 'redis_host'
 
 
 # 登录
@@ -1008,7 +1008,7 @@ def keywords_cover(request):
         area = request.GET.get('area')
         print('area -=-=>', area)
         print("--->1: ", datetime.datetime.now())
-        rc = redis.StrictRedis(host=redis_host, port=6379,db=8, password='', decode_responses=True)
+        rc = redis.StrictRedis(host=redis_host, port=6379,db=8, decode_responses=True)
         # 建立连接
         redis_data = rc.rpop('data')
         redis_len = rc.llen('data')
