@@ -1016,7 +1016,7 @@ def keywords_cover(request):
         while True:
             redis_data = rc.rpop('data')
             redis_len = rc.llen('data')
-            print('redis_len --->', redis_len, redis_data)
+            print('redis_len --->', redis_len, redis_data, type(redis_data))
             if redis_len < 500:
                 tasks.keywords_cover_select_models.delay()
 
@@ -1024,6 +1024,7 @@ def keywords_cover(request):
                 flag = False
                 break
             else:
+                # {'keyword_id': 139344, 'keyword': '八大处腹壁整形', 'area': '广东阳江', 'client_user_id': 165}
                 result_date = redis_data['area']
                 if result_date == area:
                     rc.lpush(redis_data)
