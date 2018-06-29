@@ -638,7 +638,7 @@ class KeywordsTopSet(models.Model):
     get_select_date = models.DateTimeField(verbose_name="获取关键词的时间", null=True, blank=True)
     is_delete = models.BooleanField(verbose_name="是否删除", default=False)
     area = models.CharField(verbose_name="查询地区", max_length=128)
-
+    is_shangwutong = models.BooleanField(verbose_name="是否是商务通任务", default=False)
 
 # 记录查询关键词覆盖日志
 class KeywordsSearchLog(models.Model):
@@ -704,7 +704,7 @@ class KeywordsCover(models.Model):
         (2, "带地图")
     )
     task_type = models.SmallIntegerField(choices=task_type_choices, default=1)
-    is_shangwutong = models.BooleanField(verbose_name="是否是商务通任务", default=False)
+
 
 
 # 客户每天关键词覆盖数和报表
