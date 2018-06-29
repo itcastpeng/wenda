@@ -1010,14 +1010,16 @@ def keywords_cover(request):
         print("--->1: ", datetime.datetime.now())
         rc = redis.StrictRedis(host=redis_host, port=6379,db=8, decode_responses=True)
         # 建立连接
-        redis_data = rc.rpop('data')
-        redis_len = rc.llen('data')
-        print('redis_len --->', redis_len, redis_data)
-        if redis_len < 500:
-            tasks.keywords_cover_select_models.delay()
+
 
         flag = True
         while True:
+            redis_data = rc.rpop('data')
+            redis_len = rc.llen('data')
+            print('redis_len --->', redis_len, redis_data)
+            if redis_len < 500:
+                tasks.keywords_cover_select_models.delay()
+
             if not redis_data:
                 flag = False
                 break
@@ -1025,6 +1027,8 @@ def keywords_cover(request):
                 result_date = redis_data['area']
                 if result_date == area:
                     rc.lpush(redis_data)
+                    continue
+                break
 
         if flag:
             updateData = {
