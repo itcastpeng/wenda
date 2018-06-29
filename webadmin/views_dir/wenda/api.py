@@ -1038,7 +1038,6 @@ def keywords_cover(request):
                 'update_select_cover_date': datetime.datetime.now(),
                 'status': 3,
                 'area': area,
-                'get_select_date': datetime.datetime.now()
             }
 
             # 当日查询次数
@@ -1703,5 +1702,8 @@ def keywords_cover_select_models(request):
                 'area': area
             }
             rc.lpush('data', json.dumps(redis_data_list))
+
+            keywords_obj.get_select_date = datetime.datetime.now()
+            keywords_obj.save()
 
     return HttpResponse('缓存数据到redis中')
