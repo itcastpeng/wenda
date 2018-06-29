@@ -1686,15 +1686,15 @@ def keywords_cover_select_models(request):
         q = Q(Q(status=1) & Q(is_delete=False) & Q(
             Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date)))
         keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).order_by(
-            '?')[0:2000].values('id', 'keyword', 'client_user_id')
+            '?')[0:2000]
 
     print('keywords_objs -->', keywords_objs)
     if keywords_objs:
         for keywords_obj in keywords_objs:
-            keyword = keywords_obj['keyword']
-            client_user_id = keywords_obj['client_user_id']
-            keyword_id = keywords_obj['id']
-            area = keywords_obj['area']
+            keyword = keywords_obj.keyword
+            client_user_id = keywords_obj.client_user_id
+            keyword_id = keywords_obj.id
+            area = keywords_obj.area
             redis_data_list = {
                 'keyword': keyword,
                 'client_user_id': client_user_id,
