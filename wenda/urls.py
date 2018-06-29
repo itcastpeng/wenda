@@ -60,6 +60,9 @@ urlpatterns = [
     # 查询关键词覆盖(覆盖模式)
     url(r'^api/keywords_cover', api.keywords_cover),
 
+    # 缓存要查询关键词覆盖的数据到redis中
+    url(r'^api/keywords_cover_select_models', api.keywords_cover_select_models),
+
     # 检查知道url 是我们自己操作的(覆盖模式)
     url(r'^api/check_zhidao_url', api.check_zhidao_url),
 
