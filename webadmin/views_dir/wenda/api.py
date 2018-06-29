@@ -1014,13 +1014,14 @@ def keywords_cover(request):
         redis_len = rc.llen('data')
         if redis_len < 500:
             tasks.keywords_cover_select_models.delay()
-        result_date = redis_data['area']
+
         flag = True
         while True:
             if not redis_data:
                 flag = False
                 break
             else:
+                result_date = redis_data['area']
                 if result_date == area:
                     rc.lpush(redis_data)
 
