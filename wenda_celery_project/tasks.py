@@ -1218,7 +1218,7 @@ def update_client_covering_data():
         else:
             # total_cover_num = obj['id__count']
             total_cover_num = 0
-            objs = models.UserprofileKeywordsCover.objects.filter(client_user_id=263)
+            objs = models.UserprofileKeywordsCover.objects.filter(client_user_id=obj['keywords__client_user_id'])
             for obj in objs:
                 total_cover_num += obj.cover_num
 
