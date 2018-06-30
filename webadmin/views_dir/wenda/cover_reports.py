@@ -232,7 +232,7 @@ def cover_reports(request):
                 }
             )
             # print("4 -->", datetime.datetime.now())
-            # print('result_data - - > ',result_data )
+            print('result_data - ------------------- > ',result_data )
         return HttpResponse(json.dumps(result_data))
 
     if role_id == 12:
