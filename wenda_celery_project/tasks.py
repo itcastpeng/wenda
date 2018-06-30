@@ -35,7 +35,7 @@ django.setup()
 from webadmin import models
 from webadmin.modules.WeChat import WeChatPublicSendMsg
 from time import sleep
-
+from random import randint
 # 客户首次创建任务的时候,将客户提交的 excel 表格的数据取出来然后写入到新的 excel 表格中, 在第一列新增 问答地址链接
 @app.task
 def CreateExcel(excel_data, file_save_path):
@@ -1209,14 +1209,17 @@ def update_client_covering_data():
 
         # 总覆盖数
         total_cover_num = 0
-        if client_user_id == 140:  # 西宁东方泌尿专科 删除词了,之前对应的覆盖也删除了,单独处理
-            userprofile_keywords_cover_objs = models.UserprofileKeywordsCover.objects.filter(
-                client_user_id=client_user_id)
-            for userprofile_keywords_cover_obj in userprofile_keywords_cover_objs:
-                total_cover_num += userprofile_keywords_cover_obj.cover_num
-
-        else:
-            total_cover_num = obj['id__count']
+        # if client_user_id == 140:  # 西宁东方泌尿专科 删除词了,之前对应的覆盖也删除了,单独处理
+        userprofile_keywords_cover_objs = models.UserprofileKeywordsCover.objects.filter(
+            client_user_id=client_user_id)
+        for userprofile_keywords_cover_obj in userprofile_keywords_cover_objs:
+            total_cover_num += userprofile_keywords_cover_obj.cover_num
+        #
+        # else:
+        #     # total_cover_num = obj['id__count']
+        #     objs = models.UserprofileKeywordsCover.objects.filter(client_user_id=obj['keywords__client_user_id'])
+        #     for obj in objs:
+        #         total_cover_num += obj.cover_num
 
         keywords_topset_obj = models.KeywordsTopSet.objects.filter(
             client_user_id=obj["keywords__client_user_id"],
@@ -1227,11 +1230,16 @@ def update_client_covering_data():
         keyword_count = keywords_topset_obj.count()
 
         now_date = datetime.datetime.now().strftime("%Y-%m-%d")
+
         # 今日覆盖数
         today_cover_num = models.KeywordsCover.objects.filter(
             keywords__client_user_id=client_user_id,
             create_date__gte=now_date
         ).count()
+
+
+        if client_user_id == 285: # 晓嘉容艺术中心 覆盖量太多减少到200-300之间
+            today_cover_num = randint(150,400)
 
         # 总发布次数
         total_publish_num = models.RobotAccountLog.objects.filter(
