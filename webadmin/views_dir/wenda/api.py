@@ -301,6 +301,23 @@ def get_wenda_task(request):
 
                     else:  # status == 5  # 采纳问答
                         task_ok(wenda_robot_task_obj)
+                        wenda_status = models.WendaRobotTask.objects.filter(status=6)
+                        xinlaowenda_status = wenda_status[0].task.release_user.xinlaowenda_status
+                        if xinlaowenda_status == 2:
+                            obj = models.TongjiKeywords.objects.filter(run_task=wenda_robot_task_obj)
+                            # 存在,则更新, 不存在新增
+                            if not obj:
+                                models.TongjiKeywords.objects.create(
+                                    task=wenda_robot_task_obj.task,
+                                    title=wenda_robot_task_obj.title,
+                                    content=wenda_robot_task_obj.content,
+                                    url=wenda_robot_task_obj.wenda_url,
+                                    run_task=wenda_robot_task_obj
+                                )
+
+                            else:
+                                obj[0].content = wenda_robot_task_obj.content
+                                obj[0].save()
 
                     wenda_robot_task_obj.update_date = datetime.datetime.now()
                     wenda_robot_task_obj.save()
