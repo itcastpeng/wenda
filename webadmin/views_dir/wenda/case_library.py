@@ -109,20 +109,20 @@ def case_library(request):
             else:
                 create_date = ""
 
-            # if obj.task_type == 1:
-            #     keyword = "<a href='{url}' target='_blank'>{keyword}</a>"
-            # else:   # obj.task_type == 2
-            #     keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>地图</span></a>"
+            if obj.task_type == 1:
+                keyword = "<a href='{url}' target='_blank'>{keyword}</a>"
+            else:   # obj.task_type == 2
+                keyword = "<a href='{url}' target='_blank'>{keyword} <span class='badge badge-warning'>地图</span></a>"
 
-            if obj.task_type == 2 and obj.keywords.is_shangwutong:
-                keyword = "<a href='{url}' target='_blank'>{keyword}<span class='badge badge-warning'>地图</span> <span class='badge badge-warning'>商务通</span></a>"
-            else:
-                if obj.task_type == 2:
-                    keyword = "<a href='{url}' target='_blank'>{keyword}<span class='badge badge-warning'>地图</span></a>"
-                elif obj.keywords.is_shangwutong:
-                    keyword = "<a href='{url}' target='_blank'>{keyword}<span class='badge badge-warning'>商务通</span></a>"
-                else:
-                    keyword = "<a href='{url}' target='_blank'>{keyword}</a>"
+            # if obj.task_type == 2 and obj.keywords.is_shangwutong:
+            #     keyword = "<a href='{url}' target='_blank'>{keyword}<span class='badge badge-warning'>地图</span> <span class='badge badge-warning'>商务通</span></a>"
+            # else:
+            #     if obj.task_type == 2:
+            #         keyword = "<a href='{url}' target='_blank'>{keyword}<span class='badge badge-warning'>地图</span></a>"
+            #     elif obj.keywords.is_shangwutong:
+            #         keyword = "<a href='{url}' target='_blank'>{keyword}<span class='badge badge-warning'>商务通</span></a>"
+            #     else:
+            #         keyword = "<a href='{url}' target='_blank'>{keyword}</a>"
 
             if obj.page_type == 1:  # pc
                 url = 'https://www.baidu.com/s?wd={keyword}'.format(keyword=obj.keywords.keyword)
@@ -132,8 +132,8 @@ def case_library(request):
             keyword = keyword.format(url=url, keyword=obj.keywords.keyword)
 
             wenda_robot_task_objs = models.WendaRobotTask.objects.filter(wenda_url=obj.url, task__release_user_id=obj.keywords.client_user.id)
-            # title = wenda_robot_task_objs[0].title
-            title = '测试'
+            title = wenda_robot_task_objs[0].title
+            # title = '测试'
             # ["index", "keywords__client_user_id", "keywords__keywords", "page_type", "rank", "create_date", "oper"]
             result_data["data"].append([
                 index, obj.keywords.client_user.username, keyword, title,
