@@ -978,9 +978,11 @@ def userprofile_keywords_cover(debug=False):
         if user_id == 285:
             fugai_suiji_num = randint(150, 400)
             search_objs =  search_objs[0:fugai_suiji_num]
-
+        data_url_num_list = []
         for search_obj in search_objs:
             if search_obj:
+                data_url_num = search_obj.url
+                data_url_num_list.append(data_url_num)
                 wenda_type_index = ''
                 wenda_type = ''
                 is_zhedie = "0"
@@ -1066,8 +1068,10 @@ def userprofile_keywords_cover(debug=False):
         yingxiaoguwen_file_path_name = os.path.join("statics", "upload_files", yingxiaoguwen_file_name)
 
         cover_reports_generate_excel(yingxiaoguwen_file_path_name, data_day_list, debug=False, url_list=url_list)
-
-        url_num = search_objs.values('url').distinct().count()
+        if user_id == 285:
+            url_num = len(set(data_url_num_list))
+        else:
+            url_num = search_objs.values('url').distinct().count()
 
         print("生成报表 -->>")
         cover_num = len(data_day_list)
