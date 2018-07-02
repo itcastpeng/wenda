@@ -301,6 +301,22 @@ def get_wenda_task(request):
 
                     else:  # status == 5  # 采纳问答
                         task_ok(wenda_robot_task_obj)
+                        xinlaowenda_status = wenda_robot_task_obj.task.release_user.xinlaowenda_status
+                        if xinlaowenda_status == 2:
+                            obj = models.TongjiKeywords.objects.filter(run_task=wenda_robot_task_obj)
+                            # 存在,则更新, 不存在新增
+                            if not obj:
+                                models.TongjiKeywords.objects.create(
+                                    task=wenda_robot_task_obj.task,
+                                    title=wenda_robot_task_obj.title,
+                                    content=wenda_robot_task_obj.content,
+                                    url=wenda_robot_task_obj.wenda_url,
+                                    run_task=wenda_robot_task_obj
+                                )
+
+                            else:
+                                obj[0].content = wenda_robot_task_obj.content
+                                obj[0].save()
 
                     wenda_robot_task_obj.update_date = datetime.datetime.now()
                     wenda_robot_task_obj.save()
@@ -1572,6 +1588,7 @@ def fifty_guanjianci_fabu(request):
 # 指定关键词-优化-协助调用查询数据库
 @csrf_exempt
 def keywords_select_models(request):
+    print('-------------------------------------------------------------------')
     response = pub.BaseResponse()
     data_objs = models.KeywordsTopInfo.objects.filter(keyword__client_user__is_delete=False).values(
         'keyword__client_user',
@@ -1635,7 +1652,7 @@ def keywords_select_models(request):
         response.data = {
             'user_obj':user_obj[0].id
         }
-
+        print('response.data --------------- > ',response.data)
         youhua_objs = models.KeyWords_YouHua.objects.filter(username_id=client_user_id)
         if youhua_objs:
             youhua_objs.update(**data_temp)
