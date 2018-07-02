@@ -974,8 +974,16 @@ def userprofile_keywords_cover(debug=False):
         data_list1 = []  # 老问答不折叠
         data_list2 = []  # 其他
         temp_list = []
+        fugai_suiji_num = 0
+        if user_id == 285:
+            fugai_suiji_num = randint(150, 400)
+            search_objs =  search_objs[0:fugai_suiji_num]
+
         for search_obj in search_objs:
             if search_obj:
+                wenda_type_index = ''
+                wenda_type = ''
+                is_zhedie = "0"
                 fugai_count = search_obj.keywords.top_page_cover
                 print('search_obj - - - > ', search_obj.id)
                 url = search_obj.url
@@ -997,7 +1005,6 @@ def userprofile_keywords_cover(debug=False):
                     robotaccountlog_objs = objs[0].robotaccountlog_set.all()
                     if robotaccountlog_objs:
                         create_time = robotaccountlog_objs.last().create_date.strftime("%Y-%m-%d")
-                    is_zhedie = "0"
                     if search_obj.is_zhedie:
                         is_zhedie = "1"
                     wenda_type_index, wenda_type = objs[0].wenda_type, objs[0].get_wenda_type_display()
@@ -1014,30 +1021,30 @@ def userprofile_keywords_cover(debug=False):
                     #     'wenda_type': wenda_type
                     # })
 
-                    line_data = {
-                        "username": username,
-                        "keywords": search_obj.keywords.keyword,
-                        "page_type": search_obj.get_page_type_display(),
-                        "rank": search_obj.rank,
-                        "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
-                        "link": search_obj.url,
-                        "is_zhedie": is_zhedie,
-                        'create_time': create_time,
-                        'wenda_type': wenda_type
-                    }
+                line_data = {
+                    "username": username,
+                    "keywords": search_obj.keywords.keyword,
+                    "page_type": search_obj.get_page_type_display(),
+                    "rank": search_obj.rank,
+                    "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
+                    "link": search_obj.url,
+                    "is_zhedie": is_zhedie,
+                    'create_time': create_time,
+                    'wenda_type': wenda_type
+                }
 
-                    # 新问答数据
-                    if wenda_type_index in [1, 10]:
-                        data_day_list.append(line_data)
+                # 新问答数据
+                if wenda_type_index in [1, 10]:
+                    data_day_list.append(line_data)
 
-                    # 老问答数据
+                # 老问答数据
+                else:
+                    # 老问答未折叠
+                    if is_zhedie == '0' and [search_obj.url, wenda_type] not in temp_list:
+                        data_list1.append(line_data)
+                        temp_list.append([search_obj.url, wenda_type])
                     else:
-                        # 老问答未折叠
-                        if is_zhedie == '0' and [search_obj.url, wenda_type] not in temp_list:
-                            data_list1.append(line_data)
-                            temp_list.append([search_obj.url, wenda_type])
-                        else:
-                            data_list2.append(line_data)
+                        data_list2.append(line_data)
 
         data_day_list.extend(data_list1)
         data_day_list.extend(data_list2)
@@ -1065,7 +1072,7 @@ def userprofile_keywords_cover(debug=False):
         print("生成报表 -->>")
         cover_num = len(data_day_list)
         if user_id == 285:  # 晓嘉容艺术中心 覆盖量太多减少到200-300之间
-            today_cover_num = randint(150, 400)
+            today_cover_num = fugai_suiji_num
             cover_num = today_cover_num
         models.UserprofileKeywordsCover.objects.create(
             client_user_id=user_id,
