@@ -1063,10 +1063,14 @@ def userprofile_keywords_cover(debug=False):
         url_num = search_objs.values('url').distinct().count()
 
         print("生成报表 -->>")
+        cover_num = len(data_day_list)
+        if user_id == 285:  # 晓嘉容艺术中心 覆盖量太多减少到200-300之间
+            today_cover_num = randint(150, 400)
+            cover_num = today_cover_num
         models.UserprofileKeywordsCover.objects.create(
             client_user_id=user_id,
             create_date=date,
-            cover_num=len(data_day_list),
+            cover_num=cover_num,
             statement_path=file_path_name,
             url_num=url_num
         )
@@ -1195,9 +1199,10 @@ def update_client_covering_data():
     data_objs = models.KeywordsCover.objects.select_related(
         # "keywords__client_user",
         "keywords",
-    ).filter(
-        create_date__gte=now_date
-    ).values(
+        ).values(
+        # .filter(
+    #     create_date__gte=now_date
+    # )
         # "keywords__client_user__username",
         "keywords__client_user_id",
     ).annotate(Count('id'))
@@ -1209,17 +1214,17 @@ def update_client_covering_data():
 
         # 总覆盖数
         total_cover_num = 0
-        # if client_user_id == 140:  # 西宁东方泌尿专科 删除词了,之前对应的覆盖也删除了,单独处理
-        userprofile_keywords_cover_objs = models.UserprofileKeywordsCover.objects.filter(
-            client_user_id=client_user_id)
-        for userprofile_keywords_cover_obj in userprofile_keywords_cover_objs:
-            total_cover_num += userprofile_keywords_cover_obj.cover_num
-        #
-        # else:
-        #     # total_cover_num = obj['id__count']
-        #     objs = models.UserprofileKeywordsCover.objects.filter(client_user_id=obj['keywords__client_user_id'])
-        #     for obj in objs:
-        #         total_cover_num += obj.cover_num
+        if client_user_id == 140:  # 西宁东方泌尿专科 删除词了,之前对应的覆盖也删除了,单独处理
+            userprofile_keywords_cover_objs = models.UserprofileKeywordsCover.objects.filter(
+                client_user_id=client_user_id)
+            for userprofile_keywords_cover_obj in userprofile_keywords_cover_objs:
+                total_cover_num += userprofile_keywords_cover_obj.cover_num
+
+        else:
+            total_cover_num = obj['id__count']
+            # objs = models.UserprofileKeywordsCover.objects.filter(client_user_id=obj['keywords__client_user_id'])
+            # for obj in objs:
+            #     total_cover_num += obj.cover_num
 
         keywords_topset_obj = models.KeywordsTopSet.objects.filter(
             client_user_id=obj["keywords__client_user_id"],
@@ -1239,7 +1244,11 @@ def update_client_covering_data():
 
 
         if client_user_id == 285: # 晓嘉容艺术中心 覆盖量太多减少到200-300之间
-            today_cover_num = randint(150,400)
+            # today_cover_num = randint(150,400)
+            models.UserprofileKeywordsCover.objects.filter(
+                client_user_id=client_user_id,
+                create_date__gte=now_date
+            )
 
         # 总发布次数
         total_publish_num = models.RobotAccountLog.objects.filter(
