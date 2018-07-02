@@ -1572,6 +1572,7 @@ def fifty_guanjianci_fabu(request):
 # 指定关键词-优化-协助调用查询数据库
 @csrf_exempt
 def keywords_select_models(request):
+    print('-------------------------------------------------------------------')
     response = pub.BaseResponse()
     data_objs = models.KeywordsTopInfo.objects.filter(keyword__client_user__is_delete=False).values(
         'keyword__client_user',
@@ -1635,7 +1636,7 @@ def keywords_select_models(request):
         response.data = {
             'user_obj':user_obj[0].id
         }
-
+        print('response.data --------------- > ',response.data)
         youhua_objs = models.KeyWords_YouHua.objects.filter(username_id=client_user_id)
         if youhua_objs:
             youhua_objs.update(**data_temp)
