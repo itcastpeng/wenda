@@ -665,8 +665,8 @@ class KeywordsTopInfo(models.Model):
 
     create_date = models.DateTimeField(auto_now_add=True, verbose_name="创建时间", null=True, blank=True)
     update_date = models.DateTimeField(verbose_name="更新时间", null=True, blank=True)
-    initial_num = models.IntegerField(verbose_name='初始数量',null=True,blank=True,max_length=64)
-    current_number = models.IntegerField(verbose_name='当前数量',null=True,blank=True,max_length=64,default=0)
+    initial_num = models.IntegerField(verbose_name='初始数量',null=True,blank=True)
+    current_number = models.IntegerField(verbose_name='当前数量',null=True,blank=True,default=0)
 
 # 客户存活消耗统计
 class KehuCunhuoXiaohaoTongji(models.Model):
