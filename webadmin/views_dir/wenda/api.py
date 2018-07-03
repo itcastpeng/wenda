@@ -1107,6 +1107,7 @@ def check_zhidao_url(request):
         url = request.POST.get("url")
         client_user_id = request.POST.get("client_user_id")
         is_pause = int(request.POST.get("is_pause"))
+        browse_times_text = request.POST.get('browse_times_text')
         print('---------> ',url, client_user_id, is_pause)
         tongji_keywords_objs = models.TongjiKeywords.objects.filter(
             task__release_user_id=client_user_id,
@@ -1147,7 +1148,9 @@ def check_zhidao_url(request):
             rank = request.POST.get("rank")
             is_caina = int(request.POST.get("is_caina"))
             huifu_num = request.POST.get("huifu_num")
-
+            browse_times_text = 0
+            if request.POST.get('browse_times_text'):
+                browse_times_text = request.POST.get('browse_times_text')
             if not is_pause:  # 如果任务没有关闭
                 print('--> is_pause false')
                 keywords_top_info_objs = models.KeywordsTopInfo.objects.filter(
@@ -1158,6 +1161,7 @@ def check_zhidao_url(request):
 
                 if not keywords_top_info_objs:
                     obj = models.KeywordsTopInfo.objects.create(
+                        initial_num=browse_times_text,
                         page_type=page_type,
                         keyword_id=keyword_id,
                         title=title,
@@ -1174,7 +1178,7 @@ def check_zhidao_url(request):
                     keywords_top_set_obj.save()
 
                 else:
-                    keywords_top_info_objs.update(update_date=datetime.datetime.now())
+                    keywords_top_info_objs.update(update_date=datetime.datetime.now(),current_number=browse_times_text)
 
             response.status = True
             response.data = None  # data 为空,表示不是我们的数据
