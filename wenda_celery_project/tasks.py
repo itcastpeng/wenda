@@ -977,7 +977,7 @@ def userprofile_keywords_cover(debug=False):
         fugai_suiji_num = 0
         if user_id == 285:
             fugai_suiji_num = randint(150, 400)
-            search_objs =  search_objs[0:fugai_suiji_num]
+            search_objs =  search_objs[0:fugai_suiji_num - 1]
         data_url_num_list = []
         for search_obj in search_objs:
             if search_obj:
@@ -1287,7 +1287,6 @@ def update_client_covering_data():
             client_covering_data_objs.update(**data)
         else:
             data['client_user_id'] = client_user_id
-
             models.ClientCoveringData.objects.create(**data)
 
 
