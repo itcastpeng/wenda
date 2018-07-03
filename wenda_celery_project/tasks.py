@@ -1028,18 +1028,17 @@ def userprofile_keywords_cover(debug=False):
                         continue
                     else:
                         data_url_num_list.append(data_url_num)
-                        for data_url in data_url_num_list:
-                            line_data = {
-                                "username": username,
-                                "keywords": search_obj.keywords.keyword,
-                                "page_type": search_obj.get_page_type_display(),
-                                "rank": search_obj.rank,
-                                "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
-                                "link": data_url,
-                                "is_zhedie": is_zhedie,
-                                'create_time': create_time,
-                                'wenda_type': wenda_type
-                            }
+                        line_data = {
+                            "username": username,
+                            "keywords": search_obj.keywords.keyword,
+                            "page_type": search_obj.get_page_type_display(),
+                            "rank": search_obj.rank,
+                            "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
+                            "link": search_obj.url,
+                            "is_zhedie": is_zhedie,
+                            'create_time': create_time,
+                            'wenda_type': wenda_type
+                        }
                 else:
                     line_data = {
                         "username": username,
