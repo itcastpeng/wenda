@@ -974,15 +974,14 @@ def userprofile_keywords_cover(debug=False):
         data_list1 = []  # 老问答不折叠
         data_list2 = []  # 其他
         temp_list = []
-        fugai_suiji_num = 0
-        if user_id == 285:
-            fugai_suiji_num = randint(150, 400)
-            search_objs =  search_objs[0:fugai_suiji_num - 1]
+        # 晓嘉容 用户覆盖报表 随机生成 150 - 400 条
+        # if user_id == 285:
+        #     fugai_suiji_num = randint(150, 400)
+        #     search_objs =  search_objs[0:fugai_suiji_num]
+
         data_url_num_list = []
         for search_obj in search_objs:
             if search_obj:
-                data_url_num = search_obj.url
-                data_url_num_list.append(data_url_num)
                 wenda_type_index = ''
                 wenda_type = ''
                 is_zhedie = "0"
@@ -996,7 +995,7 @@ def userprofile_keywords_cover(debug=False):
                     task__release_user=search_obj.keywords.client_user
                 )
                 create_time = ''
-                print('objs - -- - =--==- > ', objs)
+                print('objs ----=--==- > ', objs)
                 if objs:
                     if objs[0].wenda_type in [1, 10]:
                         url_list['xinlianjie'].append(url)
@@ -1022,18 +1021,37 @@ def userprofile_keywords_cover(debug=False):
                     #     'create_time': create_time,
                     #     'wenda_type': wenda_type
                     # })
-
-                line_data = {
-                    "username": username,
-                    "keywords": search_obj.keywords.keyword,
-                    "page_type": search_obj.get_page_type_display(),
-                    "rank": search_obj.rank,
-                    "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
-                    "link": search_obj.url,
-                    "is_zhedie": is_zhedie,
-                    'create_time': create_time,
-                    'wenda_type': wenda_type
-                }
+                line_data = {}
+                if user_id == 285:
+                    data_url_num = search_obj.url
+                    if data_url_num in data_url_num_list:
+                        continue
+                    else:
+                        data_url_num_list.append(data_url_num)
+                        for data_url in data_url_num_list:
+                            line_data = {
+                                "username": username,
+                                "keywords": search_obj.keywords.keyword,
+                                "page_type": search_obj.get_page_type_display(),
+                                "rank": search_obj.rank,
+                                "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
+                                "link": data_url,
+                                "is_zhedie": is_zhedie,
+                                'create_time': create_time,
+                                'wenda_type': wenda_type
+                            }
+                else:
+                    line_data = {
+                        "username": username,
+                        "keywords": search_obj.keywords.keyword,
+                        "page_type": search_obj.get_page_type_display(),
+                        "rank": search_obj.rank,
+                        "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
+                        "link": search_obj.url,
+                        "is_zhedie": is_zhedie,
+                        'create_time': create_time,
+                        'wenda_type': wenda_type
+                    }
 
                 # 新问答数据
                 if wenda_type_index in [1, 10]:
@@ -1069,15 +1087,14 @@ def userprofile_keywords_cover(debug=False):
 
         cover_reports_generate_excel(yingxiaoguwen_file_path_name, data_day_list, debug=False, url_list=url_list)
         if user_id == 285:
-            url_num = len(set(data_url_num_list))
+            url_num = len(data_url_num_list)
         else:
             url_num = search_objs.values('url').distinct().count()
 
         print("生成报表 -->>")
         cover_num = len(data_day_list)
-        if user_id == 285:  # 晓嘉容艺术中心 覆盖量太多减少到200-300之间
-            today_cover_num = fugai_suiji_num
-            cover_num = today_cover_num
+        # if user_id == 285:  # 晓嘉容艺术中心 覆盖量太多减少到200-300之间
+        #     cover_num = ''
         models.UserprofileKeywordsCover.objects.create(
             client_user_id=user_id,
             create_date=date,
