@@ -724,7 +724,7 @@ def keywords_top_page_cover_excel(request,user_id=None):
             ws.cell(row=1, column=7, value="回复数量")
             ws.cell(row=1, column=8, value="创建时间")
             ws.cell(row=1, column=9, value="更新时间")
-            ws.cell(row=1, column=10, value="测试。。。。。。")
+            ws.cell(row=1, column=10, value="状态")
             # if user_role in [1,4,7]:
             ws.cell(row=1, column=11, value="初始值")
             ws.cell(row=1, column=12, value="当前值")
