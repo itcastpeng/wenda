@@ -66,7 +66,7 @@ def WhetherAuthorized(request, auth_name, auth_url, top=False, left=False):
     elif left:
         if auth_name == "问答":
             if user_profile_obj.role.id != 11:
-                result_html = get_left_wenda_html(access_rules, access_rules_objs)
+                result_html = get_left_wenda_html(request,access_rules, access_rules_objs)
 
                 return mark_safe(result_html)
 
@@ -109,7 +109,7 @@ def get_top_houtai_html():
 
 
 # 左侧功能 问答
-def get_left_wenda_html(access_rules, access_rules_objs):
+def get_left_wenda_html(request,access_rules, access_rules_objs):
 
     result_html = """
         <div class="tab-pane animation-fade height-full" id="admui-navTabsItem-1" role="tabpanel">
@@ -398,18 +398,18 @@ def get_left_wenda_html(access_rules, access_rules_objs):
                 </a>
             </li>
         """.format(keywords_top_set=reverse("keywords_top_set"))
-
-    # 覆盖报表
-    access_rules_obj = access_rules_objs.filter(name="覆盖报表", url_path=reverse("cover_reports"))
-    if access_rules_obj and access_rules_obj[0].id in access_rules:
-        cover_reports_html = """
-            <li class="site-menu-item">
-                <a data-pjax="" href="{cover_reports}" target="_blank">
-                    <i class="icon fa-bar-chart" aria-hidden="true"></i>
-                    <span class="site-menu-title margin-left-5">覆盖报表</span>
-                </a>
-            </li>
-        """.format(cover_reports=reverse("cover_reports"))
+    if request.session['user_id'] != 26:
+        # 覆盖报表
+        access_rules_obj = access_rules_objs.filter(name="覆盖报表", url_path=reverse("cover_reports"))
+        if access_rules_obj and access_rules_obj[0].id in access_rules:
+            cover_reports_html = """
+                <li class="site-menu-item">
+                    <a data-pjax="" href="{cover_reports}" target="_blank">
+                        <i class="icon fa-bar-chart" aria-hidden="true"></i>
+                        <span class="site-menu-title margin-left-5">覆盖报表</span>
+                    </a>
+                </li>
+            """.format(cover_reports=reverse("cover_reports"))
 
     # 知道回答
     access_rules_obj = access_rules_objs.filter(name="知道回答", url_path=reverse("zhidaohuida"))
