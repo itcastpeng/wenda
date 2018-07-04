@@ -707,7 +707,7 @@ def keywords_top_page_cover_excel(request,user_id=None):
             if not keywords_top_info_objs:
                 continue
 
-            user_role = request.session.get('role_id')
+            user_role = request.session['role_id']
             if user_id:
                 user_objs = models.UserProfile.objects.filter(id=user_id)
                 user_role = user_objs[0].role_id
