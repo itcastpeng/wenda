@@ -639,7 +639,7 @@ def rank_data_generate_excel(file_name, data_list):
 
 # 生成指定首页关键词覆盖报表 和 营销顾问能够直接上传的报表
 @app.task
-def keywords_top_page_cover_excel(request,user_id=None):
+def keywords_top_page_cover_excel(user_id=None):
     if user_id:
         user_profile_objs = models.UserProfile.objects.filter(id=user_id)
     else:
@@ -701,7 +701,7 @@ def keywords_top_page_cover_excel(request,user_id=None):
 
             # 生成营销顾问直接能够上传的报表
             keywords_top_info_objs = models.KeywordsTopInfo.objects.filter(
-                keyword__client_user=user_obj).values("url", "title").annotate(Count("url")).order_by("url__count")
+                keyword__client_user=user_obj).values("url", "title", "initial_num", "current_number").annotate(Count("url")).order_by("url__count")
             guanjianci_leixing = ''
 
             if not keywords_top_info_objs:
@@ -726,8 +726,8 @@ def keywords_top_page_cover_excel(request,user_id=None):
             ws.cell(row=1, column=9, value="更新时间")
             ws.cell(row=1, column=10, value="状态")
             # if user_role in [1,4,7]:
-            ws.cell(row=1, column=11, value="初始值")
-            ws.cell(row=1, column=12, value="当前值")
+            ws.cell(row=1, column=11, value="浏览量初始值")
+            ws.cell(row=1, column=12, value="浏览量当前值")
             url_publish_list = [i[0] for i in models.WendaRobotTask.objects.filter(task__release_user=user_obj,
                 wenda_type=2, ).values_list(
                 "wenda_url")]
@@ -774,10 +774,10 @@ def keywords_top_page_cover_excel(request,user_id=None):
                     initial_num = 0
                     current_number = 0
                     # if user_role in [1,4,7]:
-                    if obj.initial_num:
-                        initial_num =   obj.initial_num
-                    if obj.current_number:
-                        current_number = obj.current_number
+                    if obj['initial_num']:
+                        initial_num = obj['initial_num']
+                    if obj['current_number']:
+                        current_number = obj['current_number']
                     # print("-->", n, obj["id"], url, title, url__count, keywords, is_caina, huifu_num, flag_publish_str)
                     try:
                         ws.cell(row=n, column=1, value=n)
