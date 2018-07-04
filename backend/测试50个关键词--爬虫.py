@@ -147,6 +147,7 @@ class GuanJianCi:
                                 self.browser.get(zhidao_url)
 
                                 sleep(2)
+
                                 try:
                                     print('删除为什么')
                                     js = "document.getElementsByClassName('fold-num-why-btn')[0].remove()"
@@ -191,8 +192,6 @@ class GuanJianCi:
                                 except InvalidSelectorException:
                                     print('没有折叠回答')
 
-
-                                sleep(2)
                                 # 获取页面内容
                                 ret = self.browser.page_source
                                 soup = BeautifulSoup(ret, 'lxml')

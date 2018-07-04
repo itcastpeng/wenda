@@ -123,7 +123,7 @@ def keywords_top_set(request):
         print('client_user_id ---------- > ',client_user_id)
         # 排序
         column_list = [
-             "client_user_id","client_user_type"
+             "client_user_id","client_user_type","xinlaowenda_xuanze"
             # "id","keyword", "top_page_cover",
             # "create_date", "oper_user_id", "oper",
         ]
@@ -146,6 +146,9 @@ def keywords_top_set(request):
                         q.add(Q(**{"username__username" + "__contains": "测试"}), Q.AND)
                 elif field == "client_user_id":
                     q.add(Q(**{"username_id": request.GET[field]}), Q.AND)
+                elif field == 'xinlaowenda_xuanze':
+                    if request.GET.get(field) == '1':
+                        q.add(Q(**{"username__laowenda_youxian":1}),Q.AND)
                 else:
                     q.add(Q(**{field: request.GET[field]}), Q.AND)
                 # q.add(Q(**{field + "__contains": request.GET[field]}), Q.AND)
