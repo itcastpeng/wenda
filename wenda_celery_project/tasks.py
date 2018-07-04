@@ -639,7 +639,7 @@ def rank_data_generate_excel(file_name, data_list):
 
 # 生成指定首页关键词覆盖报表 和 营销顾问能够直接上传的报表
 @app.task
-def keywords_top_page_cover_excel(request,user_id=None):
+def keywords_top_page_cover_excel(user_id=None):
     if user_id:
         user_profile_objs = models.UserProfile.objects.filter(id=user_id)
     else:
