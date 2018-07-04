@@ -326,7 +326,7 @@ def keywords_top_set_oper(request, oper_type, o_id):
 
         elif oper_type == "shengchengbaobiao":
             print('o_id -->', o_id)
-            tasks.keywords_top_page_cover_excel.delay(request,o_id)
+            tasks.keywords_top_page_cover_excel.delay(o_id)
             response.status = True
             response.message = "报表生成中,请稍后查看"
 
