@@ -518,7 +518,7 @@ def get_wenda_task(request):
                     return JsonResponse(response.__dict__)
 
                 wenda_robot_task_obj.update_date = datetime.datetime.now()
-                wenda_robot_task_obj.next_date = datetime.datetime.now() + datetime.timedelta(minutes=10)
+                wenda_robot_task_obj.next_date = datetime.datetime.now() + datetime.timedelta(minutes=20)
 
                 wenda_robot_task_obj.save()
 

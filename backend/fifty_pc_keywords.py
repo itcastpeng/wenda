@@ -17,7 +17,7 @@ sys.path.append(project_dir)
 print(project_dir)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'wenda.settings'
 from selenium.webdriver.common.keys import Keys
-
+from selenium.webdriver.common.touch_actions import TouchActions
 
 class GuanJianCi:
     # 初始化文件
@@ -41,7 +41,7 @@ class GuanJianCi:
     # 获取输入框  输入关键词 查询
     def data_url(self, user_id, keyword, guanjianci_id):
         # 获取输入框  输入 关键词 并查询
-        print('-----------输入数据-----',keyword)
+        print('-----------输入数据-----',keyword, 'user_id---->',user_id)
         self.browser.get(self.url)
         self.browser.find_element_by_id('index-kw').send_keys(keyword)
         self.timesleep()
@@ -69,6 +69,7 @@ class GuanJianCi:
                     zhidao_url = dict_lianjie['mu']
                     # 判断以zhidao开头的链接 ---判断是否为百度知道链接---
                     if zhidao_url.startswith('https://zhidao.baidu') or zhidao_url.startswith('http://zhidao.baidu'):
+                        print('与自己链接匹配的知道url 与order============= > ', zhidao_url, order)
                         # 获取当前url
                         data_temp = {
                             'client_user_id': user_id,
@@ -78,7 +79,6 @@ class GuanJianCi:
                         ret_panduan = requests.post(self.panduan_url, data=data_temp)
                         # 如果是自己的链接 判断答案
                         if ret_panduan:
-                            print('与自己链接匹配的知道url 与order============= > ', zhidao_url, order)
                             self.timesleep()
                             ret_json = ret_panduan.content.decode()
                             str_ret = json.loads(ret_json)
@@ -128,14 +128,55 @@ class GuanJianCi:
                                     self.browser.get_screenshot_as_file(
                                         './picture/' + keyword + '--2--' + '{guanjianci_num}.png'.format(
                                             guanjianci_num=guanjianci_num))
-                                    self.browser.get(zhidao_url)
+
+
                                     print('---截第三张截图---')
-                                    js = """$(".best-answer-container").css({"border":"3px solid red"})"""
-                                    self.browser.execute_script(js)
-                                    self.timesleep()
-                                    self.browser.get_screenshot_as_file(
-                                        './picture/' + keyword + '--3--' + '{guanjianci_num}.png'.format(
-                                            guanjianci_num=guanjianci_num))
+                                    self.browser.get(zhidao_url)
+                                    Action = TouchActions(self.browser)
+                                    # 点击展开折叠
+                                    # el = self.browser.find_element_by_xpath('//*[@id="sfr-app"]/div/div[2]/div[1]/div[5]/div')
+                                    el = self.browser.find_element_by_class_name('wgt-replies-entry')
+                                    sleep(3)
+                                    Action.tap(el).perform()
+                                    sleep(2)
+                                    # 获取 页面内容
+                                    ret = self.browser.page_source
+                                    soup = BeautifulSoup(ret, 'lxml')
+                                    # 百度知道最佳答案
+                                    div_tag_wrap = soup.find('div', class_='best-answer-container')
+                                    zhidao_zuijia_daan = div_tag_wrap.find('div',
+                                        class_='full-content inchain-replaced').get_text().strip()
+                                    # 百度知道其他答案
+                                    id_tag = soup.find('div', id='other-replies-list')
+                                    div_tags = id_tag.find_all('div', class_='full-content')
+                                    num = 0
+                                    for div_tag in div_tags:
+                                        num += 1
+                                        zhidao_daan = div_tag.get_text()
+                                        print('num ------- > ', num)
+                                        print('知道其他答案 =========== > ', zhidao_daan)
+                                        if daan_str in zhidao_daan:
+                                            print('进入 其他 答案-------')
+                                            div_tag = self.browser.find_element_by_xpath(
+                                                '//*[@id="js-replies-container"]/div[{}]'.format(num))
+                                            js = "window.scrollTo(0,{})".format(int(div_tag.location['y']))
+                                            self.browser.execute_script(js)
+                                            js = """$(".full-content").eq("{}").css({})""".format(int(num),
+                                                {"border": "3px solid red"})
+                                            self.browser.execute_script(js)
+                                            print('知道其他答案 截屏=========== > ')
+                                            self.browser.get_screenshot_as_file(
+                                                './picture/' + keyword + '--3--' + '{guanjianci_num}.png'.format(
+                                                    guanjianci_num=guanjianci_num))
+
+                                        else:
+                                            if daan_str in zhidao_zuijia_daan:
+                                                print('进入最佳答案-----')
+                                                js = """$(".best-answer-container").css({"border":"3px solid red"})"""
+                                                self.browser.execute_script(js)
+                                                self.browser.get_screenshot_as_file(
+                                                    './picture/' + keyword + '--3--' + '{guanjianci_num}.png'.format(
+                                                        guanjianci_num=guanjianci_num))
                                     sleep(3)
                                     jieping_1 = open('./picture/' + keyword + '--1--' + '{guanjianci_num}.png'.format(
                                         guanjianci_num=guanjianci_num), 'rb').read()
@@ -178,7 +219,7 @@ class GuanJianCi:
                 else:
                     continue
             except Exception as e:
-                # print('错误----> ', e)
+                print('错误----> ', e)
                 pass
     #
     def __del__(self):
