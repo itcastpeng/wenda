@@ -1673,6 +1673,8 @@ def keywords_select_models(request):
 @csrf_exempt
 def keywords_cover_select_models(request):
     rc = redis.StrictRedis(host=redis_host, port=6379,db=8, decode_responses=True)
+    if rc.llen('data') > 10000:
+        return HttpResponse('数据已经大于一万条，不缓存数据了')
 
     now_date = datetime.datetime.now().strftime("%Y-%m-%d")
     # 判断含有老问答的客户优先查覆盖
