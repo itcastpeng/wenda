@@ -126,11 +126,11 @@ app.conf.beat_schedule = {
         'schedule': crontab('0', '1', '*', '*', '*'),   # 每天早上9点发送微信通知
 
     },
-    # 更新机器人日志发布次数
-    'robot_release_num': {
-        'task': 'wenda_celery_project.tasks.robot_release_num',
-        'schedule': crontab('*/10', '*', '*', '*', '*'),
-    },
+    # # 更新机器人日志发布次数
+    # 'robot_release_num': {
+    #     'task': 'wenda_celery_project.tasks.robot_release_num',
+    #     'schedule': crontab('*/10', '*', '*', '*', '*'),
+    # },
 
     # 查询每日覆盖量微信推送
     'weixin_meiri_fugai_tuisong': {
