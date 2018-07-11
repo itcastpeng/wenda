@@ -726,8 +726,8 @@ def keywords_top_page_cover_excel(user_id=None):
             ws.cell(row=1, column=9, value="更新时间")
             ws.cell(row=1, column=10, value="状态")
             # if user_role in [1,4,7]:
-            ws.cell(row=1, column=11, value="浏览量初始值")
-            ws.cell(row=1, column=12, value="浏览量当前值")
+            # ws.cell(row=1, column=11, value="浏览量初始值")
+            # ws.cell(row=1, column=12, value="浏览量当前值")
             url_publish_list = [i[0] for i in models.WendaRobotTask.objects.filter(task__release_user=user_obj,
                 wenda_type=2, ).values_list(
                 "wenda_url")]
@@ -771,14 +771,12 @@ def keywords_top_page_cover_excel(user_id=None):
 
                     keywords = "\n".join(keywords_list)
 
-                    initial_num = 0
-                    current_number = 0
-                    # if user_role in [1,4,7]:
-                    if obj['initial_num']:
-                        initial_num = obj['initial_num']
-                    if obj['current_number']:
-                        current_number = obj['current_number']
-                    # print("-->", n, obj["id"], url, title, url__count, keywords, is_caina, huifu_num, flag_publish_str)
+                    # initial_num = 0
+                    # current_number = 0
+                    # if obj['initial_num']:
+                    #     initial_num = obj['initial_num']
+                    # if obj['current_number']:
+                    #     current_number = obj['current_number']
                     try:
                         ws.cell(row=n, column=1, value=n)
                         ws.cell(row=n, column=2, value=url)
@@ -791,8 +789,8 @@ def keywords_top_page_cover_excel(user_id=None):
                         ws.cell(row=n, column=9, value=update_date)
                         ws.cell(row=n, column=10, value=flag_publish_str)
                         # if user_role in [1,4,7]:
-                        ws.cell(row=n, column=11, value=initial_num)
-                        ws.cell(row=n, column=12, value=current_number)
+                        # ws.cell(row=n, column=11, value=initial_num)
+                        # ws.cell(row=n, column=12, value=current_number)
 
                         n += 1
                     except IllegalCharacterError:
