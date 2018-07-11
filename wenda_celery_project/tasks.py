@@ -701,7 +701,8 @@ def keywords_top_page_cover_excel(user_id=None):
 
             # 生成营销顾问直接能够上传的报表
             keywords_top_info_objs = models.KeywordsTopInfo.objects.filter(
-                keyword__client_user=user_obj).values("url", "title", "initial_num", "current_number").annotate(Count("url")).order_by("url__count")
+                # keyword__client_user=user_obj).values("url", "title", "initial_num", "current_number").annotate(Count("url")).order_by("url__count")
+                keyword__client_user=user_obj).values("url", "title").annotate(Count("url")).order_by("url__count")
             guanjianci_leixing = ''
 
             if not keywords_top_info_objs:
