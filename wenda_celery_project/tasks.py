@@ -974,6 +974,7 @@ def userprofile_keywords_cover(debug=False):
             create_date__year=date_obj.year,
             create_date__month=date_obj.month,
             create_date__day=date_obj.day,
+            keywords__client_user__status=True
         ).order_by("-create_date")
 
         if not search_objs:
