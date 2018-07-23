@@ -1237,8 +1237,12 @@ def current_oper_task(request):
             status__gte=6
         ).values("task__release_user_id").annotate(Count("id"))
         user_list_id = [i["task__release_user_id"] for i in user_data]
-        q = Q(Q(client_user_id__in=user_list_id) & Q(is_delete=False) & Q(
-            Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date)))
+        q = Q(
+                Q(client_user_id__in=user_list_id) &
+                Q(client_user__status=1) &
+                Q(is_delete=False) & 
+                Q(Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date))
+        )
         keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).order_by('client_user')[
                         0:10]
 
