@@ -1692,6 +1692,7 @@ def keywords_cover_select_models(request):
     q = Q(
         Q(client_user_id__in=user_list_id) &
         Q(is_delete=False) &
+        Q(client_user__status=1) &
         Q(Q(get_select_date__isnull=True) | Q(get_select_date__lt=get_select_date)) &
         Q(Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date))
     )
