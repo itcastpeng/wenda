@@ -1248,8 +1248,12 @@ def current_oper_task(request):
 
         # 如果查询覆盖的词查完,则查询指定关键词中未查询的词
         if not keywords_objs:
-            q = Q(Q(status=1) & Q(is_delete=False) & Q(
-                Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date)))
+            q = Q(
+                    Q(status=1) &
+                    Q(is_delete=False) &
+                    Q(client_user__status=1) &
+                    Q(Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date))
+            )
             keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).order_by(
                 'client_user')[0:10]
 
