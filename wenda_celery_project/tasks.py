@@ -1286,14 +1286,14 @@ def update_client_covering_data():
             create_date__gte=now_date
         ).count()
 
-
         if client_user_id == 285: # 晓嘉容艺术中心 覆盖量太多减少到200-300之间
             # today_cover_num = randint(150,400)
             num_objs = models.UserprofileKeywordsCover.objects.filter(
                 client_user_id=client_user_id,
                 create_date__gte=now_date
             )
-            today_cover_num = num_objs[0].cover_num
+            if num_objs:
+                today_cover_num = num_objs[0].cover_num
 
         # 总发布次数
         total_publish_num = models.RobotAccountLog.objects.filter(
