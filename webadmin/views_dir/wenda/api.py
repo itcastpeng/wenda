@@ -1075,6 +1075,7 @@ def keywords_cover(request):
                 "kid": redis_data['keyword_id'],  # 关键词id
                 "keyword": redis_data['keyword'],  # 关键词
                 "client_user_id": redis_data['client_user_id'],  # 客户id
+                "map_match_keywords": redis_data['map_match_keywords'],  # 地图匹配文字
             }
 
             response.status = True
@@ -1727,11 +1728,13 @@ def keywords_cover_select_models(request):
             client_user_id = keywords_obj.client_user_id
             keyword_id = keywords_obj.id
             area = keywords_obj.area
+            map_match_keywords = keywords_obj.client_user.map_match_keywords
             redis_data_list = {
                 'keyword': keyword,
                 'client_user_id': client_user_id,
                 'keyword_id': keyword_id,
-                'area': area
+                'area': area,
+                'map_match_keywords': map_match_keywords
             }
             rc.lpush('data', json.dumps(redis_data_list))
             keywords_obj.get_select_date = datetime.datetime.now()
