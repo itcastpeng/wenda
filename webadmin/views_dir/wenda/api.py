@@ -1162,7 +1162,7 @@ def check_zhidao_url(request):
 
                 if not keywords_top_info_objs:
                     obj = models.KeywordsTopInfo.objects.create(
-                        initial_num=browse_times_text,
+                        # initial_num=browse_times_text,
                         page_type=page_type,
                         keyword_id=keyword_id,
                         title=title,
@@ -1178,8 +1178,8 @@ def check_zhidao_url(request):
                     keywords_top_set_obj.status = 2
                     keywords_top_set_obj.save()
 
-                else:
-                    keywords_top_info_objs.update(update_date=datetime.datetime.now(),current_number=browse_times_text)
+                # else:
+                #     keywords_top_info_objs.update(update_date=datetime.datetime.now(),current_number=browse_times_text)
 
             response.status = True
             response.data = None  # data 为空,表示不是我们的数据
