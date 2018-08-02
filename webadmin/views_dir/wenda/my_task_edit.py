@@ -482,12 +482,12 @@ def my_task_edit_oper(request, oper_type, o_id):
                 img_content_list.append(img_content)
 
                 if edit_task_management_obj.task.task.wenda_type in [1, 10]:
-                    if not title or not content:
+                    if not title or not (content or img_content):
                         response.status = False
                         response.message = "上传数据异常"
                         break
                 else:
-                    if not url or not title or not content:
+                    if not url or not title or not (content or img_content):
                         response.status = False
                         response.message = "上传数据异常"
                         break
