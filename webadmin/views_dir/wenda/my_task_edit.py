@@ -463,19 +463,23 @@ def my_task_edit_oper(request, oper_type, o_id):
             url_list = []
             title_list = []
             content_list = []
+            img_content_list = []
             for row in range(2, sh.nrows):
                 url = sh.cell_value(rowx=row, colx=0)     # 链接
                 title = sh.cell_value(rowx=row, colx=1)     # 问题
                 content = sh.cell_value(rowx=row, colx=2)     # 答案
+                img_content = sh.cell_value(rowx=row, colx=3)     # 图片内容
 
                 excel_data.append({
                     "url": url,
                     "title": title,
-                    "content": content
+                    "content": content,
+                    "img_content": img_content
                 })
                 url_list.append(url)
                 title_list.append(title)
                 content_list.append(content)
+                img_content_list.append(img_content)
 
                 if edit_task_management_obj.task.task.wenda_type in [1, 10]:
                     if not title or not content:
@@ -518,19 +522,19 @@ def my_task_edit_oper(request, oper_type, o_id):
                         }
                         response.message = "问题或答案中包含敏感词"
 
-                    if edit_task_management_obj.task.task.wenda_type in [1, 10]:
-                        if response.status and len(set(content_list)) != len(content_list):
-                            response.status = False
-                            response.message = "提交问答答案有重复"
+                    # if edit_task_management_obj.task.task.wenda_type in [1, 10]:
+                    #     if response.status and len(set(content_list)) != len(content_list):
+                    #         response.status = False
+                    #         response.message = "提交问答答案有重复"
 
-                    if response.status and len(set(content_list)) != len(content_list):
-                        response.status = False
-                        response.message = "提交问答答案有重复"
+                    # if response.status and len(set(content_list)) != len(content_list):
+                    #     response.status = False
+                    #     response.message = "提交问答答案有重复"
 
-                    print(len(title_list), len(content_list))
-                    if response.status and len(title_list) != len(content_list):
-                        response.status = False
-                        response.message = "提交问答问题与提交问答问题数量不符"
+                    # print(len(title_list), len(content_list))
+                    # if response.status and len(title_list) != len(content_list):
+                    #     response.status = False
+                    #     response.message = "提交问答问题与提交问答问题数量不符"
 
             if response.status:
                 response.status = True
@@ -545,6 +549,7 @@ def my_task_edit_oper(request, oper_type, o_id):
                     content = content_list[index]
                     title = title_list[index]
                     url = url_list[index]
+                    img_content = img_content_list[index]
 
                     # 判断所有的子任务中是否已经存在该内容
                     for i_obj in models.EditTaskManagement.objects.filter(task_id=edit_task_management_obj.task.id):
@@ -573,6 +578,7 @@ def my_task_edit_oper(request, oper_type, o_id):
                             title=title,
                             url=url,
                             status=status,
+                            img_content=img_content
                         ))
 
                 print("query -->", len(query))

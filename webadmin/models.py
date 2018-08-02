@@ -512,7 +512,8 @@ class EditPublickTaskManagement(models.Model):
     task = models.ForeignKey(to='EditTaskManagement')
     url = models.CharField(verbose_name="链接", max_length=128, null=True, blank=True)
     title = models.CharField(verbose_name="问题", max_length=128, null=True, blank=True)
-    content = models.TextField(verbose_name="答案")
+    content = models.TextField(verbose_name="答案", null=True, blank=True)
+    img_content = models.TextField(verbose_name="图片内容", null=True, blank=True)
     submit_num = models.SmallIntegerField(verbose_name="提交次数", default=0)
 
     status_choices = (
