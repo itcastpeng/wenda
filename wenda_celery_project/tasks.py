@@ -46,6 +46,7 @@ def CreateExcel(excel_data, file_save_path):
     ws.cell(row=2, column=1, value="问答地址链接")
     ws.cell(row=2, column=2, value="问题")
     ws.cell(row=2, column=3, value="答案")
+    ws.cell(row=2, column=4, value="图片内容")
 
     ft1 = Font(name='宋体', size=28)
     a1 = ws['A1']
