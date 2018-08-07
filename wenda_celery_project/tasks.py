@@ -233,6 +233,7 @@ def ToRobotTask():
             url = sh.cell_value(rowx=row, colx=0)
             title = sh.cell_value(rowx=row, colx=1)
             content = sh.cell_value(rowx=row, colx=2)
+            img_content = sh.cell_value(rowx=row, colx=3)   # 图片编写内容
 
             status = 1
             if obj.wenda_type == 2:
@@ -250,6 +251,7 @@ def ToRobotTask():
                 wenda_url=url,
                 title=title,
                 content=content,
+                img_content=img_content,
                 release_platform=obj.release_platform,
                 wenda_type=obj.wenda_type,
                 next_date=datetime.datetime.now() + datetime.timedelta(minutes=30),

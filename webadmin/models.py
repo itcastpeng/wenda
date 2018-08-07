@@ -321,7 +321,8 @@ class WendaRobotTask(models.Model):
     # user = models.ForeignKey("UserProfile", verbose_name="发布任务的用户", related_name="wenda_robot_task_create_user")
 
     title = models.CharField(verbose_name="问题", max_length=128, null=True, blank=True)
-    content = models.TextField(verbose_name="答案")
+    content = models.TextField(verbose_name="答案", default=True, null=True)
+    img_content = models.TextField(verbose_name="答案", default=True, null=True)
 
     wenda_url = models.CharField(verbose_name="问答的url", null=True, blank=True, max_length=128)  # 新问答的反链,或者老问答需要回答的地址
 
