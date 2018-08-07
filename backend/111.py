@@ -9,6 +9,7 @@ import sys
 project_dir = os.path.dirname(os.getcwd())
 
 sys.path.append(project_dir)
+print(sys.path)
 
 os.environ['DJANGO_SETTINGS_MODULE'] ='wenda.settings'
 import django
