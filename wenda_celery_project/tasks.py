@@ -259,7 +259,7 @@ def ToRobotTask():
                 add_map=obj.add_map
             )
             try:
-                t_id = sh.cell_value(rowx=row, colx=3)
+                t_id = sh.cell_value(rowx=row, colx=4)
                 edit_publick_task_management_obj = models.EditPublickTaskManagement.objects.get(id=t_id)
                 edit_publick_task_management_obj.run_task = wenda_robot_task_obj
                 edit_publick_task_management_obj.save()
