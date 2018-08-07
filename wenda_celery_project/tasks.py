@@ -411,7 +411,8 @@ def edit_content_management_create_excel(o_id, file_save_path, wenda_type):
     ws.cell(row=2, column=1, value="问答地址链接")
     ws.cell(row=2, column=2, value="问题")
     ws.cell(row=2, column=3, value="答案")
-    ws.cell(row=2, column=4, value="任务编号")
+    ws.cell(row=2, column=4, value="图片内容")
+    ws.cell(row=2, column=5, value="任务编号")
 
     ft1 = Font(name='宋体', size=28)
     a1 = ws['A1']
@@ -442,7 +443,8 @@ def edit_content_management_create_excel(o_id, file_save_path, wenda_type):
                 ws.cell(row=row_line, column=1, value=obj.url)
             ws.cell(row=row_line, column=2, value=obj.title)
             ws.cell(row=row_line, column=3, value=obj.content)
-            ws.cell(row=row_line, column=4, value=obj.id)
+            ws.cell(row=row_line, column=4, value=obj.img_content)
+            ws.cell(row=row_line, column=5, value=obj.id)
         except IllegalCharacterError:
             continue
 
