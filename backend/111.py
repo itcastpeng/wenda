@@ -28,7 +28,7 @@ for obj in task_objs:
         file_path = obj.task_demand_file_path
 
     # 从excel 表格中读取数据
-    filename = os.path.join(project_dir, "wenda", file_path)
+    filename = os.path.join(project_dir, file_path)
     print(filename)
     book = xlrd.open_workbook(filename=filename)
     sh = book.sheet_by_index(0)
