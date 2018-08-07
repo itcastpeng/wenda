@@ -460,7 +460,7 @@ def get_wenda_task(request):
                     "task_id": wenda_robot_task_obj.id,
                     "release_platform": release_platform,
                     "status": wenda_robot_task_obj.status,
-                    "wenda_type": wenda_robot_task_obj.wenda_type
+                    "wenda_type": wenda_robot_task_obj.wenda_type,
                 }
 
                 # 没有任务ID的属于养账号的任务,发布任务的id 为 235 的也是养账号任务
@@ -476,6 +476,7 @@ def get_wenda_task(request):
                     response.data["url"] = wenda_robot_task_obj.wenda_url
                     response.data["title"] = wenda_robot_task_obj.title
                     response.data["content"] = wenda_robot_task_obj.content
+                    response.data["img_content"] = wenda_robot_task_obj.img_content
                     response.data["wenda_type"] = wenda_robot_task_obj.wenda_type
 
                     if wenda_robot_task_obj.task_id:  # 如果没有task_id 则是测试任务
