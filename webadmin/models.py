@@ -321,7 +321,8 @@ class WendaRobotTask(models.Model):
     # user = models.ForeignKey("UserProfile", verbose_name="发布任务的用户", related_name="wenda_robot_task_create_user")
 
     title = models.CharField(verbose_name="问题", max_length=128, null=True, blank=True)
-    content = models.TextField(verbose_name="答案", default=True, null=True)
+    content = models.TextField(verbose_name="答案", null=True, blank=True)
+    img_src = models.TextField(verbose_name="回复答案的图片获取到的链接", null=True, blank=True)
     img_content = models.TextField(verbose_name="答案", default=True, null=True)
 
     wenda_url = models.CharField(verbose_name="问答的url", null=True, blank=True, max_length=128)  # 新问答的反链,或者老问答需要回答的地址
@@ -725,7 +726,8 @@ class TongjiKeywords(models.Model):
     create_date = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
     task = models.ForeignKey("Task", verbose_name="属于哪个任务", related_name='tongjikeywords__task')
     title = models.CharField(verbose_name="问题", max_length=128)
-    content = models.TextField(verbose_name="答案")
+    content = models.TextField(verbose_name="答案", null=True, blank=True)
+    img_src = models.TextField(verbose_name="回复答案的图片获取到的链接", null=True, blank=True)
     url = models.CharField(verbose_name="知道链接", max_length=128)
 
     # 该字段用来判断自己操作的老问答被删除之后好用来打回给编辑

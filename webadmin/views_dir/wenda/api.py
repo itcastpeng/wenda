@@ -207,6 +207,7 @@ def get_wenda_task(request):
             phone = request.POST.get("phone")
             ipaddr = request.POST.get("ipaddr")
             area = request.POST.get("area")
+            img_src = request.POST.get("img_src")     # 回复内容发布图片获取到的图片url
 
             if current_url == "http://zhidao.baidu.com/new?word=&ie=GBK":
                 response.status = False
@@ -237,6 +238,9 @@ def get_wenda_task(request):
 
                             # 如果当前任务为已完成状态,不做任何处理
                             if wenda_robot_task_obj.status != 6:
+                                if img_src: # 如果回复内容存在图片，则保存图片
+                                    wenda_robot_task_obj.img_src = img_src
+
                                 task_ok(wenda_robot_task_obj)
                                 obj = models.TongjiKeywords.objects.filter(run_task=wenda_robot_task_obj)
 
@@ -247,7 +251,8 @@ def get_wenda_task(request):
                                         title=wenda_robot_task_obj.title,
                                         content=wenda_robot_task_obj.content,
                                         url=wenda_robot_task_obj.wenda_url,
-                                        run_task=wenda_robot_task_obj
+                                        run_task=wenda_robot_task_obj,
+                                        img_src=img_src
                                     )
 
                                 else:
