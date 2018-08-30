@@ -156,6 +156,12 @@ app.conf.beat_schedule = {
         'schedule': crontab('*/5', '*', '*', '*', '*'),
     },
 
+    # 定时查看进入队列的excel文件是否存在
+    'excel_is_exist': {
+        'task': 'wenda_celery_project.tasks.excel_is_exist',
+        'schedule': crontab('*/20', '*', '*', '*', '*'),
+    },
+
 }
 
 

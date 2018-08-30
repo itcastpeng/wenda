@@ -455,6 +455,16 @@ def edit_content_management_create_excel(o_id, file_save_path, wenda_type):
     wb.save(file_save_path)
 
 
+# 定时查看进入队列的excel文件是否存在
+@app.task
+def excel_is_exist():
+    objs = models.EditContentManagement.objects.select_related('task').filter(status=4)
+    for obj in objs:
+        res = os.path.exists(obj.task.task_result_file_path)
+        if not res:
+            print(obj.task.task_result_file_path, res)
+            edit_content_management_create_excel.delay(obj.id, obj.task.task_result_file_path, obj.task.wenda_type)
+
 # 生成异常报表
 @app.task
 def generate_error_excel(o_id, file_save_path):
