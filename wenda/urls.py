@@ -22,7 +22,8 @@ from webadmin.views_dir.myadmin import account, user_management, role_management
 from webadmin.views_dir.wenda import task_list, personal_center, financial_center, message, wenda_robot, api, \
     wait_clearing, my_task, set_keywords, rank_data, edit_content_management, my_task_edit, edit_error_content,\
     sensitive_word_library, big_data, edit_content_detail, client_day_covering_num, keywords_top_set, cover_reports, \
-    show_wenda_cover_num, zhidaohuida, case_library ,bianxiebaobiao,according_geturl,guwen_duijie_biao,fifty_guanjianci_jieping,my_client
+    show_wenda_cover_num, zhidaohuida, case_library ,bianxiebaobiao,according_geturl,guwen_duijie_biao,fifty_guanjianci_jieping,my_client,\
+    celery_api_fugaibaobiaogengxin
 
 from webadmin.views_dir.wechat import wechat
 
@@ -233,6 +234,8 @@ urlpatterns = [
 
     url(r'^admin/account/(?P<oper_type>\w+)/(?P<o_id>\d+)/', account.account_oper),   # 操作账户管理信息, 增删改
     url(r'^admin/account/', account.account, name="account"),  # 账户管理
+
+    url(r'^celery_apiFuGaiBaoBiaoUpdate/', celery_api_fugaibaobiaogengxin.celery_apiFuGaiBaoBiaoUpdate, name="celery_apiFuGaiBaoBiaoUpdate"),  # 账户管理
 
 
     url(r'^test/', views.test),
