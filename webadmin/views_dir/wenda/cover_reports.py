@@ -389,24 +389,28 @@ def cover_reports_oper(request, oper_type, o_id):
             startfugai = request.POST.get('startfugai')
             stopfugai = request.POST.get('stopfugai')
             client_id = request.POST.get('client_id')
-            print( '开始时间--结束时间 --  - ->',startfugai,stopfugai)
-            print('id -- -- -> ',client_id)
-            q = Q()
-            q.add(Q(create_date__gte=startfugai) & Q(create_date__lte=stopfugai) & Q(client_user_id=client_id),Q.AND)
-            print('q = == == == >',q)
-            if startfugai and stopfugai:
-                # objs = models.UserprofileKeywordsCover.objects.filter(q).values('cover_num')
-                objs = models.UserprofileKeywordsCover.objects.filter(q)
-                data_temp = {}
-                data_obj = 0
-                for obj in objs:
-                    data_temp[obj.create_date] = obj.cover_num
-                for index,data in data_temp.items():
-                    data_obj += int(data)
+            if not client_id:
+                response.code = 301
+                response.message = '请输入客户名称'
+            else:
+                print( '开始时间--结束时间 --  - ->',startfugai,stopfugai)
+                print('id -- -- -> ',client_id)
+                q = Q()
+                q.add(Q(create_date__gte=startfugai) & Q(create_date__lte=stopfugai) & Q(client_user_id=client_id),Q.AND)
+                print('q = == == == >',q)
+                if startfugai and stopfugai:
+                    # objs = models.UserprofileKeywordsCover.objects.filter(q).values('cover_num')
+                    objs = models.UserprofileKeywordsCover.objects.filter(q)
+                    data_temp = {}
+                    data_obj = 0
+                    for obj in objs:
+                        data_temp[obj.create_date] = obj.cover_num
+                    for index,data in data_temp.items():
+                        data_obj += int(data)
 
-                response.code = 200
-                response.message = '查询成功'
-                response.data = data_obj
+                    response.code = 200
+                    response.message = '查询成功'
+                    response.data = data_obj
             return JsonResponse(response.__dict__)
 
         # 重新生成覆盖报表
