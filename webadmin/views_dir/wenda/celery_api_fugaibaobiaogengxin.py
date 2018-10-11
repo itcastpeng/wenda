@@ -4,6 +4,9 @@ from webadmin import models
 from webadmin.views_dir import pub
 from django.http import JsonResponse
 
+from django.db.models import Count, Sum
+
+
 def celery_apiFuGaiBaoBiaoUpdate(request):
     response = pub.BaseResponse()
     now_date = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -27,9 +30,10 @@ def celery_apiFuGaiBaoBiaoUpdate(request):
         total_cover_num = 0
         userprofile_keywords_cover_objs = models.UserprofileKeywordsCover.objects.filter(
             client_user_id=client_user_id
-        )
+        ).values('create_date', 'cover_num').annotate(Count('cover_num'))
+
         for userprofile_keywords_cover_obj in userprofile_keywords_cover_objs:
-            total_cover_num += userprofile_keywords_cover_obj.cover_num
+            total_cover_num += userprofile_keywords_cover_obj['cover_num']
 
         # if client_user_id == 140:  # 西宁东方泌尿专科 删除词了,之前对应的覆盖也删除了,单独处理
         #     userprofile_keywords_cover_objs = models.UserprofileKeywordsCover.objects.filter(

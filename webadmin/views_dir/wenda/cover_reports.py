@@ -13,7 +13,7 @@ from webadmin.forms.form_cover_update_jifei import jifeiupdateForm
 from django.db.models import F
 from django.db.models import Q
 from webadmin.views_dir.wenda.message import AddMessage
-from django.db.models import Count,Sum
+from django.db.models import Count, Sum
 import os
 import time
 from wenda_celery_project import tasks
@@ -394,23 +394,26 @@ def cover_reports_oper(request, oper_type, o_id):
                 response.message = '请输入客户名称'
             else:
                 print( '开始时间--结束时间 --  - ->',startfugai,stopfugai)
-                print('id -- -- -> ',client_id)
-                q = Q()
-                q.add(Q(create_date__gte=startfugai) & Q(create_date__lte=stopfugai) & Q(client_user_id=client_id),Q.AND)
-                print('q = == == == >',q)
+                print('id -- -- -> ', client_id)
+                q = Q(Q(create_date__gte=startfugai) & Q(create_date__lte=stopfugai) & Q(client_user_id=client_id))
+                # q.add(Q(create_date__gte=startfugai) & Q(create_date__lte=stopfugai) & Q(client_user_id=client_id),Q.AND)
+                print('q = == == == >', q)
                 if startfugai and stopfugai:
                     # objs = models.UserprofileKeywordsCover.objects.filter(q).values('cover_num')
-                    objs = models.UserprofileKeywordsCover.objects.filter(q)
+                    objs = models.UserprofileKeywordsCover.objects.filter(q).values('create_date', 'cover_num').annotate(Count('cover_num'))
+                    print(objs)
                     data_temp = {}
-                    data_obj = 0
+                    # data_obj = 0
+                    sum_cover_num = 0
                     for obj in objs:
-                        data_temp[obj.create_date] = obj.cover_num
-                    for index,data in data_temp.items():
-                        data_obj += int(data)
+                        sum_cover_num += obj['cover_num']
+                        # data_temp[obj.create_date] = obj.cover_num
+                    # for index, data in data_temp.items():
+                    #     sum_cover_num += int(data)
 
                     response.code = 200
                     response.message = '查询成功'
-                    response.data = data_obj
+                    response.data = sum_cover_num
             return JsonResponse(response.__dict__)
 
         # 重新生成覆盖报表
