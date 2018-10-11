@@ -25,14 +25,20 @@ def celery_apiFuGaiBaoBiaoUpdate(request):
 
         # 总覆盖数
         total_cover_num = 0
-        if client_user_id == 140:  # 西宁东方泌尿专科 删除词了,之前对应的覆盖也删除了,单独处理
-            userprofile_keywords_cover_objs = models.UserprofileKeywordsCover.objects.filter(
-                client_user_id=client_user_id)
-            for userprofile_keywords_cover_obj in userprofile_keywords_cover_objs:
-                total_cover_num += userprofile_keywords_cover_obj.cover_num
+        userprofile_keywords_cover_objs = models.UserprofileKeywordsCover.objects.filter(
+            client_user_id=client_user_id
+        )
+        for userprofile_keywords_cover_obj in userprofile_keywords_cover_objs:
+            total_cover_num += userprofile_keywords_cover_obj.cover_num
 
-        else:
-            total_cover_num = obj['id__count']
+        # if client_user_id == 140:  # 西宁东方泌尿专科 删除词了,之前对应的覆盖也删除了,单独处理
+        #     userprofile_keywords_cover_objs = models.UserprofileKeywordsCover.objects.filter(
+        #         client_user_id=client_user_id)
+        #     for userprofile_keywords_cover_obj in userprofile_keywords_cover_objs:
+        #         total_cover_num += userprofile_keywords_cover_obj.cover_num
+        #
+        # else:
+        #     total_cover_num = obj['id__count']
             # objs = models.UserprofileKeywordsCover.objects.filter(client_user_id=obj['keywords__client_user_id'])
             # for obj in objs:
             #     total_cover_num += obj.cover_num
