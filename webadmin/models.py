@@ -47,6 +47,7 @@ class UserProfile(models.Model):
     username = models.CharField(verbose_name="姓名", max_length=32)
 
     zhidao_hehuoren_website = models.CharField(verbose_name="知道合伙人主页", max_length=128, null=True, blank=True)
+    xiongzhanghao_website = models.CharField(verbose_name="熊掌号主页", max_length=128, null=True, blank=True)
 
     role = models.ForeignKey("Role", verbose_name="角色", null=True, blank=True)
 

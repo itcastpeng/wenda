@@ -43,6 +43,10 @@ class UserProfileCreateForm(Form):
         required=False,
     )
 
+    xiongzhanghao_website = fields.CharField(
+        required=False,
+    )
+
     def clean_username(self):
         username = self.data["username"]
         user_profile_objs = models.UserProfile.objects.filter(username=username, is_delete=False)
