@@ -39,6 +39,9 @@ class UserProfileCreateForm(Form):
     xinlaowenda_status = fields.IntegerField(
         required=False,
     )
+    zhidao_hehuoren_website = fields.IntegerField(
+        required=False,
+    )
 
     def clean_username(self):
         username = self.data["username"]
@@ -55,7 +58,7 @@ class UserProfileCreateForm(Form):
         role_id = self.data["role_id"]
         xiaoshou_id = self.data["xiaoshou_id"]
         guwen_id = self.data["guwen_id"]
-        if role_id == "5":   # 如果创建的是客户角色
+        if role_id in ["5", "15"]:   # 如果创建的是客户角色
             if not guwen_id:
                 self.errors["guwen_id"] = "请选择营销顾问"
             elif not xiaoshou_id:
