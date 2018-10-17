@@ -1033,7 +1033,6 @@ def keywords_cover(request):
         rc = redis.StrictRedis(host=redis_host, port=6379,db=8, decode_responses=True)
         # 建立连接
 
-
         flag = True
         while True:
             redis_data = rc.rpop('data')
@@ -1063,12 +1062,15 @@ def keywords_cover(request):
             }
 
             # 当日查询次数
-            search_count = models.KeywordsSearchLog.objects.filter(create_date__gt=now_date).count()
+            search_count = models.KeywordsSearchLog.objects.filter(
+                create_date__gt=now_date,
+                keyword_id=redis_data['keyword_id']
+            ).count()
             if search_count < 2:   # 如果今日查询次数小于2次，则在查询一次
                 del updateData['update_select_cover_date']
 
-
-            models.KeywordsTopSet.objects.filter(id=redis_data['keyword_id']).update(**updateData)
+            keywords_top_set_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(id=redis_data['keyword_id'])
+            keywords_top_set_objs.update(**updateData)
             # KeywordsSearchLog
             models.KeywordsSearchLog.objects.create(
                 keyword_id=redis_data['keyword_id'],
@@ -1077,11 +1079,15 @@ def keywords_cover(request):
 
             print("--->4: ", datetime.datetime.now())
 
+            xiongzhanghao_website = keywords_top_set_objs[0].client_user.xiongzhanghao_website
+            zhidao_hehuoren_website = keywords_top_set_objs[0].client_user.zhidao_hehuoren_website
             data = {
                 "kid": redis_data['keyword_id'],  # 关键词id
                 "keyword": redis_data['keyword'],  # 关键词
                 "client_user_id": redis_data['client_user_id'],  # 客户id
                 "map_match_keywords": redis_data['map_match_keywords'],  # 地图匹配文字
+                "xiongzhanghao_website": xiongzhanghao_website,  # 熊掌号主页地址
+                "zhidao_hehuoren_website": zhidao_hehuoren_website,  # 知道合伙人主页地址
             }
 
             response.status = True
