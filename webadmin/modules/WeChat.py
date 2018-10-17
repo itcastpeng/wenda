@@ -47,7 +47,7 @@ class WeChatPublicSendMsg(object):
 
         ret = requests.get(url)
         print(ret.text)
-        self.access_token = json.loads(ret.text)["access_token"]
+        self.access_token = json.loads(ret.text).get('access_token')
         print(self.access_token)
 
         data = {
@@ -102,7 +102,7 @@ class WeChatPublicSendMsg(object):
         print(ret.text)
         print(json.loads(ret.text))
 
-        ticket = json.loads(ret.text)["ticket"]
+        ticket = json.loads(ret.text).get('ticket')
 
         url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket={TICKET}".format(
             TICKET=ticket

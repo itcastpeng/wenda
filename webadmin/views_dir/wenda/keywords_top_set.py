@@ -363,7 +363,7 @@ def keywords_top_set_oper(request, oper_type, o_id):
     else:
         # 添加
         if oper_type == "create":
-            client_objs = models.UserProfile.objects.filter(is_delete=False, role_id=5)
+            client_objs = models.UserProfile.objects.filter(is_delete=False, role_id__in=[5, 15])   # 5为普通用户，15为知道合伙人账号
             keywords_type_choices = models.KeywordsTopSet.keywords_type_choices
             return render(request, 'wenda/keywords_top_set/keywords_top_set_modal_create.html', locals())
 
