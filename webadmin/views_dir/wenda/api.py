@@ -1731,6 +1731,14 @@ def keywords_cover_select_models(request):
         '?'
     )[0:500]
 
+    if not keywords_objs:   # 如果启用的查询完了，则查询知道合伙人的关键词
+        keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(
+            Q(is_delete=False) &
+            Q(client_user__status=1) &
+            Q(Q(get_select_date__isnull=True) | Q(get_select_date__lt=get_select_date)) &
+            Q(Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date))
+        ).order_by('?')[0:500]
+
     if not keywords_objs:  # 如果启用的查询完了，则查询未启用的用户的关键词覆盖
         keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).order_by(
             '?'
