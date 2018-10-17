@@ -658,7 +658,7 @@ def keywords_top_page_cover_excel(user_id=None):
     if user_id:
         user_profile_objs = models.UserProfile.objects.filter(id=user_id)
     else:
-        user_profile_objs = models.UserProfile.objects.filter(role_id=5, is_delete=False)
+        user_profile_objs = models.UserProfile.objects.filter(role_id__in=[5, 15], is_delete=False)
 
     for user_obj in user_profile_objs:
 
