@@ -1259,6 +1259,15 @@ def current_oper_task(request):
         keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).order_by('client_user')[
                         0:10]
 
+        # 如果查询覆盖的词查完了，判断下是否有知道合伙人的任务
+        if not keywords_objs:
+            keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(
+                client_user__status=1,
+                is_delete=False,
+                client_user__role_id=15
+            ).filter(Q(Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date)))
+
+
         # 如果查询覆盖的词查完,则查询指定关键词中未查询的词
         if not keywords_objs:
             q = Q(
