@@ -1265,6 +1265,7 @@ def current_oper_task(request):
                     Q(status=1) &
                     Q(is_delete=False) &
                     Q(client_user__status=1) &
+                    Q(client_user__role_id=5) &
                     Q(Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=now_date))
             )
             keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(q).order_by(
