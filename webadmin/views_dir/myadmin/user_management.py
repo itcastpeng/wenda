@@ -121,6 +121,7 @@ def user_management_oper(request, oper_type, o_id):
             print('username ,xiaoshou_id - -- ->',username ,xiaoshou_id)
 
             form_obj = user.UserProfileCreateForm(request.POST)
+            print(form_obj.is_valid())
             if form_obj.is_valid():
                 form_obj.cleaned_data["oper_user_id"] = user_id
                 user_obj = models.UserProfile.objects.create(**form_obj.cleaned_data)
@@ -130,7 +131,7 @@ def user_management_oper(request, oper_type, o_id):
                 )
             else:
                 response.status = False
-                for i in ["username", "password", "role_id", "guwen_id", "xiaoshou_id",'xinlaowenda_status']:
+                for i in ["username", "password", "role_id", "guwen_id", "xiaoshou_id",'xinlaowenda_status', 'zhidao_hehuoren_website']:
                     if i in form_obj.errors:
                         response.message = form_obj.errors[i]
                         break

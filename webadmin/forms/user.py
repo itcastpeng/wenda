@@ -39,7 +39,7 @@ class UserProfileCreateForm(Form):
     xinlaowenda_status = fields.IntegerField(
         required=False,
     )
-    zhidao_hehuoren_website = fields.IntegerField(
+    zhidao_hehuoren_website = fields.CharField(
         required=False,
     )
 
