@@ -873,7 +873,7 @@ def tongji_kehu_shiyong():
 @app.task
 def cover_reports_generate_excel(file_name, data_list, debug, url_list=None):
     # 生成客户查看的覆盖报表
-    print('生成客户查看的覆盖报表 -->', len(data_list))
+    print('生成客户查看的覆盖报表 -->', len(data_list), url_list)
     wb = Workbook()
     ws = wb.active
     ws.cell(row=1, column=1, value="客户名称")
