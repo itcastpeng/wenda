@@ -1099,6 +1099,87 @@ def keywords_cover(request):
 
     return JsonResponse(response.__dict__)
 
+# 查询关键词覆盖(覆盖模式)  调试模式
+@csrf_exempt
+def keywords_cover_debug(request):
+    response = pub.BaseResponse()
+
+    if request.method == "POST":
+        """
+        {
+            'client_user_id': 25,
+            'task_type': 1,
+            'url': 'https://zhidao.baidu.com/question/578414474.html',
+            'kid': 2087,
+            'rank': 10,
+            'keyword': '胸部变大的好方法'
+        }
+        """
+        kid = request.POST.get("kid")
+        page_type = request.POST.get("task_type")
+        rank = request.POST.get("rank")
+        url = request.POST.get("url")
+        is_zhedie = request.POST.get("is_zhedie", False)
+
+        keywords_cover_obj = models.KeywordsCover.objects.filter(
+            keywords_id=kid,
+            page_type=page_type,
+            url=url,
+            create_date__gte=datetime.datetime.now().strftime("%Y-%m-%d")
+        )
+
+        if not keywords_cover_obj:
+            keywords_top_set_objs = models.KeywordsTopSet.objects.filter(id=kid)
+            keywords_top_set_objs.update(
+                update_select_cover_date=datetime.datetime.now()
+            )
+            wenda_robot_task_objs = models.WendaRobotTask.objects.filter(
+                task__release_user_id=keywords_top_set_objs[0].client_user.id,
+                wenda_url=url
+            )
+
+            models.EditPublickTaskManagement.objects.filter(run_task_id=wenda_robot_task_objs[0].id).update(status=3)
+
+            if wenda_robot_task_objs[0].add_map == 1:
+                task_type = 2
+            else:
+                task_type = 1
+
+            models.KeywordsCover.objects.create(
+                keywords_id=kid,
+                page_type=page_type,
+                rank=rank,
+                url=url,
+                task_type=task_type,
+                is_zhedie=is_zhedie
+            )
+
+        response.status = True
+        response.message = "添加成功"
+
+    else:
+        keywords_obj = models.KeywordsTopSet.objects.select_related('client_user', 'client_user__role').get(
+            Q(is_delete=False) &
+            Q(client_user__status=1) &
+            Q(client_user__role_id=15)
+        )
+
+        xiongzhanghao_website = keywords_obj.client_user.xiongzhanghao_website
+        zhidao_hehuoren_website = keywords_obj.client_user.zhidao_hehuoren_website
+        data = {
+            "kid": keywords_obj.id,  # 关键词id
+            "keyword": keywords_obj.keyword,  # 关键词
+            "client_user_id": keywords_obj.client_user_id,  # 客户id
+            "map_match_keywords": keywords_obj.client_user.map_match_keywords,  # 地图匹配文字
+            "xiongzhanghao_website": xiongzhanghao_website,  # 熊掌号主页地址
+            "zhidao_hehuoren_website": zhidao_hehuoren_website,  # 知道合伙人主页地址
+        }
+
+        response.status = True
+        response.data = data
+
+    return JsonResponse(response.__dict__)
+
 
 # 检查知道url 是我们自己操作的(覆盖模式)
 @csrf_exempt
