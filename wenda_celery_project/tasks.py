@@ -995,12 +995,7 @@ def userprofile_keywords_cover(debug=False):
         if not search_objs:
             continue
 
-        url_list = {
-            'xinlianjie': [],
-            'laolianjie': [],
-            'xinfugai': [],
-            'laofugai': []
-        }
+        url_list = {}
 
         data_day_list = [] # 新问答
         data_list1 = []  # 老问答不折叠
