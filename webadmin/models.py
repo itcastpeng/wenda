@@ -712,6 +712,13 @@ class KeywordsCover(models.Model):
     )
     task_type = models.SmallIntegerField(choices=task_type_choices, default=1)
 
+    rank_type_choices = (
+        (1, "普通知道排名"),
+        (2, "知道合伙人排名"),
+        (3, "熊掌号排名"),
+    )
+    rank_type = models.SmallIntegerField(verbose_name="排名类型", choices=rank_type_choices, default=1)
+
 
 
 # 客户每天关键词覆盖数和报表

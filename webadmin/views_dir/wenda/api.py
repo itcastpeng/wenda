@@ -989,6 +989,7 @@ def keywords_cover(request):
         url = request.POST.get("url")
         is_zhedie = request.POST.get("is_zhedie", False)
         zhidao_hehuoren = request.POST.get("zhidao_hehuoren", False)
+        xiongzhanghao = request.POST.get("xiongzhanghao", False)
 
         keywords_cover_obj = models.KeywordsCover.objects.filter(
             keywords_id=kid,
@@ -998,13 +999,19 @@ def keywords_cover(request):
         )
 
         if not keywords_cover_obj:
-            if zhidao_hehuoren:     # 知道合伙人排名
+            if zhidao_hehuoren or xiongzhanghao:     # 知道合伙人排名
+                rank_type = 1
+                if zhidao_hehuoren:
+                    rank_type = 2
+                if xiongzhanghao:
+                    rank_type = 2
                 models.KeywordsCover.objects.create(
                     keywords_id=kid,
                     page_type=page_type,
                     rank=rank,
                     url=url,
-                    is_zhedie=is_zhedie
+                    is_zhedie=is_zhedie,
+                    rank_type=rank_type
                 )
 
             else:
