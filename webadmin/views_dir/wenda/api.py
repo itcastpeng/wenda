@@ -988,6 +988,7 @@ def keywords_cover(request):
         rank = request.POST.get("rank")
         url = request.POST.get("url")
         is_zhedie = request.POST.get("is_zhedie", False)
+        zhidao_hehuoren = request.POST.get("zhidao_hehuoren", False)
 
         keywords_cover_obj = models.KeywordsCover.objects.filter(
             keywords_id=kid,
@@ -997,30 +998,40 @@ def keywords_cover(request):
         )
 
         if not keywords_cover_obj:
-            keywords_top_set_objs = models.KeywordsTopSet.objects.filter(id=kid)
-            keywords_top_set_objs.update(
-                update_select_cover_date=datetime.datetime.now()
-            )
-            wenda_robot_task_objs = models.WendaRobotTask.objects.filter(
-                task__release_user_id=keywords_top_set_objs[0].client_user.id,
-                wenda_url=url
-            )
+            if zhidao_hehuoren:     # 知道合伙人排名
+                models.KeywordsCover.objects.create(
+                    keywords_id=kid,
+                    page_type=page_type,
+                    rank=rank,
+                    url=url,
+                    is_zhedie=is_zhedie
+                )
 
-            models.EditPublickTaskManagement.objects.filter(run_task_id=wenda_robot_task_objs[0].id).update(status=3)
-
-            if wenda_robot_task_objs[0].add_map == 1:
-                task_type = 2
             else:
-                task_type = 1
+                keywords_top_set_objs = models.KeywordsTopSet.objects.filter(id=kid)
+                keywords_top_set_objs.update(
+                    update_select_cover_date=datetime.datetime.now()
+                )
+                wenda_robot_task_objs = models.WendaRobotTask.objects.filter(
+                    task__release_user_id=keywords_top_set_objs[0].client_user.id,
+                    wenda_url=url
+                )
 
-            models.KeywordsCover.objects.create(
-                keywords_id=kid,
-                page_type=page_type,
-                rank=rank,
-                url=url,
-                task_type=task_type,
-                is_zhedie=is_zhedie
-            )
+                models.EditPublickTaskManagement.objects.filter(run_task_id=wenda_robot_task_objs[0].id).update(status=3)
+
+                if wenda_robot_task_objs[0].add_map == 1:
+                    task_type = 2
+                else:
+                    task_type = 1
+
+                models.KeywordsCover.objects.create(
+                    keywords_id=kid,
+                    page_type=page_type,
+                    rank=rank,
+                    url=url,
+                    task_type=task_type,
+                    is_zhedie=is_zhedie
+                )
 
         response.status = True
         response.message = "添加成功"
