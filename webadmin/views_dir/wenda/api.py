@@ -1158,17 +1158,19 @@ def keywords_cover_debug(request):
         response.message = "添加成功"
 
     else:
-        keywords_obj = models.KeywordsTopSet.objects.select_related('client_user', 'client_user__role').get(
-            Q(is_delete=False) &
-            Q(client_user__status=1) &
-            Q(client_user__role_id=15)
+        keywords_objs = models.KeywordsTopSet.objects.select_related('client_user', 'client_user__role').filter(
+            is_delete=False,
+            client_user__status=1,
+            client_user__role_id=15
         )
+        keywords_obj = keywords_objs[0]
 
         xiongzhanghao_website = keywords_obj.client_user.xiongzhanghao_website
         zhidao_hehuoren_website = keywords_obj.client_user.zhidao_hehuoren_website
         data = {
             "kid": keywords_obj.id,  # 关键词id
-            "keyword": keywords_obj.keyword,  # 关键词
+            # "keyword": keywords_obj.keyword,  # 关键词
+            "keyword": "沈阳白癜风",  # 关键词
             "client_user_id": keywords_obj.client_user_id,  # 客户id
             "map_match_keywords": keywords_obj.client_user.map_match_keywords,  # 地图匹配文字
             "xiongzhanghao_website": xiongzhanghao_website,  # 熊掌号主页地址
