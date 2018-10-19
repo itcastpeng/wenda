@@ -902,14 +902,23 @@ def cover_reports_generate_excel(file_name, data_list, debug, url_list=None):
         count_fugailiang = xinfugai_count + laofugai_count
         count_baifenbi = xinlianjie + laolianjie
 
-        xinbaifenbi = float((xinlianjie + .0) / count_baifenbi) * 100
-        laobaifenbi = float((laolianjie + .0) / count_baifenbi) * 100
-        xinfugai = float((xinfugai_count + .0) / count_fugailiang) * 100
-        laofugai = float((laofugai_count + .0) / count_fugailiang) * 100
-        yunsuanxin = round(xinbaifenbi)
-        yunsuanlao = round(laobaifenbi)
-        xinfugaiyunsuan = round(xinfugai)
-        laofugaiyunsuan = round(laofugai)
+        yunsuanxin = 0
+        yunsuanlao = 0
+        if count_baifenbi > 0:
+            xinbaifenbi = float((xinlianjie + .0) / count_baifenbi) * 100
+            yunsuanxin = round(xinbaifenbi)
+
+            laobaifenbi = float((laolianjie + .0) / count_baifenbi) * 100
+            yunsuanlao = round(laobaifenbi)
+
+        xinfugaiyunsuan = 0
+        laofugaiyunsuan = 0
+        if count_fugailiang > 0:
+            xinfugai = float((xinfugai_count + .0) / count_fugailiang) * 100
+            laofugai = float((laofugai_count + .0) / count_fugailiang) * 100
+
+            xinfugaiyunsuan = round(xinfugai)
+            laofugaiyunsuan = round(laofugai)
         ws.cell(row=2, column=10, value="新问答占比:" + str(yunsuanxin) + '%')
         ws.cell(row=3, column=10, value="老问答占比:" + str(yunsuanlao) + '%')
         ws.cell(row=2, column=11, value="新覆盖:" + str(xinfugaiyunsuan) + '%')
