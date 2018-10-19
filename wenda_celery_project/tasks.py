@@ -1024,6 +1024,12 @@ def userprofile_keywords_cover(debug=False):
                 create_time = ''
                 print('objs ----=--==- > ', objs)
                 if objs:
+                    url_list = {
+                        'laolianjie': [],
+                        'laofugai': [],
+                        'xinlianjie': [],
+                        'xinfugai': [],
+                    }
                     if objs[0].wenda_type in [1, 10]:
                         url_list['xinlianjie'].append(url)
                         url_list['xinfugai'].append(fugai_count)
