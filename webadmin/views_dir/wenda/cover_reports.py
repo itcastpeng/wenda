@@ -185,7 +185,11 @@ def cover_reports(request):
             jifei_start_date = ''
             jifei_stop_date = ''
 
-            xiaoshou_id = obj.client_user.xiaoshou.id
+            xiaoshou_id = ''
+            xiaoshou_name = ''
+            if obj.client_user.xiaoshou_id:
+                xiaoshou_id = obj.client_user.xiaoshou.id
+                xiaoshou_name = obj.client_user.xiaoshou.username
 
             if role_id in [1,4,6,7] or user_id == xiaoshou_id:
                 if obj.client_user.jifei_start_date:
@@ -217,7 +221,7 @@ def cover_reports(request):
                     "index": index,
                     "id": obj.client_user_id,
                     "username": username,
-                    "xiaoshou_username": obj.client_user.xiaoshou.username,
+                    "xiaoshou_username": xiaoshou_name,
                     "cover_total": obj.total_cover_num,
                     "select_status": select_status,
                     "keyword_count": keyword_count_str,
