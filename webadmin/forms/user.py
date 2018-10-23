@@ -125,6 +125,14 @@ class UserProfileUpdateForm(Form):
         required=False,
     )
 
+    zhidao_hehuoren_website = fields.CharField(
+        required=False,
+    )
+
+    xiongzhanghao_website = fields.CharField(
+        required=False,
+    )
+
     def clean_username(self):
         username = self.data["username"]
         o_id = self.data["id"]

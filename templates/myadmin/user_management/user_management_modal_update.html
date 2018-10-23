@@ -60,6 +60,36 @@
             </div>
         </div>
 
+        {% if user_profile_obj.role.id == 15 %}
+            <div class="form-group">
+                <label class="col-md-3 control-label" for="zhidao_hehuoren_website">知道合伙人地址</label>
+                <div class="col-md-6">
+                    <input type="text"
+                           class="form-control input-md"
+                           id="zhidao_hehuoren_website"
+                           name="zhidao_hehuoren_website"
+                           placeholder="知道合伙人主页地址"
+                           autocomplete="off"
+                           value="{{ user_profile_obj.zhidao_hehuoren_website }}"
+                    >
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-3 control-label" for="xiongzhanghao_website">熊掌号地址</label>
+                <div class="col-md-6">
+                    <input type="text"
+                           class="form-control input-md"
+                           id="xiongzhanghao_website"
+                           name="xiongzhanghao_website"
+                           placeholder="熊掌号主页地址"
+                           autocomplete="off"
+                           value="{{ user_profile_obj.xiongzhanghao_website }}"
+                    >
+                </div>
+            </div>
+        {% endif %}
+
         {% if user_profile_obj.role.id == 5 %}
         <div class="form-group">
             <label class="col-md-3 control-label" for="guwen_id">营销顾问</label>

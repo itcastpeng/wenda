@@ -268,6 +268,7 @@ def user_management_oper(request, oper_type, o_id):
             if hospital_infomation_objs:
                 hospital_infomation_obj = hospital_infomation_objs[0]
 
+            print('user_profile_obj.role.id -->', user_profile_obj.role.id)
             return render(request, 'myadmin/user_management/user_management_modal_update.html', locals())
 
         # 删除用户
