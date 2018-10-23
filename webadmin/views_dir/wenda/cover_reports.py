@@ -29,7 +29,7 @@ def cover_reports(request):
     print("role_id -->", role_id)
     print("user_id -->", user_id)
     filter_dict = {}
-    if role_id == 5:  # 客户角色只能看到自己的
+    if role_id in [5, 15]:  # 客户角色只能看到自己的
         filter_dict["client_user"] = user_id
     # elif role_id == 12:  # 销售角色只能看到自己客户的
     #     filter_dict["client_user__xiaoshou_id"] = user_id
