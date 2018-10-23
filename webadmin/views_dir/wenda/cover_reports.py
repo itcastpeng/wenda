@@ -566,7 +566,7 @@ def cover_reports_oper(request, oper_type, o_id):
                     "url_num": obj.url_num,
                     "statement_path": obj.statement_path
                 }
-            if role_id in [5, 12]:  # 客户角色和销售角色
+            if role_id in [5, 12, 15]:  # 客户角色和销售角色
                 result_data = """
                     <table class="table table-bordered text-nowrap padding-left-50 margin-bottom-0" >
                         <tr><td>编号</td><td>日期</td><td>覆盖数</td><td>下载报表</td></tr>
@@ -605,7 +605,7 @@ def cover_reports_oper(request, oper_type, o_id):
                 if role_id == 12 and data_objs[0].client_user.xiaoshou_id != user_id and user_id != 133:
                     statement_path = ''
 
-                if role_id in [5, 12]:
+                if role_id in [5, 12, 15]:
                     tr_html += """
                         <tr><td>{index}</td><td>{date}</td><td>{count}</td><td>{statement_path}</td></tr>
                     """.format(
