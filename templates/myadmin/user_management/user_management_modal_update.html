@@ -90,7 +90,7 @@
             </div>
         {% endif %}
 
-        {% if user_profile_obj.role.id == 5 %}
+        {% if user_profile_obj.role.id == 5 or user_profile_obj.role.id == 15 %}
         <div class="form-group">
             <label class="col-md-3 control-label" for="guwen_id">营销顾问</label>
             <div class="col-md-6">
@@ -120,7 +120,9 @@
                 </select>
             </div>
         </div>
+        {% endif %}
 
+        {% if user_profile_obj.role.id == 5 %}
         <div class="form-group">
             <label class="col-md-3 control-label" for="department_id">科室 </label>
             <div class="col-md-6">
