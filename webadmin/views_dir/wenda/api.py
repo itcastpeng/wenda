@@ -1084,8 +1084,8 @@ def keywords_cover(request):
                 create_date__gt=now_date,
                 keyword_id=redis_data['keyword_id']
             ).count()
-            # if search_count < 2:   # 如果今日查询次数小于2次，则在查询一次
-            #     del updateData['update_select_cover_date']
+            if search_count < 2:   # 如果今日查询次数小于2次，则在查询一次
+                del updateData['update_select_cover_date']
 
             keywords_top_set_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(id=redis_data['keyword_id'])
             keywords_top_set_objs.update(**updateData)
