@@ -48,8 +48,7 @@ def cover_reports(request):
         column_list = [
             "index", "id", "client_user", "client_user__xiaoshou", "keywords_num", "keyword_no_select_count",
             "today_cover_num", "total_cover_num", "total_publish_num",'client_user__jifei_start_date' ,'client_user__jifei_stop_date',
-            "oper", "client_user_id","client_user__xiaoshou_id", 'client_user__status',
-
+            "oper", "client_user_id","client_user__xiaoshou_id", 'client_user__status', 'client_user__role_id'
         ]
         order_column = request.GET.get('order[0][column]', 1)  # 第几列排序
         order = request.GET.get('order[0][dir]')  # 正序还是倒序

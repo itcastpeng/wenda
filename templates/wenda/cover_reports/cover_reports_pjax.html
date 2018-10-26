@@ -44,6 +44,17 @@
             <form class="form-horizontal search_form">
                 <div>
                     {% if role_id != 5 %}
+                        <label for="client_user_id">角色名称：</label>
+                        <select class="form-control select2-hidden-accessible" data-plugin="select2" tabindex="-1"
+                                aria-hidden="true" id="client_user__role_id" name="client_user__role_id">
+                            <option value="">全部</option>
+                            <option value="5">霸屏王</option>
+                            <option value="15">知道合伙人</option>
+{#                            {% for i in client_data %}#}
+{#                                <option value="{{ i.client_user__role_id }}">{{ i.client_user__username }}</option>#}
+{#                            {% endfor %}#}
+                        </select>
+
                         <label for="client_user_id">用户名称：</label>
                         <select class="form-control select2-hidden-accessible" data-plugin="select2" tabindex="-1"
                                 aria-hidden="true" id="client_user_id" name="client_user_id">
