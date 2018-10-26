@@ -49,7 +49,7 @@ class UserProfile(models.Model):
     zhidao_hehuoren_website = models.CharField(verbose_name="知道合伙人主页", max_length=128, null=True, blank=True)
     xiongzhanghao_website = models.CharField(verbose_name="熊掌号主页", max_length=128, null=True, blank=True)
 
-    role = models.ForeignKey("Role", verbose_name="角色", null=True, blank=True)
+    role = models.ForeignKey("Role", verbose_name="角色", null=True, blank=True, related_name="userProfile_role")
 
     balance = models.IntegerField(verbose_name="余额", default=0)
 
