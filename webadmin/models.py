@@ -864,7 +864,10 @@ class My_Client_User_Log(models.Model):
     shijian_xinxi_xian = models.TextField(verbose_name='事件信息现数据',null=True,blank=True)
 
 
-
+# 合伙人发布的地址
+class HehuorenPublishLink(models.Model):
+    url = models.CharField(verbose_name="合伙人回答过的链接", max_length=128)
+    user = models.ForeignKey(verbose_name="那个客户", to='UserProfile')
 
 
 
