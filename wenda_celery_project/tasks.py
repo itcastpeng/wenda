@@ -715,6 +715,11 @@ def keywords_top_page_cover_excel(user_id=None):
                 now_date=now_date
             )
 
+            # 先删除当前客户所有的在保存
+            shell = 'cd /data/www/wenda/statics/task_excel/keywords_top_set; rm -rf {name}*'.format(
+                name=user_obj.username
+            )
+            os.system(shell)
             wb.save(os.path.abspath(keywords_top_page_cover_excel_path))
             user_obj.keywords_top_page_cover_excel_path = keywords_top_page_cover_excel_path
 
