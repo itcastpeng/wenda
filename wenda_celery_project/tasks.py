@@ -721,7 +721,6 @@ def keywords_top_page_cover_excel(user_id=None):
             )
             os.system(shell)
             wb.save(os.path.abspath(keywords_top_page_cover_excel_path))
-            user_obj.keywords_top_page_cover_excel_path = keywords_top_page_cover_excel_path
 
             # 生成营销顾问直接能够上传的报表
             keywords_top_info_objs = models.KeywordsTopInfo.objects.filter(
@@ -827,13 +826,12 @@ def keywords_top_page_cover_excel(user_id=None):
                     except IllegalCharacterError:
                         pass
 
+            now_date = datetime.datetime.now().strftime("%Y-%m-%d %H-%M-%S")
             keywords_top_page_cover_yingxiao_excel_path = "statics/task_excel/keywords_top_set/{name}_{now_date}.xlsx".format(
                 name=user_obj.username,
                 now_date=now_date
             )
-            # 先删除当前客户所有的在保存
             wb.save(os.path.abspath(keywords_top_page_cover_yingxiao_excel_path))
-            user_obj.keywords_top_page_cover_yingxiao_excel_path = keywords_top_page_cover_yingxiao_excel_path
 
             models.UserProfile.objects.filter(id=user_obj.id).update(
                 keywords_top_page_cover_yingxiao_excel_path=keywords_top_page_cover_yingxiao_excel_path,
