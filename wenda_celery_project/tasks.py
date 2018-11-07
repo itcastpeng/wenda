@@ -714,6 +714,9 @@ def keywords_top_page_cover_excel(user_id=None):
                 name=user_obj.username,
                 now_date=now_date
             )
+
+            # 先删除当前客户所有的在保存
+            os.remove("statics/task_excel/keywords_top_set/{name}*.xlsx".format(name=user_obj.username))
             wb.save(os.path.abspath(keywords_top_page_cover_excel_path))
             user_obj.keywords_top_page_cover_excel_path = keywords_top_page_cover_excel_path
 
@@ -825,6 +828,7 @@ def keywords_top_page_cover_excel(user_id=None):
                 name=user_obj.username,
                 now_date=now_date
             )
+            # 先删除当前客户所有的在保存
             wb.save(os.path.abspath(keywords_top_page_cover_yingxiao_excel_path))
             user_obj.keywords_top_page_cover_yingxiao_excel_path = keywords_top_page_cover_yingxiao_excel_path
 
