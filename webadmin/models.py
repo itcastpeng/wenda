@@ -868,6 +868,7 @@ class My_Client_User_Log(models.Model):
 class HehuorenPublishLink(models.Model):
     url = models.CharField(verbose_name="合伙人回答过的链接", max_length=128)
     user = models.ForeignKey(verbose_name="那个客户", to='UserProfile')
+    create_time = models.DateField(auto_now_add=True, verbose_name='创建时间')
 
 
 

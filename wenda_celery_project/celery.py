@@ -162,6 +162,12 @@ app.conf.beat_schedule = {
         'schedule': crontab('*/20', '*', '*', '*', '*'),
     },
 
+    # 定时获取合伙人发布的链接地址
+    'get_hehuoren_url': {
+        'task': 'wenda_celery_project.tasks.get_hehuoren_url',
+        'schedule': crontab('0', '0', '*', '*', '*'),
+    },
+
 }
 
 

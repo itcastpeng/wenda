@@ -36,6 +36,9 @@ from webadmin import models
 from webadmin.modules.WeChat import WeChatPublicSendMsg
 from time import sleep
 from random import randint
+import re
+
+
 # 客户首次创建任务的时候,将客户提交的 excel 表格的数据取出来然后写入到新的 excel 表格中, 在第一列新增 问答地址链接
 @app.task
 def CreateExcel(excel_data, file_save_path):
@@ -2005,4 +2008,73 @@ def huancunguanjianci():
     requests.get(url)
 
 
+# 知道合伙人获取数据
+def get_data(url):
 
+    requests_obj = requests.session()
+    ret = requests_obj.get(url)
+    # print(ret.text)
+    url_list = []
+
+    obj = re.findall('F.context\(\'applyInfo\', (.*)\);', ret.text)
+    if obj:
+        data = json.loads(obj[0])
+        try:
+            businessId = data.get('businessId')
+            uid = data.get('uid')
+        except:
+            print('主页异常')
+            return url_list
+
+        print('businessId -->', businessId)
+        print('uid -->', uid)
+
+        start_index = 0
+        timestamp = int(time.time() * 1000)
+
+        while True:
+            url = 'https://zhidao.baidu.com/business/ajax/allreplylist?requestUid={uid}&businessId={businessId}&pn={start_index}&rn=20&t={timestamp}'.format(
+                uid=uid,
+                businessId=businessId,
+                start_index=start_index,
+                timestamp=timestamp
+            )
+
+            ret = requests_obj.get(url)
+            data = ret.json()['data']
+
+            for i in data:
+                qid = i.get('encode_qid')
+                url = "https://zhidao.baidu.com/question/{qid}".format(qid=qid)
+                url_list.append(url)
+            if len(data) == 20:
+                start_index += 20
+            else:
+                break
+    else:
+        print('获取失败')
+
+    return url_list
+
+
+# 获取合伙人发布过的链接
+@app.task
+def get_hehuoren_url():
+    objs = models.UserProfile.objects.filter(
+        role_id=15,
+        status=1,
+        is_delete=False
+    )
+    for obj in objs:
+        zhidao_hehuoren_website = obj.zhidao_hehuoren_website
+
+        print(obj.id, zhidao_hehuoren_website)
+        if zhidao_hehuoren_website:     # 如果有知道合伙人地址
+            url_list = get_data(zhidao_hehuoren_website)
+
+            query_list = []
+            for url in url_list:
+                if not models.HehuorenPublishLink.objects.filter(url=url, user_id=obj.id):
+                    query_list.append(models.HehuorenPublishLink(url=url, user_id=obj.id))
+
+            models.HehuorenPublishLink.objects.bulk_create(query_list)
