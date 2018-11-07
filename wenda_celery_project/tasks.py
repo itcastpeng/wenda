@@ -747,9 +747,15 @@ def keywords_top_page_cover_excel(user_id=None):
             # if user_role in [1,4,7]:
             # ws.cell(row=1, column=11, value="浏览量初始值")
             # ws.cell(row=1, column=12, value="浏览量当前值")
-            url_publish_list = [i[0] for i in models.WendaRobotTask.objects.filter(task__release_user=user_obj,
-                wenda_type=2, ).values_list(
-                "wenda_url")]
+
+
+            if user_obj.role_id == 15:  # 如果是知道合伙人角色，则单独获取发布的链接
+                url_publish_list= [i[0] for i in models.HehuorenPublishLink.objects.filter(user_id=user_obj.id).values_list("url")]
+            else:
+                url_publish_list = [i[0] for i in models.WendaRobotTask.objects.filter(
+                    task__release_user=user_obj,
+                    wenda_type=2
+                ).values_list("wenda_url")]
             n = 2
             for obj in keywords_top_info_objs:
 
