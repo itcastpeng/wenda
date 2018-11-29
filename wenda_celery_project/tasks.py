@@ -1162,7 +1162,14 @@ def userprofile_keywords_cover(debug=False):
 # 生成客户日覆盖报表 指定客户和日期
 @app.task
 def specified_userprofile_keywords_cover(user_id, generate_date, debug=False):
-    client_data = models.KeywordsCover.objects.filter(keywords__client_user_id=user_id).values(
+    date_obj = datetime.datetime.strptime(generate_date, "%Y-%m-%d")
+
+    client_data = models.KeywordsCover.objects.filter(
+        keywords__client_user_id=user_id,
+        create_date__year=date_obj.year,
+        create_date__month=date_obj.month,
+        create_date__day=date_obj.day,
+    ).values(
         'keywords__client_user__username',
         'keywords__client_user_id'
     ).annotate(Count("id"))
@@ -1170,7 +1177,7 @@ def specified_userprofile_keywords_cover(user_id, generate_date, debug=False):
     for user_obj in client_data:
         user_id = user_obj["keywords__client_user_id"]
         username = user_obj["keywords__client_user__username"]
-        date_obj = datetime.datetime.strptime(generate_date, "%Y-%m-%d")
+
         date = date_obj.strftime("%Y-%m-%d")
 
         q = Q(Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=date))
