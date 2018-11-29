@@ -1166,7 +1166,7 @@ def specified_userprofile_keywords_cover(user_id, generate_date, debug=False):
         'keywords__client_user__username',
         'keywords__client_user_id'
     ).annotate(Count("id"))
-
+    print('client_data -->', client_data)
     for user_obj in client_data:
         user_id = user_obj["keywords__client_user_id"]
         username = user_obj["keywords__client_user__username"]
