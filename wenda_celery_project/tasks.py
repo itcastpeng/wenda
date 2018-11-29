@@ -1159,6 +1159,200 @@ def userprofile_keywords_cover(debug=False):
         )
 
 
+# 生成客户日覆盖报表 指定客户和日期
+@app.task
+def specified_userprofile_keywords_cover(user_id, generate_date, debug=False):
+    client_data = models.KeywordsCover.objects.filter(keywords__client_user_id=user_id).values(
+        'keywords__client_user__username',
+        'keywords__client_user_id'
+    ).annotate(Count("id"))
+
+    for user_obj in client_data:
+        user_id = user_obj["keywords__client_user_id"]
+        username = user_obj["keywords__client_user__username"]
+        date_obj = datetime.datetime.strptime(generate_date, "%Y-%m-%d")
+        date = date_obj.strftime("%Y-%m-%d")
+
+        q = Q(Q(update_select_cover_date__isnull=True) | Q(update_select_cover_date__lt=date))
+        keywords_topset_obj = models.KeywordsTopSet.objects.filter(
+            client_user_id=user_id,
+            is_delete=False
+        ).filter(q)
+
+        keyword_select_count = keywords_topset_obj.count()  # 未查询的关键词数
+
+        # 十分钟之前有新数据则不生成报表
+        ten_minutes_ago = date_obj - datetime.timedelta(minutes=10)
+        keywords_cover_objs = models.KeywordsCover.objects.filter(
+            keywords__client_user_id=user_id,
+            create_date__gt=ten_minutes_ago
+        )
+
+        if keyword_select_count > 0 or keywords_cover_objs.count() > 0:  # 如果大于0表示数据未查询完
+            continue
+
+        user_profile_keywords_cover_obj = models.UserprofileKeywordsCover.objects.filter(
+            client_user_id=user_id,
+            create_date=date,
+        )
+        if user_profile_keywords_cover_obj:  # 如果已经创建,则跳过
+            continue
+
+        search_objs = models.KeywordsCover.objects.select_related(
+            'keywords',
+            'keywords__client_user'
+        ).filter(
+            keywords__client_user_id=user_id,
+            create_date__year=date_obj.year,
+            create_date__month=date_obj.month,
+            create_date__day=date_obj.day,
+            # keywords__client_user__status=True
+        ).order_by("-create_date")
+
+        if not search_objs:
+            continue
+
+        url_list = {}
+
+        data_day_list = [] # 新问答
+        data_list1 = []  # 老问答不折叠
+        data_list2 = []  # 其他
+        temp_list = []
+        # 晓嘉容 用户覆盖报表 随机生成 150 - 400 条
+        # if user_id == 285:
+        #     fugai_suiji_num = randint(150, 400)
+        #     search_objs =  search_objs[0:fugai_suiji_num]
+
+        data_url_num_list = []
+        for search_obj in search_objs:
+            if search_obj:
+                wenda_type_index = ''
+                wenda_type = ''
+                is_zhedie = "0"
+                fugai_count = search_obj.keywords.top_page_cover
+                print('search_obj - - - > ', search_obj.id)
+                url = search_obj.url
+                print('url_', url)
+                print('search _ obj ', search_obj.keywords.client_user)
+                objs = models.WendaRobotTask.objects.filter(
+                    wenda_url=url,
+                    task__release_user=search_obj.keywords.client_user
+                )
+                create_time = ''
+                print('objs ----=--==- > ', objs)
+                if objs:
+                    url_list = {
+                        'laolianjie': [],
+                        'laofugai': [],
+                        'xinlianjie': [],
+                        'xinfugai': [],
+                    }
+                    if objs[0].wenda_type in [1, 10]:
+                        url_list['xinlianjie'].append(url)
+                        url_list['xinfugai'].append(fugai_count)
+                    if objs[0].wenda_type == 2:
+                        url_list['laolianjie'].append(url)
+                        url_list['laofugai'].append(fugai_count)
+                    robotaccountlog_objs = objs[0].robotaccountlog_set.all()
+                    if robotaccountlog_objs:
+                        create_time = robotaccountlog_objs.last().create_date.strftime("%Y-%m-%d")
+                    if search_obj.is_zhedie:
+                        is_zhedie = "1"
+                    wenda_type_index, wenda_type = objs[0].wenda_type, objs[0].get_wenda_type_display()
+                    # data_list.append([is_zhedie,search_obj.url])
+                    # data_day_list.append({
+                    #     "username": username,
+                    #     "keywords": search_obj.keywords.keyword,
+                    #     "page_type": search_obj.get_page_type_display(),
+                    #     "rank": search_obj.rank,
+                    #     "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
+                    #     "link": search_obj.url,
+                    #     "is_zhedie": is_zhedie,
+                    #     'create_time': create_time,
+                    #     'wenda_type': wenda_type
+                    # })
+                line_data = {}
+                if user_id == 285:
+                    data_url_num = search_obj.url
+                    if data_url_num in data_url_num_list:
+                        continue
+                    else:
+                        data_url_num_list.append(data_url_num)
+                        line_data = {
+                            "username": username,
+                            "keywords": search_obj.keywords.keyword,
+                            "page_type": search_obj.get_page_type_display(),
+                            "rank": search_obj.rank,
+                            "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
+                            "link": search_obj.url,
+                            "is_zhedie": is_zhedie,
+                            'create_time': create_time,
+                            'wenda_type': wenda_type
+                        }
+                else:
+                    line_data = {
+                        "username": username,
+                        "keywords": search_obj.keywords.keyword,
+                        "page_type": search_obj.get_page_type_display(),
+                        "rank": search_obj.rank,
+                        "create_date": search_obj.create_date.strftime("%Y-%m-%d"),
+                        "link": search_obj.url,
+                        "is_zhedie": is_zhedie,
+                        'create_time': create_time,
+                        'wenda_type': wenda_type
+                    }
+
+                # 新问答数据
+                if wenda_type_index in [1, 10]:
+                    data_day_list.append(line_data)
+
+                # 老问答数据
+                else:
+                    # 老问答未折叠
+                    if is_zhedie == '0' and [search_obj.url, wenda_type] not in temp_list:
+                        data_list1.append(line_data)
+                        temp_list.append([search_obj.url, wenda_type])
+                    else:
+                        data_list2.append(line_data)
+
+        data_day_list.extend(data_list1)
+        data_day_list.extend(data_list2)
+
+        # 客户查看报表的名称
+        file_name = "{username}_{date}.xlsx".format(
+            username=username,
+            date=date
+        )
+        file_path_name = os.path.join("statics", "upload_files", file_name)
+
+        cover_reports_generate_excel(file_path_name, data_day_list, debug=True)
+
+        # 营销顾问查看报表的名称
+        yingxiaoguwen_file_name = "yingxiaoguwen_{username}_{date}.xlsx".format(
+            username=username,
+            date=date
+        )
+        yingxiaoguwen_file_path_name = os.path.join("statics", "upload_files", yingxiaoguwen_file_name)
+
+        cover_reports_generate_excel(yingxiaoguwen_file_path_name, data_day_list, debug=False, url_list=url_list)
+        if user_id == 285:
+            url_num = len(data_url_num_list)
+        else:
+            url_num = search_objs.values('url').distinct().count()
+
+        print("生成报表 -->>")
+        cover_num = len(data_day_list)
+        # if user_id == 285:  # 晓嘉容艺术中心 覆盖量太多减少到200-300之间
+        #     cover_num = ''
+        models.UserprofileKeywordsCover.objects.create(
+            client_user_id=user_id,
+            create_date=date,
+            cover_num=cover_num,
+            statement_path=file_path_name,
+            url_num=url_num
+        )
+
+
 # 每天提醒客户报表已经查完
 @app.task
 def send_cover_info():
