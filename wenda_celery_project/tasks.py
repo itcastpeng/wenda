@@ -1188,16 +1188,6 @@ def specified_userprofile_keywords_cover(user_id, generate_date, debug=False):
 
         keyword_select_count = keywords_topset_obj.count()  # 未查询的关键词数
 
-        # 十分钟之前有新数据则不生成报表
-        ten_minutes_ago = date_obj - datetime.timedelta(minutes=10)
-        keywords_cover_objs = models.KeywordsCover.objects.filter(
-            keywords__client_user_id=user_id,
-            create_date__gt=ten_minutes_ago
-        )
-
-        if keyword_select_count > 0 or keywords_cover_objs.count() > 0:  # 如果大于0表示数据未查询完
-            continue
-
         user_profile_keywords_cover_obj = models.UserprofileKeywordsCover.objects.filter(
             client_user_id=user_id,
             create_date=date,
