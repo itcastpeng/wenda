@@ -766,6 +766,7 @@ def keywords_top_page_cover_excel(user_id=None):
 
                 url = obj["url"]
                 title = obj["title"]
+                if not title: continue      # 如果没有title，则不生成到表格中
                 url__count = obj["url__count"]
                 k_objs = models.KeywordsTopInfo.objects.select_related('keyword').filter(
                     keyword__client_user=user_obj,
