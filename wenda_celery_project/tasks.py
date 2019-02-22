@@ -104,7 +104,7 @@ def CheckWenda():
         models.WendaLink.objects.filter(task=obj).delete()
 
         # 将提交的 excel 表格中的数据读出
-        print(obj.name)
+        print(obj.name, obj.publish_task_result_file_path)
         book = xlrd.open_workbook(obj.publish_task_result_file_path)
         sh = book.sheet_by_index(0)
 
