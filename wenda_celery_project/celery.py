@@ -85,11 +85,11 @@ app.conf.beat_schedule = {
         'schedule': crontab('*/5', '*', '*', '*', '*'),
     },
 
-    # 插入养账号新问答任务
-    'yangzhanghao_task': {
-        'task': 'wenda_celery_project.tasks.yangzhanghao_task',
-        'schedule': crontab('*/5', '*', '*', '*', '*'),
-    },
+    # # 插入养账号新问答任务
+    # 'yangzhanghao_task': {
+    #     'task': 'wenda_celery_project.tasks.yangzhanghao_task',
+    #     'schedule': crontab('*/5', '*', '*', '*', '*'),
+    # },
 
     # 将最近6个小时使用的 ip 地址缓存到redis 中
     'cached_ipaddr_list': {
