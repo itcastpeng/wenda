@@ -69,6 +69,7 @@ def rank_data(request):
                 else:
                     q.add(Q(**{field: request.GET[field]}), Q.AND)
 
+        print('q -->', q)
         if role_id == 5:
 
             objs = models.SearchKeywordsRankLog.objects.select_related("keywords", "keywords__client_user").filter(keywords__client_user_id=user_id).filter(q).order_by(*order_column)
