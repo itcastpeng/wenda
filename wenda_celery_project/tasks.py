@@ -114,7 +114,7 @@ def CheckWenda():
             url = sh.cell_value(rowx=row, colx=0)
             keywords = sh.cell_value(rowx=row, colx=1)
 
-            wenda_link_objs = models.WendaLink.objects.filter(url=url)
+            wenda_link_objs = models.WendaLink.objects.filter(url=url, task=obj)
             if wenda_link_objs.count() > 0:  # 如果该链接已经存在,则跳过
                 continue
 
