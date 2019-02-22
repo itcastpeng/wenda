@@ -136,6 +136,7 @@ def CheckWenda():
             except IntegrityError:
                 continue
 
+        print('query -->', len(query), query)
         models.WendaLink.objects.bulk_create(query)
         obj.is_check = True
         obj.save()
