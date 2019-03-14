@@ -912,45 +912,45 @@ def keywords_top_set_oper(request, oper_type):
                 else:
                     robot_task_obj = models.WendaRobotTask.objects.select_related('task').get(id=obj[0].run_task.id)
                     print('robot_task_obj -->', robot_task_obj.id)
-                    edit_pulick_task_obj = models.EditPublickTaskManagement.objects.get(run_task=robot_task_obj)
-                    print('edit_pulick_task_obj -->', edit_pulick_task_obj)
+                    edit_pulick_task_objs = models.EditPublickTaskManagement.objects.filter(run_task=robot_task_obj)
+                    # print('edit_pulick_task_obj -->', edit_pulick_task_obj)
+                    if edit_pulick_task_objs:
+                        edit_pulick_task_obj = edit_pulick_task_objs[0]
+                        if not is_pause:  # is_pause = False 任务没有关闭,需要打回
+                            robot_task_obj.status = 20
+                            robot_task_obj.next_date = datetime.datetime.now() + datetime.timedelta(minutes=10)
 
-                    if not is_pause:  # is_pause = False 任务没有关闭,需要打回
-                        robot_task_obj.status = 20
-                        robot_task_obj.next_date = datetime.datetime.now() + datetime.timedelta(minutes=10)
+                            edit_pulick_task_obj.update_date = datetime.datetime.now()
+                            if edit_pulick_task_obj.status < 3:
+                                print("已经打回")
+                            else:
+                                if robot_task_obj.task.status <= 7:
+                                    edit_pulick_task_obj.status = 2
+                                    edit_pulick_task_obj.is_select_cover_back = True
 
-                        edit_pulick_task_obj.update_date = datetime.datetime.now()
-                        if edit_pulick_task_obj.status < 3:
-                            print("已经打回")
-                        else:
-                            if robot_task_obj.task.status <= 7:
-                                edit_pulick_task_obj.status = 2
-                                edit_pulick_task_obj.is_select_cover_back = True
+                                    models.EditTaskLog.objects.create(
+                                        edit_public_task_management=edit_pulick_task_obj,
+                                        title=edit_pulick_task_obj.title,
+                                        content=edit_pulick_task_obj.content,
+                                        remark="查询覆盖无匹配答案"
+                                    )
+                        else:  # 任务被关闭  is_pause = True
+                            robot_task_obj.status = 6
+                            robot_task_obj.next_date = datetime.datetime.now() + datetime.timedelta(minutes=10)
+                            edit_pulick_task_obj.status = 3
+                            edit_pulick_task_obj.is_select_cover_back = True
+                            edit_pulick_task_obj.update_date = datetime.datetime.now()
 
+                            if not obj[0].is_pause:  # 如果该任务当前状态为未暂停状态
                                 models.EditTaskLog.objects.create(
                                     edit_public_task_management=edit_pulick_task_obj,
                                     title=edit_pulick_task_obj.title,
                                     content=edit_pulick_task_obj.content,
-                                    remark="查询覆盖无匹配答案"
+                                    remark="查询覆盖答案被删除,问答被关闭"
                                 )
-                    else:  # 任务被关闭  is_pause = True
-                        robot_task_obj.status = 6
-                        robot_task_obj.next_date = datetime.datetime.now() + datetime.timedelta(minutes=10)
-                        edit_pulick_task_obj.status = 3
-                        edit_pulick_task_obj.is_select_cover_back = True
-                        edit_pulick_task_obj.update_date = datetime.datetime.now()
-
-                        if not obj[0].is_pause:  # 如果该任务当前状态为未暂停状态
-                            models.EditTaskLog.objects.create(
-                                edit_public_task_management=edit_pulick_task_obj,
-                                title=edit_pulick_task_obj.title,
-                                content=edit_pulick_task_obj.content,
-                                remark="查询覆盖答案被删除,问答被关闭"
-                            )
-
+                        edit_pulick_task_obj.save()
                     obj[0].save()
                     robot_task_obj.save()
-                    edit_pulick_task_obj.save()
 
                     response.status = True
                     response.message = "修改成功"
