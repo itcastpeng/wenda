@@ -911,7 +911,9 @@ def keywords_top_set_oper(request, oper_type):
                     response.message = "修改成功 - 渠道操作"
                 else:
                     robot_task_obj = models.WendaRobotTask.objects.select_related('task').get(id=obj[0].run_task.id)
+                    print('robot_task_obj -->', robot_task_obj)
                     edit_pulick_task_obj = models.EditPublickTaskManagement.objects.get(run_task=robot_task_obj)
+                    print('edit_pulick_task_obj -->', edit_pulick_task_obj)
 
                     if not is_pause:  # is_pause = False 任务没有关闭,需要打回
                         robot_task_obj.status = 20
