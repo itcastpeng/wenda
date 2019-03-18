@@ -547,20 +547,20 @@ def check_ipaddr(request):
 
         user_objs = models.UserProfile.objects.filter(token=token, token__isnull=False, is_delete=False)
         if user_objs:
-            ipaddr = request.GET.get("ipaddr")
-            ipaddr_list = RedisOper.read_from_cache('api_check_ipaddr_ip_list')
-            if ipaddr in ipaddr_list:
-
-                # up_hours_time = datetime.datetime.now() - datetime.timedelta(hours=6)
-                # robot_account_log_obj = models.RobotAccountLog.objects.filter(ipaddr=ipaddr, create_date__lt=up_hours_time)
-                #
-                # if robot_account_log_obj:
-                response.status = False
-                response.message = "该ip不能使用"
-
-            else:
-                response.status = True
-                response.message = "该ip可以使用"
+            # ipaddr = request.GET.get("ipaddr")
+            # ipaddr_list = RedisOper.read_from_cache('api_check_ipaddr_ip_list')
+            # if ipaddr in ipaddr_list:
+            #
+            #     # up_hours_time = datetime.datetime.now() - datetime.timedelta(hours=6)
+            #     # robot_account_log_obj = models.RobotAccountLog.objects.filter(ipaddr=ipaddr, create_date__lt=up_hours_time)
+            #     #
+            #     # if robot_account_log_obj:
+            #     response.status = False
+            #     response.message = "该ip不能使用"
+            #
+            # else:
+            response.status = True
+            response.message = "该ip可以使用"
 
     else:
         response.status = False
