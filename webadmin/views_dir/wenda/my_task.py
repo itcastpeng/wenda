@@ -354,6 +354,7 @@ def my_task_oper(request, oper_type, o_id):
                         templete_path = os.path.join('statics/task_excel/template/新问答-信息模板2.xlsx')  # 模板存放路径
                         # wb = load_workbook(filename=templete_path)
 
+                        print("excel_data -->", excel_data, os.path.join(os.getcwd(), file_save_path))
                         tasks.CreateExcel.delay(excel_data, os.path.join(os.getcwd(), file_save_path))
 
                     else:  # 老问答
