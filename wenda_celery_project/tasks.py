@@ -42,6 +42,7 @@ import re
 # 客户首次创建任务的时候,将客户提交的 excel 表格的数据取出来然后写入到新的 excel 表格中, 在第一列新增 问答地址链接
 @app.task
 def CreateExcel(excel_data, file_save_path):
+    print("CreateExcel//////////////////////////////////")
     wb = Workbook()
 
     ws = wb.active
