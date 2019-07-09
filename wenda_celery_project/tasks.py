@@ -99,7 +99,7 @@ def CheckWenda():
         publish_user__isnull=False,
         publish_task_result_file_path__isnull=False,
     )
-    print(task_objs.count())
+    # print(task_objs.count())
     for obj in task_objs:
         # 先清空该任务在回链表中的所有链接
         models.WendaLink.objects.filter(task=obj).delete()
