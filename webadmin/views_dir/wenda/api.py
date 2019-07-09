@@ -270,18 +270,18 @@ def get_wenda_task(request):
                     elif status == "20":  # 回复内容异常
                         wenda_robot_task_obj.status = 20
                         # send_msg(wenda_robot_task_obj, "回复内容异常")
-                        send_msg_gongzhonghao(wenda_robot_task_obj, "回复内容异常")
+                        # send_msg_gongzhonghao(wenda_robot_task_obj, "回复内容异常")
 
                     elif status == "22":  # 发布内容异常
                         wenda_robot_task_obj.status = 22
                         # send_msg(wenda_robot_task_obj, "发布内容异常")
-                        send_msg_gongzhonghao(wenda_robot_task_obj, "发布内容异常")
+                        # send_msg_gongzhonghao(wenda_robot_task_obj, "发布内容异常")
 
                     elif status == "30":  # 标题过长
                         wenda_robot_task_obj.status = 30
                         # send_msg(wenda_robot_task_obj, "标题过长")
-                        send_msg_gongzhonghao(wenda_robot_task_obj, "标题过长")
-
+                        # send_msg_gongzhonghao(wenda_robot_task_obj, "标题过长")
+                    #
                     elif status == "40":  # 链接失效
 
                         # 如果是老问答,直接将状态修改为已完成
@@ -290,7 +290,7 @@ def get_wenda_task(request):
                         else:
                             wenda_robot_task_obj.status = 40
                             # send_msg(wenda_robot_task_obj, "链接失效")
-                            send_msg_gongzhonghao(wenda_robot_task_obj, "链接失效")
+                            # send_msg_gongzhonghao(wenda_robot_task_obj, "链接失效")
 
                     elif status == "50":  # 未找到采纳答案
                         # 未找到采纳答案重新发布

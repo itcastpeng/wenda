@@ -46,7 +46,7 @@ def send_gongzhonghao_msg(openid, value="您有新的问答任务等待编写,�
             },
         }
     }
-    tasks.send_msg_gongzhonghao.delay(post_data)
+    # tasks.send_msg_gongzhonghao.delay(post_data)
     # print(openid)
     # print(post_data)
     # wechat_data_path = os.path.abspath('webadmin/modules/wechat_data.json')

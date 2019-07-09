@@ -194,6 +194,6 @@ def bianxiebaobiao(request):
         print('result_data -->', json.dumps(result_data))
         return HttpResponse(json.dumps(result_data))
 
-    if "_pjax" in request.GET:
-        return render(request, '../../wenda/templates/wenda/bianxiebaobiao/bianxiebaobiao_pjax.html', locals())
-    return render(request, '../../wenda/templates/wenda/bianxiebaobiao/bianxiebaobiao.html', locals())
+    # if "_pjax" in request.GET:
+    #     return render(request, '../../wenda/templates/wenda/bianxiebaobiao/bianxiebaobiao_pjax.html', locals())
+    # return render(request, '../../wenda/templates/wenda/bianxiebaobiao/bianxiebaobiao.html', locals())
