@@ -81,31 +81,31 @@ def send_msg(wenda_robot_task_obj, yuanyin):
         )
 
         # 给对应编辑发送消息
-        weixin_id = edit_obj.task.edit_user.weixin_id
-        if weixin_id:
-            now_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            description = """
-                通知时间: {now_datetime}\n\n
-                问题: {title}\n\n
-                答案: {content}\n\n
-                异常原因: {yuanyin}
-                        """.format(
-                now_datetime=now_datetime,
-                title=edit_obj.title,
-                content=edit_obj.content,
-                yuanyin=yuanyin
-            )
-            user_id_str = edit_obj.task.edit_user.weixin_id
-            url = "http://wenda.zhugeyingxiao.com/edit_error_content/{t_id}/".format(t_id=edit_obj.id)
-            tasks.send_msg.delay(user_id_str, description, w_type="card", url=url)
-
-        else:
-            now_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            text = "通知时间: {now_datetime} \n通知平台:诸葛问答\n用户 {username} 未设置微信id".format(
-                now_datetime=now_datetime,
-                username=edit_obj.task.edit_user.username
-            )
-            tasks.send_msg.delay("zhangcong", text)
+        # weixin_id = edit_obj.task.edit_user.weixin_id
+        # if weixin_id:
+        #     now_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        #     description = """
+        #         通知时间: {now_datetime}\n\n
+        #         问题: {title}\n\n
+        #         答案: {content}\n\n
+        #         异常原因: {yuanyin}
+        #                 """.format(
+        #         now_datetime=now_datetime,
+        #         title=edit_obj.title,
+        #         content=edit_obj.content,
+        #         yuanyin=yuanyin
+        #     )
+        #     user_id_str = edit_obj.task.edit_user.weixin_id
+        #     url = "http://wenda.zhugeyingxiao.com/edit_error_content/{t_id}/".format(t_id=edit_obj.id)
+        #     tasks.send_msg.delay(user_id_str, description, w_type="card", url=url)
+        #
+        # else:
+        #     now_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        #     text = "通知时间: {now_datetime} \n通知平台:诸葛问答\n用户 {username} 未设置微信id".format(
+        #         now_datetime=now_datetime,
+        #         username=edit_obj.task.edit_user.username
+        #     )
+        #     tasks.send_msg.delay("zhangcong", text)
 
 
 # 发送微信公众号消息
@@ -269,18 +269,18 @@ def get_wenda_task(request):
 
                     elif status == "20":  # 回复内容异常
                         wenda_robot_task_obj.status = 20
-                        # send_msg(wenda_robot_task_obj, "回复内容异常")
-                        # send_msg_gongzhonghao(wenda_robot_task_obj, "回复内容异常")
+                        send_msg(wenda_robot_task_obj, "回复内容异常")
+                        send_msg_gongzhonghao(wenda_robot_task_obj, "回复内容异常")
 
                     elif status == "22":  # 发布内容异常
                         wenda_robot_task_obj.status = 22
-                        # send_msg(wenda_robot_task_obj, "发布内容异常")
-                        # send_msg_gongzhonghao(wenda_robot_task_obj, "发布内容异常")
+                        send_msg(wenda_robot_task_obj, "发布内容异常")
+                        send_msg_gongzhonghao(wenda_robot_task_obj, "发布内容异常")
 
                     elif status == "30":  # 标题过长
                         wenda_robot_task_obj.status = 30
-                        # send_msg(wenda_robot_task_obj, "标题过长")
-                        # send_msg_gongzhonghao(wenda_robot_task_obj, "标题过长")
+                        send_msg(wenda_robot_task_obj, "标题过长")
+                        send_msg_gongzhonghao(wenda_robot_task_obj, "标题过长")
                     #
                     elif status == "40":  # 链接失效
 
