@@ -22,6 +22,8 @@
 					<a class="reg-logo" href="/" style="
                         {% if request.get_host == 'wenda.zhugeyingxiao.com' %}
                             background: url(/statics/custom/images/reglogo.png) no-repeat;
+                        {% elif request.get_host == 'zhidao.lychuanmei.com' %}
+                            background: url(/statics/custom/images/lychuanmei.png) no-repeat;
                         {% else %}
                             background: url(/statics/custom/images/reglogo_qudao1.png) no-repeat;
 {#                            background: url(/statics/custom/images/reglogo.png) no-repeat;#}

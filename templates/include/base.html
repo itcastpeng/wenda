@@ -112,6 +112,8 @@
                     <img class="navbar-brand-logo visible-lg visible-xs navbar-logo"
                         {% if request.get_host == "wenda.qudao.zhugeyingxiao.com" %}
                             src="/statics/public/images/logo-white_qudao_01.svg"
+                        {% elif request.get_host == "zhidao.lychuanmei.com" %}
+                            src="/statics/public/images/lychuanmei.png"
                         {% else %}
                             src="/statics/public/images/logo-white.svg"
                         {% endif %}
