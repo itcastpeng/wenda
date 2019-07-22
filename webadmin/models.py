@@ -111,6 +111,11 @@ class UserProfile(models.Model):
 
     xinlaowenda_status = models.SmallIntegerField(verbose_name='用户为_新老问答',choices=xinlaowenda_status_choices,default=2)
 
+    company_choices = (
+        (1, '合众'),
+        (2, '华人医院'),
+    )
+    company = models.SmallIntegerField(verbose_name='公司', choices=company_choices, default=1)
     def __str__(self):
         return self.username
 

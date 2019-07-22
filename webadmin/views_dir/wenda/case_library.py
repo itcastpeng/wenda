@@ -87,7 +87,7 @@ def case_library(request):
         # 成都美尔贝不显示
         objs = models.KeywordsCover.objects.select_related('keywords', 'keywords__client_user').filter(q).exclude(keywords__client_user_id=175)
         if role_id == 12:
-            objs = objs.exclude(keywords__client_user__username__contains='YZ-')
+            objs = objs.exclude(keywords__client_user__username__contains='YZ-', keywords__client_user__company=1)
 
         objs = objs.order_by(order_column)
         print("01-->", datetime.datetime.now())
@@ -151,7 +151,7 @@ def case_library(request):
         is_delete=False
      )
     if role_id == 12:
-        user_objs = user_objs.exclude(username__contains='YZ-')
+        user_objs = user_objs.exclude(username__contains='YZ-', company=1)
 
     department_objs = models.Department.objects.all()
     print('department_objs-->',department_objs)
