@@ -30,6 +30,8 @@ def case_library(request):
     role_id = request.session.get("role_id")
     user_id = request.session.get("user_id")
     now_date = datetime.datetime.now().strftime("%Y-%m-%d")
+    print('request.session=======================-------222222222222223333333333333=======> ', request.session.get('role_id'))
+    print('request.session=======================-------222222222222223333333333333=======> ', request.session.get('user_id'))
     if not role_id:
         role_id = request.session.get('role_id')
     if "type" in request.GET and request.GET["type"] == "ajax_json":
