@@ -84,9 +84,9 @@ def cover_reports(request):
         data_objs = models.ClientCoveringData.objects.select_related(
             "client_user",
             "client_user__xiaoshou"
-        ).filter(client_user__is_delete=False).filter(**filter_dict).filter(q).exclude(client_user__company=2).order_by(order_column)
+        ).filter(client_user__is_delete=False).filter(**filter_dict).filter(q).order_by(order_column)
         if role_id == 12:
-            data_objs = data_objs.exclude(client_user__username__contains='YZ-', client_user__company=2)
+            data_objs = data_objs.exclude(client_user__username__contains='YZ-').exclude(client_user__company=2)
             if user_id != 37:
                 data_objs = data_objs.exclude(client_user_id=175)
 
