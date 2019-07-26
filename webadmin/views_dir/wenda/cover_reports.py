@@ -25,7 +25,8 @@ import datetime
 def cover_reports(request):
     role_id = request.session.get("role_id")
     user_id = request.session.get("user_id")
-
+    if not role_id:
+        role_id = request.session.get('role_id')
     print("role_id -->", role_id)
     print("user_id -->", user_id)
     filter_dict = {}
