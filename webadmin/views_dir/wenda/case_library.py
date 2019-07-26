@@ -151,7 +151,7 @@ def case_library(request):
         is_delete=False
      )
     if role_id == 12:
-        user_objs = user_objs.exclude(username__contains='YZ-', company=1)
+        user_objs = user_objs.exclude(username__contains='YZ-', company=2)
 
     department_objs = models.Department.objects.all()
     print('department_objs-->',department_objs)
