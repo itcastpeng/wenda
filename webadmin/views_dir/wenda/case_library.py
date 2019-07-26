@@ -155,6 +155,7 @@ def case_library(request):
      )
     if role_id in [12, '12']:
         user_objs = user_objs.exclude(username__contains='YZ-', company=2)
+        print('user_objs------------> ', user_objs)
 
     department_objs = models.Department.objects.all()
     print('department_objs-->',department_objs)
