@@ -168,6 +168,12 @@ app.conf.beat_schedule = {
         'schedule': crontab('0', '0', '*', '*', '*'),
     },
 
+    # 指定关键词 用户查询 优化 2小时一次
+    'specify_keywords_user_query_optimization': {
+        'task': 'wenda_celery_project.tasks.specify_keywords_user_query_optimization',
+        'schedule': crontab('0', '*/2', '*', '*', '*'),
+    },
+
 }
 
 

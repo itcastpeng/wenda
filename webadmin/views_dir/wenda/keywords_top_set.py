@@ -2,26 +2,16 @@
 # -*- coding: utf-8 -*-
 # Author:zhangcong
 # Email:zc_92@sina.com
-
-
+from webadmin.views_dir.wenda.message import AddMessage
+from webadmin.modules import RedisOper
+from webadmin.forms import user
 from django.shortcuts import render, HttpResponse
 from webadmin.views_dir import pub
-
 from webadmin import models
 from django.http import JsonResponse
-
-from webadmin.forms import user
-import json
-
-from django.db.models import F
-from django.db.models import Q
-from webadmin.views_dir.wenda.message import AddMessage
-from django.db.models import Count
-import datetime
-import os ,time
-from webadmin.modules import RedisOper
-
+from django.db.models import Q, F, Count
 from wenda_celery_project import tasks
+import os ,time, redis, datetime, json
 
 
 # 生成表格中显示的数据
@@ -200,12 +190,27 @@ def keywords_top_set(request):
         return HttpResponse(json.dumps(result_data))
 
     status_choices = models.UserProfile.status_choices
-    client_data = models.KeywordsTopInfo.objects.filter(keyword__client_user__is_delete=False).values(
-        'keyword__client_user',
-        'keyword__client_user__username',
-    ).annotate(cover=Count("keyword__client_user"))
-    # client_data = models.KeywordsTopSet.objects.values('client_user__username', 'client_user_id').annotate(Count("keyword")).filter(is_delete=False)
 
+
+    rc = redis.StrictRedis(host='redis_host', port=6379, db=8, decode_responses=True)
+    # client_data = models.KeywordsTopInfo.objects.filter(keyword__client_user__is_delete=False).values(
+    #     'keyword__client_user',
+    #     'keyword__client_user__username',
+    # ).annotate(cover=Count("keyword__client_user"))
+    # data_list = []
+    # for i in client_data:
+    #     data_list.append({
+    #         'cover': i.get('cover'),
+    #         'keyword__client_user': i.get('keyword__client_user'),
+    #         'keyword__client_user__username': i.get('keyword__client_user__username'),
+    #     })
+    # rc.set('redis_keywords_top_set_user', json.dumps(data_list))
+
+    client_data = rc.get('redis_keywords_top_set_user')
+    client_data = json.loads(client_data)
+    # for i in client_data:
+    #     print(i.keyword__client_user)
+    # client_data = models.KeywordsTopSet.objects.values('client_user__username', 'client_user_id').annotate(Count("keyword")).filter(is_delete=False)
     if "_pjax" in request.GET:
         return render(request, 'wenda/keywords_top_set/keywords_top_set_pjax.html', locals())
     return render(request, 'wenda/keywords_top_set/keywords_top_set.html', locals())
