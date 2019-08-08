@@ -841,7 +841,7 @@ def keywords_top_set(request):
     else:
         objs = models.KeywordsTopSet.objects.filter(status=1, is_delete=False, client_user_id=193)
         if not objs:
-            objs = models.KeywordsTopSet.objects.filter(status=1, is_delete=False)
+            objs = models.KeywordsTopSet.objects.filter(status=1, is_delete=False, client_user__status=1)
         if objs:
             obj = objs[0]
             obj.status = 3
