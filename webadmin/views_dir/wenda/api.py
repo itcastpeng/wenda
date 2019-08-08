@@ -1060,7 +1060,7 @@ def keywords_cover(request):
             print('redis_len --->', redis_len, type(redis_len), redis_data, type(redis_data))
             if redis_len < 500:
                 rand_int = random.randint(10, 99)
-                if 1 in rand_int:
+                if '1' in str(rand_int):
                     print('===============缓存任务到接口中======================')
                     tasks.huancunguanjianci.delay()
 
