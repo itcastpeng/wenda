@@ -1059,14 +1059,11 @@ def keywords_cover(request):
             redis_len = rc.llen('data')
             print('redis_len --->', redis_len, type(redis_len), redis_data, type(redis_data))
             if redis_len < 500:
-                rand_int = random.randint(10, 99)
-                if '1' in str(rand_int):
-                    if rc.get('huancunguanjianci_time'):
-                        print('===============缓存任务到接口中======================')
-                        tasks.huancunguanjianci.delay()
-                    else:
-                        rc.set('huancunguanjianci_time', 1)
-                        rc.expire('huancunguanjianci_time', 120)
+                if rc.get('huancunguanjianci_time'):
+                    tasks.huancunguanjianci.delay()
+                else:
+                    rc.set('huancunguanjianci_time', 1)
+                    rc.expire('huancunguanjianci_time', 120)
 
             if not redis_data:
                 flag = False
