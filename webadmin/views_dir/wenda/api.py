@@ -1060,10 +1060,9 @@ def keywords_cover(request):
             print('redis_len --->', redis_len, type(redis_len), redis_data, type(redis_data))
             if redis_len < 500:
                 if not rc.get('huancunguanjianci_time'):
-                    tasks.huancunguanjianci.delay()
-                else:
                     rc.set('huancunguanjianci_time', 1)
                     rc.expire('huancunguanjianci_time', 120)
+                    tasks.huancunguanjianci.delay()
 
             if not redis_data:
                 flag = False
