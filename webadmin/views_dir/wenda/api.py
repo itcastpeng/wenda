@@ -1059,7 +1059,7 @@ def keywords_cover(request):
             redis_len = rc.llen('data')
             print('redis_len --->', redis_len, type(redis_len), redis_data, type(redis_data))
             if redis_len < 500:
-                if rc.get('huancunguanjianci_time'):
+                if not rc.get('huancunguanjianci_time'):
                     tasks.huancunguanjianci.delay()
                 else:
                     rc.set('huancunguanjianci_time', 1)
