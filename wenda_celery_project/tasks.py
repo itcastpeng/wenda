@@ -965,6 +965,7 @@ def cover_reports_generate_excel(file_name, data_list, debug, url_list=None):
 # 生成客户日覆盖报表   (老问答覆盖模式)
 @app.task
 def userprofile_keywords_cover(debug=False):
+    print('生成客户日覆盖报表-----------生成客户日覆盖报表-----------生成客户日覆盖报表--------------生成客户日覆盖报表')
     client_data = models.KeywordsCover.objects.values(
         'keywords__client_user__username',
         'keywords__client_user_id'
@@ -973,6 +974,7 @@ def userprofile_keywords_cover(debug=False):
     for user_obj in client_data:
         user_id = user_obj["keywords__client_user_id"]
         username = user_obj["keywords__client_user__username"]
+        print('username-------> ', username)
         date_obj = datetime.datetime.now()
         date = date_obj.strftime("%Y-%m-%d")
 
@@ -990,7 +992,7 @@ def userprofile_keywords_cover(debug=False):
             keywords__client_user_id=user_id,
             create_date__gt=ten_minutes_ago
         )
-
+        print('keyword_select_count-------> ', keyword_select_count, keywords_cover_objs.count())
         if keyword_select_count > 0 or keywords_cover_objs.count() > 0:  # 如果大于0表示数据未查询完
             continue
 
@@ -1042,7 +1044,7 @@ def userprofile_keywords_cover(debug=False):
                     task__release_user=search_obj.keywords.client_user
                 )
                 create_time = ''
-                print('objs ----=--==- > ', objs)
+                # print('objs ----=--==- > ', objs)
                 if objs:
                     url_list = {
                         'laolianjie': [],
