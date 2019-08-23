@@ -34,7 +34,7 @@ app.conf.beat_schedule = {
     # 将机器人操作完的任务返还到任务中
     'RobotTaskToTask': {  # 此处的命名不要用 tasks 开头,否则会报错
         'task': 'wenda_celery_project.tasks.RobotTaskToTask',  # 要执行的任务函数名
-        'schedule': crontab("*", '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
+        'schedule': crontab("*/5", '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
         # 'args': (2, 2),                                     # 传递的参数
     },
 
