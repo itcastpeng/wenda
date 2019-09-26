@@ -1348,6 +1348,7 @@ def current_oper_task(request):
     # 先判断是否有覆盖查询的任务
     select_keyword_cover_flag = False
     if not select_keyword_cover_flag:
+        print('-----------------------=============1111111111111111=============----------------------')
         now_date = datetime.datetime.now().strftime("%Y-%m-%d")
         user_data = models.WendaRobotTask.objects.filter(
             wenda_type=2,
@@ -1365,6 +1366,7 @@ def current_oper_task(request):
 
         # 如果查询覆盖的词查完了，判断下是否有知道合伙人的任务
         if not keywords_objs:
+            print('-----------------------=============22222222222222222222=============----------------------')
             keywords_objs = models.KeywordsTopSet.objects.select_related('client_user').filter(
                 client_user__status=1,
                 is_delete=False,
@@ -1374,6 +1376,7 @@ def current_oper_task(request):
 
         # 如果查询覆盖的词查完,则查询指定关键词中未查询的词
         if not keywords_objs:
+            print('-----------------------=============33333333333333333333333333333=============----------------------')
             q = Q(
                     Q(status=1) &
                     Q(is_delete=False) &
@@ -1385,6 +1388,7 @@ def current_oper_task(request):
                 'client_user')[0:10]
 
         if keywords_objs:
+            print('----------============5555555555555555555==============---->')
             select_keyword_cover_flag = True
             response.status = True
             response.data = {
@@ -1392,6 +1396,7 @@ def current_oper_task(request):
             }
 
     if not select_keyword_cover_flag:
+        print('-----------------------=============444444444444444444444444444=============----------------------')
         wenda_robot_task_objs = models.WendaRobotTask.objects.filter(
             next_date__lt=datetime.datetime.now(),
         )
