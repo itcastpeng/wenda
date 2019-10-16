@@ -27,6 +27,8 @@
                             display: inline-block;
                             background-size: 100%;
                             width: 100%;
+                        {% elif request.get_host == 'home.bjzdqh.com' %}
+                            background: url(/statics/custom/images/zhidaqihang.png) no-repeat;
                         {% else %}
                             background: url(/statics/custom/images/reglogo_qudao1.png) no-repeat;
 {#                            background: url(/statics/custom/images/reglogo.png) no-repeat;#}
