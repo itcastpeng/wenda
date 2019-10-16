@@ -103,7 +103,6 @@ def login(request):
 
         return JsonResponse(response.__dict__)
 
-    print('locals()-----------> ', locals())
     return render(request, 'login.html', locals())
 
 
