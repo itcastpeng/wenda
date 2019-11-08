@@ -273,7 +273,7 @@ def RobotTaskToTask():
 
     # 状态为发布中,且发布用户为机器人
 
-    five_days_ago = datetime.datetime.now() - datetime.timedelta(days=5)
+    five_days_ago = datetime.datetime.now() - datetime.timedelta(days=15)
     # q = Q(Q(status=6) or Q(create_date__lt=five_days_ago))
     task_objs = models.Task.objects.filter(publish_user_id__in=robot_ids, status=6, fabu_date__isnull=False)
     for task_obj in task_objs:
