@@ -196,6 +196,7 @@ def my_client_oper(request, oper_type, o_id):
                     response.message = '修改合伙人信息成功!'
 
             if flag:
+
                 models.record_partner_info.objects.create(
                     user_id=o_id,
                     data=partner
