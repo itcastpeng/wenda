@@ -221,7 +221,11 @@ def my_client_oper(request, oper_type, o_id):
 
         # 合伙人
         elif oper_type == 'partner':
-            objs = models.record_partner_info.objects.filter(user_id=o_id).order_by('-create_date')
+            now = datetime.datetime.today()
+            objs = models.record_partner_info.objects.filter(
+                user_id=o_id,
+                create_date=now
+            ).order_by('-create_date')
             if objs:
                 partner_info = objs[0].data
             return render(request, 'wenda/my_client/my_client_marker_partner.html', locals())
