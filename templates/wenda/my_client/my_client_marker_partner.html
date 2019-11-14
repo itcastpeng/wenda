@@ -2,16 +2,16 @@
     <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
         <span aria-hidden="true">×</span>
     </button>
-    <h3 class="modal-title">备注</h3>
+    <h3 class="modal-title">合伙人信息</h3>
 </div>
 <div class="modal-body">
-    <form class="form-horizontal" id="modal_partner_info" onsubmit="return false">
+    <form class="form-horizontal" id="modal_beizhu" onsubmit="return false">
         {% csrf_token %}
 {#        宣传要求#}
         <div class="form-group">
-            <label class="col-md-2 control-label" for="partner_info">备注<span class="form-span-active">*</span></label>
+            <label class="col-md-2 control-label" for="remark">合伙人信息<span class="form-span-active">*</span></label>
             <div class="col-md-8">
-                <textarea name="partner_info" id="partner_info" class="form-control" rows="10" placeholder="请输入备注！" >{{ remark }}</textarea>
+                <textarea name="remark" id="remark" class="form-control" rows="10" placeholder="请输入信息！" >{{ partner_info }}</textarea>
             </div>
         </div>
     </form>
@@ -57,8 +57,8 @@
     $('#inputRadiosChecked').on('change',function(){
     });
     $("#create_button").on('click', function () {
-        var data = $("#modal_partner_info").serialize();
-        var url = '{% url "my_client" %}marker_client/{{ o_id }}/';
+        var data = $("#modal_beizhu").serialize();
+        var url = '{% url "my_client" %}partner_info/{{ o_id }}/';
         $.post(url, data, function (result) {
             if(!result['status']){
                 toastr['error'](result['message']);

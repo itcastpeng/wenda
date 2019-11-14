@@ -116,6 +116,8 @@ class UserProfile(models.Model):
         (2, '华人医院'),
     )
     company = models.SmallIntegerField(verbose_name='公司', choices=company_choices, default=1)
+
+    partner_info = models.CharField(verbose_name='合伙人信息', max_length=128, null=True)
     def __str__(self):
         return self.username
 

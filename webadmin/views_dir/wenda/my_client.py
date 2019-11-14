@@ -78,6 +78,7 @@ def my_client(request):
             # oper += "<a href='outer_update/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>修改</a>".format(user_id=user_id)
             rizhi = "<a href = 'look_log/{user_id}/'data-toggle='modal' data-target='#exampleFormModal'> 查看日志 </a>".format(user_id=user_id)
             beizhu = "<a href='marker_client/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>备注</a>".format(user_id=user_id)
+            partner = "<a href='marker_client/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>合伙人</a>".format(user_id=user_id)
             result_data['data'].append({
                 # 'delete_client':delete_client,
                 'kaishi_jifei':rizhi,
@@ -85,6 +86,7 @@ def my_client(request):
                 'user_id':obj.id,
                 'index':index,
                 'beizhu':beizhu,
+                'partner':partner,
             })
         return HttpResponse(json.dumps(result_data))
     if "_pjax" in request.GET:
@@ -178,6 +180,19 @@ def my_client_oper(request, oper_type, o_id):
                 response.status = False
                 response.message = '请输入备注!'
 
+        # 合伙人
+        elif oper_type == 'partner_info':
+            print('request.POST========================> ', request.POST)
+            partner_info = request.POST.get('partner_info')
+            objs = models.UserProfile.objects.filter(id=o_id)
+            if objs:
+                objs.update(partner_info=partner_info)
+                response.status = True
+                response.message = '修改合伙人信息成功!'
+            else:
+                response.status = False
+                response.message = '请输入合伙人信息'
+
         return JsonResponse(response.__dict__)
 
     else:
@@ -189,6 +204,13 @@ def my_client_oper(request, oper_type, o_id):
             if objs:
                 remark = objs[0].remark_beizhu
             return render(request, 'wenda/my_client/my_client_marker_beizhu.html', locals())
+
+        # 合伙人
+        elif oper_type == 'partner':
+            objs = models.UserProfile.objects.filter(id=o_id)
+            if objs:
+                partner_info = objs[0].partner_info
+            return render(request, 'wenda/', locals())
 
         # 查看日志
         elif oper_type == 'look_log':

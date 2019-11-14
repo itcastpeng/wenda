@@ -269,7 +269,8 @@ def ToRobotTask():
 # 将机器人中已经操作完的任务提交到后台
 @app.task
 def RobotTaskToTask():
-    robot_ids = [i[0] for i in models.UserProfile.objects.filter(role_id=10).values_list('id')]
+    # robot_ids = [i[0] for i in models.UserProfile.objects.filter(role_id=10).values_list('id')]
+    robot_ids = [i[0] for i in models.UserProfile.objects.filter(id__in=[459, 460]).values_list('id')]
 
     # 状态为发布中,且发布用户为机器人
 
