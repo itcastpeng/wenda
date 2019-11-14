@@ -59,6 +59,7 @@
     $("#create_button").on('click', function () {
         var data = $("#modal_partner").serialize();
         var url = '{% url "my_client" %}partner_info/{{ o_id }}/';
+        alert(url, data);
         $.post(url, data, function (result) {
             if(!result['status']){
                 toastr['error'](result['message']);
