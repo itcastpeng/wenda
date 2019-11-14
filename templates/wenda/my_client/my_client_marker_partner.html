@@ -57,7 +57,7 @@
     $('#inputRadiosChecked').on('change',function(){
     });
     $("#create_button").on('click', function () {
-        var data = $("#modal_beizhu").serialize();
+        var data = $("#modal_partner").serialize();
         var url = '{% url "my_client" %}partner_info/{{ o_id }}/';
         $.post(url, data, function (result) {
             if(!result['status']){

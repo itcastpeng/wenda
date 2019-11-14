@@ -210,7 +210,7 @@ def my_client_oper(request, oper_type, o_id):
             objs = models.UserProfile.objects.filter(id=o_id)
             if objs:
                 partner_info = objs[0].partner_info
-            return render(request, 'wenda/', locals())
+            return render(request, 'wenda/my_client/my_client_marker_partner.html', locals())
 
         # 查看日志
         elif oper_type == 'look_log':
