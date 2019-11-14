@@ -140,6 +140,7 @@ def get_left_wenda_html(request,access_rules, access_rules_objs):
                     {bianxiebaobiao_html}
                     {guwen_duijie_biao_html}
                     {fifty_guanjianci_jieping_html}
+                    {partner_html}
                 </ul>
             </div>
         </div>
