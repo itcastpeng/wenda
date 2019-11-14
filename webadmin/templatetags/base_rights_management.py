@@ -167,6 +167,8 @@ def get_left_wenda_html(request,access_rules, access_rules_objs):
     guwen_duijie_biao_html = ""
     fifty_guanjianci_jieping_html = ""
     my_client_html = ""
+    partner_html = ""
+
     # 问答机器人
     access_rules_obj = access_rules_objs.filter(name="问答机器人", url_path=reverse("wenda_robot"))
     if access_rules_obj and access_rules_obj[0].id in access_rules:
@@ -411,6 +413,22 @@ def get_left_wenda_html(request,access_rules, access_rules_objs):
                 </li>
             """.format(cover_reports=reverse("cover_reports"))
 
+    objs = models.UserProfile.objects.filter(id=request.session['user_id'])
+    if objs:
+        obj = objs[0]
+        if int(obj.role_id) == 15: # 知道合伙人
+            access_rules_obj = access_rules_objs.filter(name="合伙人信息", url_path=reverse("partner"))
+            if access_rules_obj and access_rules_obj[0].id in access_rules:
+                partner_html = """
+                            <li class="site-menu-item">
+                                <a data-pjax="" href="{partner}" target="_blank">
+                                    <i class="icon fa-bar-chart" aria-hidden="true"></i>
+                                    <span class="site-menu-title margin-left-5">合伙人信息</span>
+                                </a>
+                            </li>
+                        """.format(partner=reverse("partner"))
+
+
     # 知道回答
     access_rules_obj = access_rules_objs.filter(name="知道回答", url_path=reverse("zhidaohuida"))
     if access_rules_obj and access_rules_obj[0].id in access_rules:
@@ -505,7 +523,8 @@ def get_left_wenda_html(request,access_rules, access_rules_objs):
         bianxiebaobiao_html=bianxiebaobiao_html,
         guwen_duijie_biao_html=guwen_duijie_biao_html,
         fifty_guanjianci_jieping_html=fifty_guanjianci_jieping_html,
-        my_client_html=my_client_html
+        my_client_html=my_client_html,
+        partner_html=partner_html
     )
     return result_html
 
