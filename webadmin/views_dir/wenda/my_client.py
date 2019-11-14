@@ -78,7 +78,7 @@ def my_client(request):
             # oper += "<a href='outer_update/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>修改</a>".format(user_id=user_id)
             rizhi = "<a href = 'look_log/{user_id}/'data-toggle='modal' data-target='#exampleFormModal'> 查看日志 </a>".format(user_id=user_id)
             beizhu = "<a href='marker_client/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>备注</a>".format(user_id=user_id)
-            partner = "<a href='marker_client/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>合伙人</a>".format(user_id=user_id)
+            partner = "<a href='partner/{user_id}/' data-toggle='modal' data-target='#exampleFormModal'>合伙人</a>".format(user_id=user_id)
             result_data['data'].append({
                 # 'delete_client':delete_client,
                 'kaishi_jifei':rizhi,
