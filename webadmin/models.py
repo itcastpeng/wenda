@@ -117,10 +117,15 @@ class UserProfile(models.Model):
     )
     company = models.SmallIntegerField(verbose_name='公司', choices=company_choices, default=1)
 
-    partner_info = models.CharField(verbose_name='合伙人信息', max_length=128, null=True)
+    # partner_info = models.CharField(verbose_name='合伙人信息', max_length=128, null=True)
     def __str__(self):
         return self.username
 
+# 合伙人记录数据
+class record_partner_info(models.Model):
+    user = models.ForeignKey('UserProfile', verbose_name='用户', null=True)
+    data = models.CharField(verbose_name='合伙人数据', max_length=128)
+    create_date = models.DateField(verbose_name="创建时间", auto_now_add=True)
 
 # 登录日志
 class account_log(models.Model):

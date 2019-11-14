@@ -183,13 +183,23 @@ def my_client_oper(request, oper_type, o_id):
         # 合伙人
         elif oper_type == 'partner_info':
             print('request.POST========================> ', request.POST)
-            partner_info = request.POST.get('partner_info')
-            objs = models.UserProfile.objects.filter(id=o_id)
+            partner = request.POST.get('partner')
+            objs = models.record_partner_info.objects.filter(user_id=o_id)
+            now_date = datetime.datetime.today()
+            flag = True
             if objs:
-                objs.update(partner_info=partner_info)
-                response.status = True
-                response.message = '修改合伙人信息成功!'
-            else:
+                objs = objs.filter(create_date=now_date)
+                if objs:
+                    flag = False
+                    objs.update(partner_info=partner)
+                    response.status = True
+                    response.message = '修改合伙人信息成功!'
+
+            if flag:
+                models.record_partner_info.objects.create(
+                    user_id=o_id,
+                    data=partner
+                )
                 response.status = False
                 response.message = '请输入合伙人信息'
 
@@ -207,8 +217,7 @@ def my_client_oper(request, oper_type, o_id):
 
         # 合伙人
         elif oper_type == 'partner':
-            objs = models.UserProfile.objects.filter(id=o_id)
-            partner_info = ''
+            objs = models.record_partner_info.objects.filter(user_id=o_id).order_by('-create_date')
             if objs:
                 partner_info = objs[0].partner_info
             return render(request, 'wenda/my_client/my_client_marker_partner.html', locals())
