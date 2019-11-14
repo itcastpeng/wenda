@@ -187,22 +187,25 @@ def my_client_oper(request, oper_type, o_id):
             objs = models.record_partner_info.objects.filter(user_id=o_id)
             now_date = datetime.datetime.today()
             flag = True
-            if objs:
-                objs = objs.filter(create_date=now_date)
-                if objs:
-                    flag = False
-                    objs.update(partner_info=partner)
-                    response.status = True
-                    response.message = '修改合伙人信息成功!'
-
-            if flag:
-
-                models.record_partner_info.objects.create(
-                    user_id=o_id,
-                    data=partner
-                )
+            if not partner:
                 response.status = False
                 response.message = '请输入合伙人信息'
+            else:
+                if objs:
+                    objs = objs.filter(create_date=now_date)
+                    if objs:
+                        flag = False
+                        objs.update(partner_info=partner)
+                        response.status = True
+
+                if flag:
+
+                    models.record_partner_info.objects.create(
+                        user_id=o_id,
+                        data=partner
+                    )
+                    response.status = True
+                response.message = '修改合伙人信息成功!'
 
         return JsonResponse(response.__dict__)
 
@@ -220,7 +223,7 @@ def my_client_oper(request, oper_type, o_id):
         elif oper_type == 'partner':
             objs = models.record_partner_info.objects.filter(user_id=o_id).order_by('-create_date')
             if objs:
-                partner_info = objs[0].partner_info
+                partner_info = objs[0].data
             return render(request, 'wenda/my_client/my_client_marker_partner.html', locals())
 
         # 查看日志
