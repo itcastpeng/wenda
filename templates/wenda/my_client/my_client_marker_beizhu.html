@@ -59,6 +59,7 @@
     $("#create_button").on('click', function () {
         var data = $("#modal_beizhu").serialize();
         var url = '{% url "my_client" %}marker_client/{{ o_id }}/';
+        alert('url--> ', url);
         $.post(url, data, function (result) {
             if(!result['status']){
                 toastr['error'](result['message']);

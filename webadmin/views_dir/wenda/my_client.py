@@ -208,6 +208,7 @@ def my_client_oper(request, oper_type, o_id):
         # 合伙人
         elif oper_type == 'partner':
             objs = models.UserProfile.objects.filter(id=o_id)
+            partner_info = ''
             if objs:
                 partner_info = objs[0].partner_info
             return render(request, 'wenda/my_client/my_client_marker_partner.html', locals())
