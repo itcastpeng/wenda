@@ -415,16 +415,11 @@ def get_left_wenda_html(request,access_rules, access_rules_objs):
             """.format(cover_reports=reverse("cover_reports"))
 
     objs = models.UserProfile.objects.filter(id=request.session['user_id'])
-    print('-----------------> ', request.session['user_id'])
     if objs:
         obj = objs[0]
         if int(obj.role_id) in [15, '15']: # 知道合伙人
-            print('-------obj.role_id---obj.role_id----obj.role_id---> ', obj.role_id)
-            print('reverse("cover_reports")---------------------> ', reverse("cover_reports"))
             access_rules_obj = access_rules_objs.filter(name="合伙人信息", url_path=reverse("cover_reports"))
-            print('access_rules_obj---------> ', access_rules_obj)
             if access_rules_obj and access_rules_obj[0].id in access_rules:
-                print('access_rules_obj[0].id -------------> ', access_rules_obj[0].id, access_rules)
                 partner_html = """
                             <li class="site-menu-item">
                                 <a data-pjax="" href="{partner}" target="_blank">
@@ -432,7 +427,7 @@ def get_left_wenda_html(request,access_rules, access_rules_objs):
                                     <span class="site-menu-title margin-left-5">合伙人信息</span>
                                 </a>
                             </li>
-                        """.format(partner=reverse("partner"))
+                        """.format(partner=reverse("cover_reports"))
 
 
     # 知道回答
