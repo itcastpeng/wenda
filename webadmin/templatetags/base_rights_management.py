@@ -420,7 +420,9 @@ def get_left_wenda_html(request,access_rules, access_rules_objs):
         obj = objs[0]
         if int(obj.role_id) in [15, '15']: # 知道合伙人
             print('-------obj.role_id---obj.role_id----obj.role_id---> ', obj.role_id)
+            print('reverse("cover_reports")---------------------> ', reverse("cover_reports"))
             access_rules_obj = access_rules_objs.filter(name="合伙人信息", url_path=reverse("cover_reports"))
+            print('access_rules_obj---------> ', access_rules_obj)
             if access_rules_obj and access_rules_obj[0].id in access_rules:
                 print('access_rules_obj[0].id -------------> ', access_rules_obj[0].id, access_rules)
                 partner_html = """
