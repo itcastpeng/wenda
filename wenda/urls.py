@@ -23,7 +23,7 @@ from webadmin.views_dir.wenda import task_list, personal_center, financial_cente
     wait_clearing, my_task, set_keywords, rank_data, edit_content_management, my_task_edit, edit_error_content,\
     sensitive_word_library, big_data, edit_content_detail, client_day_covering_num, keywords_top_set, cover_reports, \
     show_wenda_cover_num, zhidaohuida, case_library ,bianxiebaobiao,according_geturl,guwen_duijie_biao,fifty_guanjianci_jieping,my_client,\
-    celery_api_fugaibaobiaogengxin
+    celery_api_fugaibaobiaogengxin, partner_info
 
 from webadmin.views_dir.wechat import wechat
 
@@ -239,6 +239,7 @@ urlpatterns = [
 
     url(r'^celery_apiFuGaiBaoBiaoUpdate/', celery_api_fugaibaobiaogengxin.celery_apiFuGaiBaoBiaoUpdate, name="celery_apiFuGaiBaoBiaoUpdate"),  # 账户管理
 
+    url(r'^partner/', partner_info.partner_info), # 合伙人角色 查询合伙人信息
 
     url(r'^test/', views.test),
     url(r'', views.index),
