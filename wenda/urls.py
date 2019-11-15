@@ -239,7 +239,7 @@ urlpatterns = [
 
     url(r'^celery_apiFuGaiBaoBiaoUpdate/', celery_api_fugaibaobiaogengxin.celery_apiFuGaiBaoBiaoUpdate, name="celery_apiFuGaiBaoBiaoUpdate"),  # 账户管理
 
-    url(r'^partner/', partner_info.partner_info), # 合伙人角色 查询合伙人信息
+    url(r'^partner/', partner_info.partner_info, name='partner'), # 合伙人角色 查询合伙人信息
 
     url(r'^test/', views.test),
     url(r'', views.index),
