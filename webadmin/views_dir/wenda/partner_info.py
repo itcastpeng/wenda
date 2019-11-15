@@ -72,6 +72,7 @@ def partner_info(request):
                 'liulanliang':liulanliang,
                 'guanfangdianhua':guanfangdianhua,
                 'guanfangdianji':guanfangdianji,
+                'create_date':obj.create_date.strftime('%Y-%m-%d %H:%M:%S'),
             })
 
 
