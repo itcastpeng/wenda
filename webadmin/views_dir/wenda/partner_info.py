@@ -58,11 +58,10 @@ def partner_info(request):
             }
         for index, obj in enumerate(clinet_date_objs[start: (start + length)], start=1):
             user_id = obj.id
-            result_data['data'].append({
-                'index':index,
-                'kehu_name':obj.username,
-                'user_id':obj.id,
-            })
+            # result_data['data'].append({
+            #     'index':index,
+            #     'user_id':obj.id,
+            # })
 
 
         return HttpResponse(json.dumps(result_data))

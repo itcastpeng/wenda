@@ -418,7 +418,7 @@ def get_left_wenda_html(request,access_rules, access_rules_objs):
     if objs:
         obj = objs[0]
         if int(obj.role_id) in [15, '15']: # 知道合伙人
-            access_rules_obj = access_rules_objs.filter(name="合伙人信息", url_path=reverse("cover_reports"))
+            access_rules_obj = access_rules_objs.filter(name="合伙人信息", url_path=reverse("partner"))
             if access_rules_obj and access_rules_obj[0].id in access_rules:
                 partner_html = """
                             <li class="site-menu-item">
@@ -427,7 +427,7 @@ def get_left_wenda_html(request,access_rules, access_rules_objs):
                                     <span class="site-menu-title margin-left-5">合伙人信息</span>
                                 </a>
                             </li>
-                        """.format(partner=reverse("cover_reports"))
+                        """.format(partner=reverse("partner"))
 
 
     # 知道回答
