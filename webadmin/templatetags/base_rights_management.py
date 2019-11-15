@@ -422,6 +422,7 @@ def get_left_wenda_html(request,access_rules, access_rules_objs):
             print('-------obj.role_id---obj.role_id----obj.role_id---> ', obj.role_id)
             access_rules_obj = access_rules_objs.filter(name="合伙人信息", url_path=reverse("cover_reports"))
             if access_rules_obj and access_rules_obj[0].id in access_rules:
+                print('access_rules_obj[0].id -------------> ', access_rules_obj[0].id, access_rules)
                 partner_html = """
                             <li class="site-menu-item">
                                 <a data-pjax="" href="{partner}" target="_blank">
