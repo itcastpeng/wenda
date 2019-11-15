@@ -49,7 +49,11 @@ def partner_info(request):
         clinet_date_objs = ''
         delete_client = ''
 
-        clinet_date_objs = models.UserProfile.objects.filter(q).filter(role_id=15,is_delete=False)
+        clinet_date_objs = models.record_partner_info.objects.filter(q).filter(
+            user_id=obj_user_id
+        ).order_by(
+            '-create_date'
+        )
 
         result_data = {
             "recordsFiltered": clinet_date_objs.count(),
@@ -58,10 +62,17 @@ def partner_info(request):
             }
         for index, obj in enumerate(clinet_date_objs[start: (start + length)], start=1):
             user_id = obj.id
-            # result_data['data'].append({
-            #     'index':index,
-            #     'user_id':obj.id,
-            # })
+            data = obj.data.split('|')
+            liulanliang = data[0]
+            guanfangdianhua = data[1]
+            guanfangdianji = data[2]
+            result_data['data'].append({
+                'index':index,
+                'id':obj.id,
+                'liulanliang':liulanliang,
+                'guanfangdianhua':guanfangdianhua,
+                'guanfangdianji':guanfangdianji,
+            })
 
 
         return HttpResponse(json.dumps(result_data))
