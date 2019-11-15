@@ -40,48 +40,6 @@
 {% csrf_token %}
 <div class="page animation-fade page-index page-data-tables">
     <div class="page-content">
-
-        <div class="panel" style="padding: 10px; height: auto">
-            <form class="form-horizontal search_form">
-                <div>
-                        <label for="client_user">用户名称：</label>
-                        <select class="form-control select2-hidden-accessible" data-plugin="select2" tabindex="-1"
-                                aria-hidden="true" id="client_user" name="client_user">
-                            <option value="">全部</option>
-                            {% for i in client_data %}
-                                <option value="{{ i.id }}">{{ i.username }}</option>
-                            {% endfor %}
-                        </select>
-
-                        <label for="qiyong_status">是否启用：</label>
-                        <select class="form-control select2-hidden-accessible" data-plugin="select2" tabindex="-1"
-                                aria-hidden="true" id="qiyong_status" name="qiyong_status">
-                            <option value="">全部</option>
-                            {% for i in qiyong_status %}
-                                <option value="{{ i.0 }}">{{ i.1 }}</option>
-                            {% endfor %}
-                        </select>
-
-                        <label for="xinlaowenda_status">新老问答：</label>
-                        <select class="form-control select2-hidden-accessible" data-plugin="select2" tabindex="-1"
-                                aria-hidden="true" id="xinlaowenda_status" name="xinlaowenda_status">
-                            <option value="">全部</option>
-                            {% for i in xinlaowenda_status %}
-                                <option value="{{ i.0 }}">{{ i.1 }}</option>
-                            {% endfor %}
-                        </select>
-
-                </div>
-
-                <div style="position: absolute; bottom:0; right: 20px;">
-                    <button type="button" class="btn btn-primary" id="search_button"><i class="icon fa-search"
-                                                                                        aria-hidden="true"></i>搜索
-                    </button>
-                </div>
-
-            </form>
-        </div>
-
         <div class="panel" style="height: 100%;">
             <div class="panel-body">
                 <table class="table table-bordered table-hover dataTable table-striped width-full text-nowrap"
