@@ -14,7 +14,7 @@ import datetime
 # 顾问对接
 @pub.is_login
 def my_client(request):
-    client_data = models.UserProfile.objects.filter(is_delete=False, role_id=5).values('username', 'id')
+    client_data = models.UserProfile.objects.filter(is_delete=False, role_id__in=[5, 15]).values('username', 'id')
     role_id = request.session.get("role_id")
     obj_user_id = request.session.get("user_id")
     qiyong_status = models.UserProfile.status_choices
