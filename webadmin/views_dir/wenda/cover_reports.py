@@ -246,6 +246,7 @@ def cover_reports(request):
         ).exclude(client_user__company=2).values(
             'client_user__username',
             'client_user_id'
+
         ).annotate(Count("id"))
     else:
         client_data = models.ClientCoveringData.objects.filter(client_user__is_delete=False).filter(**filter_dict).values(
