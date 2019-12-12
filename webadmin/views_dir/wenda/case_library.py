@@ -135,6 +135,7 @@ def case_library(request):
             keyword = keyword.format(url=url, keyword=obj.keywords.keyword)
 
             wenda_robot_task_objs = models.WendaRobotTask.objects.filter(wenda_url=obj.url, task__release_user_id=obj.keywords.client_user.id)
+
             title = ''
             if wenda_robot_task_objs:
                 title = wenda_robot_task_objs[0].title
